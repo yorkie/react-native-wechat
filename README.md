@@ -1,7 +1,7 @@
-
 # react-native-wechat
 
 React native for WeChat, this is still under in-progress to develop.
+This module binds WeChat's iOS SDK.
 
 ## Install
 
@@ -36,6 +36,8 @@ $ npm install react-native-wechat --save
   - {Function} `callback` callback
 - `sendAuthRequest(callback)` auth request
   - {Function} `callback` callback
+
+For more details, visit https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=1417674108&token=&lang=zh_CN
 
 ## License
 
