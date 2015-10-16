@@ -1,7 +1,4 @@
-const React = require('react-native');
-const {
-  NativeModules,
-  Component
-} = React;
 
+const React = require('react-native');
 module.exports = React.NativeModules.WeChat;
+
