@@ -13,8 +13,13 @@
   "keywords": [
     "wechat",
     "react",
-    "react-native"
+    "react-native",
+    "react-component",
+    "ios"
   ],
+  "peerDependencies": {
+    "react-native": ">=0.5"
+  },
   "author": "Yorkie Liu <yorkiefixer@gmail.com>",
   "license": "MIT",
   "bugs": {
