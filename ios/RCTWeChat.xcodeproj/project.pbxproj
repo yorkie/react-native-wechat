@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		86D238561BD0BC1000C75D01 /* RCTWeChat.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D238551BD0BC1000C75D01 /* RCTWeChat.m */; settings = {ASSET_TAGS = (); }; };
+		86D238561BD0BC1000C75D01 /* RCTWeChat.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D238551BD0BC1000C75D01 /* RCTWeChat.m */; };
 		86D2385D1BD0CA3D00C75D01 /* libWeChatSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86D238571BD0BC2200C75D01 /* libWeChatSDK.a */; };
 /* End PBXBuildFile section */
 
@@ -217,7 +217,10 @@
 		86D2384C1BD0BB9E00C75D01 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../react-native/React";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../../react-native/React",
+					"$(SRCROOT)/../node_modules/react-native/React",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -231,7 +234,10 @@
 		86D2384D1BD0BB9E00C75D01 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../react-native/React";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../../react-native/React",
+					"$(SRCROOT)/../node_modules/react-native/React",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
