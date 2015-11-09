@@ -69,14 +69,14 @@ Send request to WeChat with an `openid`.
 
 #### sendAuthRequest(state, callback)
 
-> auth request
+Send authentication request.
 
 - {String} `state` the state of OAuth2
 - {Function} `callback` callback
 
 #### sendSuccessResponse(callback)
 
-> send a success response to wechat
+Send a success response.
 
 - {Function} `callback` callback
 
