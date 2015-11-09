@@ -1,9 +1,11 @@
 # react-native-wechat
 
-React native for WeChat, this is still under in-progress to develop.
-This module binds WeChat's iOS SDK.
+React-Native bridge static library for WeChat SDK.
 
-## Install
+- [x] iOS
+- [ ] Android
+
+## Installation
 
 ```sh
 $ npm install react-native-wechat --save
@@ -11,43 +13,42 @@ $ npm install react-native-wechat --save
 
 ## Linking in your XCode project
 
-1. Link `RCTWeChat` library from your `node_modules/react-native-wechat/ios` folder like its
+- Link `RCTWeChat` library from your `node_modules/react-native-wechat/ios` folder like its
   [described here](http://facebook.github.io/react-native/docs/linking-libraries-ios.html).
   Don't forget to add it to "Build Phases" of project.
-2. Added the following libraries to your "Link Binary With Libraries":
-  - CoreTelephony.framework
-  - libsqlite3.0
-  - libc++
-  - libz
-3. Done
+- Added the following libraries to your "Link Binary With Libraries":
+  - [x] CoreTelephony.framework
+  - [x] libsqlite3.0
+  - [x] libc++
+  - [x] libz
 
 ## API Documentation
 
 #### registerApp(appid)
 
-- {String} `appid`
+- {String} `appid` the appid you get from WeChat dashboard
 
 #### registerAppWithDescription(appid, appdesc)
 
-- {String} `appid`
-- {String} `appdesc`
+- {String} `appid` the appid you get from WeChat dashboard
+- {String} `appdesc` the description of your app
 
 #### isWXAppInstalled(callback) 
 
-> get if wechat installed in this app
+Check if wechat installed in this app.
 
 - {Function} `callback` - the result callback.
   - {Boolean} `installed` - the result.
 
 #### isWXAppSupportApi(callback)
 
-> get if wechat support open url.
+Check if wechat support open url.
 
 - {Function} `callback` - the same to `isWXAppInstalled`.
 
 #### getApiVersion(callback)
 
-> get api version
+Get api version of WeChat SDK.
 
 - {Function} `callback`
   - {Error} `err` the error if something went wrong
@@ -55,13 +56,13 @@ $ npm install react-native-wechat --save
 
 #### openWXApp(callback)
 
-> open wechat app
+Open WeChat app with an optional callback argument.
 
 - {Function} `callback` callback
 
 #### sendRequest(openid, callback)
 
-> send request to wechat
+Send request to WeChat with an `openid`.
 
 - {String} `openid` the user openid
 - {Function} `callback` the callback
@@ -81,14 +82,14 @@ $ npm install react-native-wechat --save
 
 #### sendErrorCommonResponse(message, callback)
 
-> send an error response to wechat
+Send an error response to WeChat app.
 
 - {String} `message` the error message
 - {Function} `callback` callback
 
 #### sendErrorUserCancelResponse(message, callback)
 
-> send an error becaosue cancelation by user to wechat
+Send an error becaosue cancelation by user to WeChat.
 
 - {String} `message` the error message
 - {Function} `callback` callback
