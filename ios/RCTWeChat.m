@@ -15,16 +15,14 @@
 
 RCT_EXPORT_MODULE()
 
-RCT_EXPORT_METHOD(registerApp
-                  :(NSString *)appid
+RCT_EXPORT_METHOD(registerApp:(NSString *)appid
                   :(RCTResponseSenderBlock)callback)
 {
     [WXApi registerApp:appid];
     callback(@[[NSNull null]]);
 }
 
-RCT_EXPORT_METHOD(registerAppWithDescription
-                  :(NSString *)appid
+RCT_EXPORT_METHOD(registerAppWithDescription:(NSString *)appid
                   :(NSString *)appdesc
                   :(RCTResponseSenderBlock)callback)
 {
@@ -57,8 +55,7 @@ RCT_EXPORT_METHOD(openWXApp:(RCTResponseSenderBlock)callback)
     callback(@[@([WXApi openWXApp])]);
 }
 
-RCT_EXPORT_METHOD(sendRequest
-                  :(NSString *)openid
+RCT_EXPORT_METHOD(sendRequest:(NSString *)openid
                   :(RCTResponseSenderBlock)callback)
 {
     BaseReq* req = [[BaseReq alloc] init];
@@ -67,8 +64,7 @@ RCT_EXPORT_METHOD(sendRequest
     callback(@[[NSNull null]]);
 }
 
-RCT_EXPORT_METHOD(sendAuthRequest
-                  :(NSString *)state
+RCT_EXPORT_METHOD(sendAuthRequest:(NSString *)state
                   :(RCTResponseSenderBlock)callback)
 {
     SendAuthReq* req = [[SendAuthReq alloc] init];
@@ -78,8 +74,7 @@ RCT_EXPORT_METHOD(sendAuthRequest
     callback(@[[NSNull null]]);
 }
 
-RCT_EXPORT_METHOD(sendSuccessResponse
-                  :(RCTResponseSenderBlock)callback)
+RCT_EXPORT_METHOD(sendSuccessResponse:(RCTResponseSenderBlock)callback)
 {
     BaseResp* resp = [[BaseResp alloc] init];
     resp.errCode = WXSuccess;
@@ -87,8 +82,7 @@ RCT_EXPORT_METHOD(sendSuccessResponse
     callback(@[[NSNull null]]);
 }
 
-RCT_EXPORT_METHOD(sendErrorCommonResponse
-                  :(NSString *)message
+RCT_EXPORT_METHOD(sendErrorCommonResponse:(NSString *)message
                   :(RCTResponseSenderBlock)callback)
 {
     BaseResp* resp = [[BaseResp alloc] init];
@@ -98,8 +92,7 @@ RCT_EXPORT_METHOD(sendErrorCommonResponse
     callback(@[[NSNull null]]);
 }
 
-RCT_EXPORT_METHOD(sendErrorUserCancelResponse
-                  :(NSString *)message
+RCT_EXPORT_METHOD(sendErrorUserCancelResponse:(NSString *)message
                   :(RCTResponseSenderBlock)callback)
 {
     BaseResp* resp = [[BaseResp alloc] init];

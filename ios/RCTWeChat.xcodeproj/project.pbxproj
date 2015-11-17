@@ -220,6 +220,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../../react-native/React",
 					"$(SRCROOT)/../node_modules/react-native/React",
+					"$(SRCROOT)/../Example/node_modules/react-native/React",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -237,6 +238,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../../react-native/React",
 					"$(SRCROOT)/../node_modules/react-native/React",
+					"$(SRCROOT)/../Example/node_modules/react-native/React",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
