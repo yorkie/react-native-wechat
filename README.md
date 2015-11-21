@@ -1,4 +1,4 @@
-![react-native-wechat logo](./logo.svg?raw=true)
+![react-native-wechat logo](./logo.jpg?raw=true)
 
 React-Native bridge static library for WeChat SDK.
 
