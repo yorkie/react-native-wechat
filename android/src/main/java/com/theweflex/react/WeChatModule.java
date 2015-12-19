@@ -48,6 +48,21 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
 
     private static ArrayList<WeChatModule> modules = new ArrayList<>();
 
+    @Override
+    public void initialize() {
+        super.initialize();
+        modules.add(this);
+    }
+
+    @Override
+    public void onCatalystInstanceDestroy() {
+        super.onCatalystInstanceDestroy();
+        if (api != null){
+            api = null;
+        }
+        modules.remove(this);
+    }
+
     public static void handleIntent(Intent intent){
         for (WeChatModule mod : modules){
             mod.api.handleIntent(intent, mod);
@@ -57,26 +72,30 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     @ReactMethod
     public void registerApp(String appid, Callback resolve){
         api = WXAPIFactory.createWXAPI(this.getReactApplicationContext().getBaseContext(), appid, true);
-        api.registerApp(appid);
-        resolve.invoke();
+        resolve.invoke(api.registerApp(appid));
     }
 
+    @ReactMethod
     public void isWXAppInstalled(Callback resolve){
         resolve.invoke(api.isWXAppInstalled());
     }
 
+    @ReactMethod
     public void isWXAppSupportApi(Callback resolve){
         resolve.invoke(api.isWXAppSupportAPI());
     }
 
+    @ReactMethod
     public void getApiVersion(Callback resolve){
         resolve.invoke(api.getWXAppSupportAPI());
     }
 
+    @ReactMethod
     public void openWXApp(Callback resolve){
         resolve.invoke(api.openWXApp());
     }
 
+    @ReactMethod
     public void sendAuthRequest(String state, Callback resolve){
         SendAuth.Req req = new SendAuth.Req();
         req.scope = "snsapi_userinfo";
