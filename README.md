@@ -54,14 +54,14 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         ...
         mReactInstanceManager = ReactInstanceManager.builder()
-                .setApplication(getApplication())
-                .setBundleAssetName("index.android.bundle")
-                .setJSMainModuleName("index.android")
-                .addPackage(new MainReactPackage())
-                .addPackage(new WeChatPackage())        // Add this line
-                .setUseDeveloperSupport(BuildConfig.DEBUG)
-                .setInitialLifecycleState(LifecycleState.RESUMED)
-                .build();
+            .setApplication(getApplication())
+            .setBundleAssetName("index.android.bundle")
+            .setJSMainModuleName("index.android")
+            .addPackage(new MainReactPackage())
+            .addPackage(new WeChatPackage())        // Add this line
+            .setUseDeveloperSupport(BuildConfig.DEBUG)
+            .setInitialLifecycleState(LifecycleState.RESUMED)
+            .build();
     }
 }
 ```
