@@ -87,7 +87,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
 
     @ReactMethod
     public void getApiVersion(Callback resolve){
-        resolve.invoke(api.getWXAppSupportAPI());
+        resolve.invoke(null, api.getWXAppSupportAPI());
     }
 
     @ReactMethod
@@ -102,6 +102,8 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         req.state = state;
         resolve.invoke(api.sendReq(req));
     }
+
+    // TODO: 实现sendRequest、sendSuccessResponse、sendErrorCommonResponse、sendErrorUserCancelResponse
 
     @Override
     public void onReq(BaseReq baseReq) {
