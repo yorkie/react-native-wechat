@@ -5,9 +5,11 @@ React-Native bridge static library for WeChat SDK.
 - [x] iOS
 - [ ] Android
 
-## Installation
+## Join us at Gitter
 
 [![Join the chat at https://gitter.im/weflex/react-native-wechat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/weflex/react-native-wechat?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+## Installation
 
 ```sh
 $ npm install react-native-wechat --save
