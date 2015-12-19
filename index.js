@@ -1,4 +1,100 @@
 
-const React = require('react-native');
-module.exports = React.NativeModules.WeChat;
+import { DeviceEventEmitter, NativeModules } from 'react-native';
 
+const WeChat = NativeModules.WeChat;
+
+function translateError(err) {
+	const ret = new Error(err.message);
+	ret.err = err.err;
+}
+
+function assertSuccessed(result) {
+	if (!result){
+		throw new Error("WeChat API returns false.(failed)");
+	}
+}
+
+export function registerApp(appid, callback = assertSuccessed) {
+	return new Promise( (resolve) => {
+		WeChat.registerApp(appid, resolve)
+	}).then(callback);
+}
+
+export function registerAppWithDescription(appid, appdesc, callback = assertSuccessed) {
+	return new Promise( (resolve) => {
+		WeChat.registerAppWithDescription(appid, appdesc, resolve)
+	}).then(callback);
+}
+
+export function isWXAppinstalled(callback = assertSuccessed) {
+	return new Promise( (resolve) => {
+		WeChat.isWXAppinstalled(callback);
+	}).then(callback);
+}
+
+export function isWXAppSupportApi(callback = assertSuccessed) {
+	return new Promise( (resolve) => {
+		WeChat.isWXAppSupportApi(callback);
+	}).then(callback);
+}
+
+export function getApiVersion(callback) {
+	const ret = new Promise( (resolve) => {
+		WeChat.getApiVersion(callback);
+	})
+	return callback ? ret.then(callback) : ret;
+}
+
+export function openWXApp(callback = assertSuccessed) {
+	return new Promise( (resolve) => {
+		WeChat.openWXApp(callback);
+	}).then(callback);
+}
+
+
+var authCallbackList = {};
+
+function waitForAuthResponse(state, result){
+	if (!result){
+		throw new Error("Failed to call SendReq");
+	}
+	return new Promise((resolve, reject) => {
+		authCallbackList[state] = result => {
+			if (result.errCode != 0){
+				// Failed.
+				const err = new Error(result.errMsg);
+				err.code = result.errCode;
+				reject(err);
+			} else {
+				resolve(result);
+			}
+		}
+	});
+}
+
+export function sendAuthRequest(state, callback) {
+	if (typeof(state) == 'function'){
+		callback = state;
+		state = undefined;
+	}
+	if (!state){
+		state = Math.random().toString(16).substr(2)+"_"+ new Date().getTime();
+	}
+	return new Promise( (resolve) => {
+		if (authCallbackList[state]){
+			throw new Error('Last request of state `'+state+'` is not responsed yet.');
+		}
+		WeChat.openWXApp(callback);
+	})
+		.then(result=>waitForAuthResponse(state, result))
+		.then(callback);
+}
+
+function onWeChatResponse(resp){
+	if (resp.type == 'SendAuth.Resp'){
+		const callback = authCallbackList[resp.state];
+		delete authCallbackList[resp.state];
+		return callback && callback(resp);
+	}
+}
+DeviceEventEmitter.addListener('WeChat_Resp', onWeChatResponse);
