@@ -45,7 +45,7 @@ dependencies {
 
 - Add following lines into `MainActivity.java`
 
-```
+```java
 ...
 import com.theweflex.react.WeChatPackage;       // Add this line before public class MainActivity
 
@@ -66,7 +66,7 @@ public class MainActivity extends Activity {
 }
 ```
 
--- Create a package named 'wxapi' in your application package and a class named 'WXEntryActivity' in it. This is needed to get request and response from wechat.
+- Create a package named 'wxapi' in your application package and a class named 'WXEntryActivity' in it. This is needed to get request and response from wechat.
 
 ```java
 package your.package.wxapi;
@@ -86,7 +86,7 @@ public class WXEntryActivity extends Activity{
 }
 ```
 
--- Add activity declare in your AndroidManifest.xml
+- Add activity declare in your AndroidManifest.xml
 
 ```
 <manifest>
@@ -95,15 +95,15 @@ public class WXEntryActivity extends Activity{
     ...
     <!-- 微信Activity -->
     <activity
-            android:name=".wxapi.WXEntryActivity"
-            android:label="@string/app_name"
-            android:exported="true"
-            />
+      android:name=".wxapi.WXEntryActivity"
+      android:label="@string/app_name"
+      android:exported="true"
+      />
   </application>
 </manifest>
 ```
 
--- Add these lines to 'proguard-rules.pro':
+- Add these lines to 'proguard-rules.pro':
 
 ```
 -keep class com.tencent.mm.sdk.** {
