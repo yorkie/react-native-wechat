@@ -9,7 +9,7 @@ function translateError(err) {
     const ret = new Error(err.message);
     ret.errCode = err.errCode || err.err;
   } else if (typeof(err) == 'string') {
-    throw new Error(err);)
+    throw new Error(err);
   } else {
     throw err;
   }
@@ -143,7 +143,7 @@ export function sendAuthRequest(state, callback) {
     if (authCallbackList[state]) {
       throw new Error('Last request of state `' + state + '` is not responsed yet.');
     }
-    WeChat.openWXApp(resolve);
+    WeChat.sendAuthRequest(state, resolve);
   }).then(assertSuccessed)
     .then(()=>waitForAuthResponse(state));
   if (callback){
