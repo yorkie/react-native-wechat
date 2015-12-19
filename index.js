@@ -2,6 +2,7 @@
 import { DeviceEventEmitter, NativeModules } from 'react-native';
 
 const WeChat = NativeModules.WeChat;
+let isAppRegistered = false;
 
 function translateError(err) {
 	const ret = new Error(err.message);
@@ -14,7 +15,15 @@ function assertSuccessed(result) {
 	}
 }
 
+function assertRegistered(){
+	if (!isAppRegistered){
+		throw new Error("Must call registerApp at first.");
+	}
+}
+
+
 export function registerApp(appid, callback = assertSuccessed) {
+	isAppRegistered = true;
 	return new Promise( (resolve) => {
 		WeChat.registerApp(appid, resolve)
 	}).then(callback);
@@ -28,18 +37,21 @@ export function registerAppWithDescription(appid, appdesc, callback = assertSucc
 
 export function isWXAppinstalled(callback = assertSuccessed) {
 	return new Promise( (resolve) => {
+		assertRegistered();
 		WeChat.isWXAppinstalled(callback);
 	}).then(callback);
 }
 
 export function isWXAppSupportApi(callback = assertSuccessed) {
 	return new Promise( (resolve) => {
+		assertRegistered();
 		WeChat.isWXAppSupportApi(callback);
 	}).then(callback);
 }
 
 export function getApiVersion(callback) {
 	const ret = new Promise( (resolve) => {
+		assertRegistered();
 		WeChat.getApiVersion(callback);
 	})
 	return callback ? ret.then(callback) : ret;
@@ -47,6 +59,7 @@ export function getApiVersion(callback) {
 
 export function openWXApp(callback = assertSuccessed) {
 	return new Promise( (resolve) => {
+		assertRegistered();
 		WeChat.openWXApp(callback);
 	}).then(callback);
 }
@@ -81,10 +94,11 @@ export function sendAuthRequest(state, callback) {
 		state = Math.random().toString(16).substr(2)+"_"+ new Date().getTime();
 	}
 	return new Promise( (resolve) => {
+		assertRegistered();
 		if (authCallbackList[state]){
 			throw new Error('Last request of state `'+state+'` is not responsed yet.');
 		}
-		WeChat.openWXApp(callback);
+		WeChat.sendAuthRequest(state, resolve);
 	})
 		.then(result=>waitForAuthResponse(state, result))
 		.then(callback);
