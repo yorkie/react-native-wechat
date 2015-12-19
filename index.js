@@ -104,6 +104,24 @@ export function sendAuthRequest(state, callback) {
 		.then(callback);
 }
 
+export function sendSuccessResponse(callback = assertSuccessed){
+	return new Promise(resolve=>{
+		WeChat.sendSuccessResponse(callback);
+	}).then(callback);
+}
+
+export function sendErrorCommonResponse(message, callback = assertSuccessed){
+	return new Promise(resolve=>{
+		WeChat.sendErrorCommonResponse(message, callback);
+	}).then(callback);
+}
+
+export function sendErrorUserCancelResponse(message, callback = assertSuccessed){
+	return new Promise(resolve=>{
+		WeChat.sendErrorUserCancelResponse(message, callback);
+	}).then(callback);
+}
+
 function onWeChatResponse(resp){
 	if (resp.type == 'SendAuth.Resp'){
 		const callback = authCallbackList[resp.state];
