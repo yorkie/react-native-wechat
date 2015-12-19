@@ -18,16 +18,14 @@ RCT_EXPORT_MODULE()
 RCT_EXPORT_METHOD(registerApp:(NSString *)appid
                   :(RCTResponseSenderBlock)callback)
 {
-    [WXApi registerApp:appid];
-    callback(@[[NSNull null]]);
+    callback(@[@[WXApi registerApp:appid]]);
 }
 
 RCT_EXPORT_METHOD(registerAppWithDescription:(NSString *)appid
                   :(NSString *)appdesc
                   :(RCTResponseSenderBlock)callback)
 {
-    [WXApi registerApp:appid withDescription:appdesc];
-    callback(@[[NSNull null]]);
+    callback(@[@[WXApi registerApp:appid withDescription:appdesc]]);
 }
 
 RCT_EXPORT_METHOD(isWXAppInstalled:(RCTResponseSenderBlock)callback)
@@ -60,8 +58,7 @@ RCT_EXPORT_METHOD(sendRequest:(NSString *)openid
 {
     BaseReq* req = [[BaseReq alloc] init];
     req.openID = openid;
-    [WXApi sendReq:req];
-    callback(@[[NSNull null]]);
+    callback(@[@[WXApi sendReq:req]]);
 }
 
 RCT_EXPORT_METHOD(sendAuthRequest:(NSString *)state
@@ -70,16 +67,14 @@ RCT_EXPORT_METHOD(sendAuthRequest:(NSString *)state
     SendAuthReq* req = [[SendAuthReq alloc] init];
     req.scope = @"snsapi_userinfo";
     req.state = state;
-    [WXApi sendReq:req];
-    callback(@[[NSNull null]]);
+    callback(@[@[WXApi sendReq:req]]);
 }
 
 RCT_EXPORT_METHOD(sendSuccessResponse:(RCTResponseSenderBlock)callback)
 {
     BaseResp* resp = [[BaseResp alloc] init];
     resp.errCode = WXSuccess;
-    [WXApi sendResp:resp];
-    callback(@[[NSNull null]]);
+    callback(@[@[WXApi sendResp:resp]]);
 }
 
 RCT_EXPORT_METHOD(sendErrorCommonResponse:(NSString *)message
@@ -88,8 +83,7 @@ RCT_EXPORT_METHOD(sendErrorCommonResponse:(NSString *)message
     BaseResp* resp = [[BaseResp alloc] init];
     resp.errCode = WXErrCodeCommon;
     resp.errStr = message;
-    [WXApi sendResp:resp];
-    callback(@[[NSNull null]]);
+    callback(@[@[WXApi sendResp:resp]]);
 }
 
 RCT_EXPORT_METHOD(sendErrorUserCancelResponse:(NSString *)message
@@ -98,8 +92,7 @@ RCT_EXPORT_METHOD(sendErrorUserCancelResponse:(NSString *)message
     BaseResp* resp = [[BaseResp alloc] init];
     resp.errCode = WXErrCodeUserCancel;
     resp.errStr = message;
-    [WXApi sendResp:resp];
-    callback(@[[NSNull null]]);
+    callback(@[@[WXApi sendResp:resp]]);
 }
 
 @end
