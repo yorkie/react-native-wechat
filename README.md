@@ -3,7 +3,7 @@
 React-Native bridge static library for WeChat SDK.
 
 - [x] iOS
-- [ ] Android
+- [x] Android
 
 ## Join us at Gitter
 
@@ -15,7 +15,7 @@ React-Native bridge static library for WeChat SDK.
 $ npm install react-native-wechat --save
 ```
 
-## Linking in your XCode project
+## iOS: Linking in your XCode project
 
 - Link `RCTWeChat` library from your `node_modules/react-native-wechat/ios` folder like its
   [described here](http://facebook.github.io/react-native/docs/linking-libraries-ios.html).
@@ -26,7 +26,7 @@ $ npm install react-native-wechat --save
   - [x] libc++
   - [x] libz
 
-## Linking to your gradle Project(Android)
+## Android: Linking to your gradle Project
 
 - Add following lines into `android/settings.gradle`
 
@@ -189,7 +189,11 @@ Send an error becaosue cancelation by user to WeChat.
 
 For more details, visit [WeChat SDK Documentation](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=1417674108&token=&lang=zh_CN)
 
+## Authors
+
+- [Yorkie Liu](https://github.com/yorkie) from [WeFlex](https://github.com/weflex)
+- [Deng Yun](https://github.com/tdzl2003) from [React-Native-CN](https://github.com/reactnativecn)
+
 ## License
 
 MIT @ WeFlex,Inc
-
