@@ -24,13 +24,102 @@ $ npm install react-native-wechat --save
   - [x] libc++
   - [x] libz
 
+## Linking to your gradle Project(Android)
+
+- Add following lines into `android/settings.gradle`
+
+```
+include ':RCTWeChat'
+project(':RCTWeChat').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-wechat/android')
+```
+
+- Add following lines into your `android/app/build.gradle` in section `dependencies`
+
+```
+...
+dependencies {
+   ...
+   compile project(':RCTWeChat')    // Add this line only.
+}
+```
+
+- Add following lines into `MainActivity.java`
+
+```
+...
+import com.theweflex.react.WeChatPackage;       // Add this line before public class MainActivity
+
+public class MainActivity extends Activity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        ...
+        mReactInstanceManager = ReactInstanceManager.builder()
+                .setApplication(getApplication())
+                .setBundleAssetName("index.android.bundle")
+                .setJSMainModuleName("index.android")
+                .addPackage(new MainReactPackage())
+                .addPackage(new WeChatPackage())        // Add this line
+                .setUseDeveloperSupport(BuildConfig.DEBUG)
+                .setInitialLifecycleState(LifecycleState.RESUMED)
+                .build();
+    }
+}
+```
+
+-- Create a package named 'wxapi' in your application package and a class named 'WXEntryActivity' in it. This is needed to get request and response from wechat.
+
+```java
+package your.package.wxapi;
+
+import android.app.Activity;
+import android.os.Bundle;
+
+import com.theweflex.react.WeChatModule;
+
+public class WXEntryActivity extends Activity{
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        WeChatModule.handleIntent(getIntent());
+        finish();
+    }
+}
+```
+
+-- Add activity declare in your AndroidManifest.xml
+
+```
+<manifest>
+  ...
+  <application>
+    ...
+    <!-- 微信Activity -->
+    <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:label="@string/app_name"
+            android:exported="true"
+            />
+  </application>
+</manifest>
+```
+
+-- Add these lines to 'proguard-rules.pro':
+
+```
+-keep class com.tencent.mm.sdk.** {
+   *;
+}
+```
+
 ## API Documentation
 
-#### registerApp(appid)
+#### registerApp(appid[, callback])
 
 - {String} `appid` the appid you get from WeChat dashboard
 
-#### registerAppWithDescription(appid, appdesc)
+#### registerAppWithDescription(appid, appdesc[, callback])
+
+Only available on iOS.
 
 - {String} `appid` the appid you get from WeChat dashboard
 - {String} `appdesc` the description of your app
