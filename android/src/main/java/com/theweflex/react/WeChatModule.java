@@ -1,20 +1,12 @@
 package com.theweflex.react;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.util.Log;
 
-import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.tencent.mm.sdk.modelbase.BaseReq;
@@ -24,9 +16,6 @@ import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
-import org.json.JSONObject;
-
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 /**
@@ -34,6 +23,8 @@ import java.util.ArrayList;
  */
 public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEventHandler {
     private String appId;
+
+    private IWXAPI api = null;
 
     public WeChatModule(ReactApplicationContext context) {
         super(context);
@@ -43,8 +34,6 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     public String getName() {
         return "RCTWeChat";
     }
-
-    private IWXAPI api = null;
 
     private static ArrayList<WeChatModule> modules = new ArrayList<>();
 
@@ -77,26 +66,48 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
 
     @ReactMethod
     public void isWXAppInstalled(Callback resolve){
+        if (api == null){
+            resolve.invoke(false);
+            return;
+        }
         resolve.invoke(api.isWXAppInstalled());
     }
 
     @ReactMethod
     public void isWXAppSupportApi(Callback resolve){
+        if (api == null){
+            resolve.invoke(false);
+            return;
+        }
         resolve.invoke(api.isWXAppSupportAPI());
     }
 
     @ReactMethod
     public void getApiVersion(Callback resolve){
+        if (api == null){
+            WritableMap map = Arguments.createMap();
+            map.putString("message", "Must call registerApp first.");
+            resolve.invoke(map);
+            return;
+        }
         resolve.invoke(null, api.getWXAppSupportAPI());
     }
 
     @ReactMethod
     public void openWXApp(Callback resolve){
+        if (api == null){
+            resolve.invoke(false);
+            return;
+        }
         resolve.invoke(api.openWXApp());
     }
 
     @ReactMethod
     public void sendAuthRequest(String state, Callback resolve){
+        if (api == null){
+            resolve.invoke(false);
+            return;
+        }
         SendAuth.Req req = new SendAuth.Req();
         req.scope = "snsapi_userinfo";
         req.state = state;
