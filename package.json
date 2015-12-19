@@ -1,6 +1,6 @@
 {
   "name": "react-native-wechat",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "react-native library for wechat app",
   "main": "index.js",
   "scripts": {
@@ -21,6 +21,16 @@
     "react-native": ">=0.5"
   },
   "author": "Yorkie Liu <yorkiefixer@gmail.com>",
+  "contributors": [
+    {
+      "name": "Yorkie Liu",
+      "email": "yorkiefixer@gmail.com"
+    },
+    {
+      "name": "Deng Yun",
+      "email": "tdzl2003@gmail.com"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/weflex/react-native-wechat/issues"
