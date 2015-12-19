@@ -1,5 +1,6 @@
 import { DeviceEventEmitter, NativeModules } from 'react-native';
 
+let registered = false;
 const WeChat = NativeModules.WeChat;
 
 // Translate a pure object or message into a Error instance.
@@ -45,46 +46,85 @@ function assertSuccessed(result) {
   }
 }
 
-export function registerApp(appid, callback = assertSuccessed) {
-  return new Promise((resolve) => {
+export function registerApp(appid, callback) {
+  const ret =  new Promise((resolve, reject) => {
+    if (registered){
+      return reject(new Error("This app is already registered."));
+    }
+    registered = true;
     WeChat.registerApp(appid, resolve)
-  }).then(callback);
+  }).then(assertSuccessed);
+  if (callback){
+    ret.then(result=>callback(result), err=>callback(false));
+  }
+  return ret;
 }
 
-export function registerAppWithDescription(appid, appdesc, callback = assertSuccessed) {
-  return new Promise((resolve) => {
+export function registerAppWithDescription(appid, appdesc, callback) {
+  const ret = new Promise((resolve, reject) => {
+    if (registered){
+      return reject(new Error("This app is already registered."));
+    }
     WeChat.registerAppWithDescription(appid, appdesc, resolve)
-  }).then(callback);
+  }).then(assertSuccessed);
+  if (callback){
+    ret.then(result=>callback(result), err=>callback(false));
+  }
+  return ret;
 }
 
-export function isWXAppinstalled(callback = assertSuccessed) {
-  return new Promise((resolve) => {
+export function isWXAppinstalled(callback) {
+  const ret = new Promise((resolve, reject) => {
+    if (!registered){
+      return reject(new Error("Must call registerApp() first."));
+    }
     WeChat.isWXAppinstalled(resolve);
-  }).then(callback);
+  });
+  if (callback){
+    ret.then(result=>callback(result), err=>callback(false));
+  }
+  return ret;
 }
 
 export function isWXAppSupportApi(callback = assertSuccessed) {
-  return new Promise((resolve) => {
+  const ret =  new Promise((resolve, reject) => {
+    if (!registered){
+      return reject(new Error("Must call registerApp() first."));
+    }
     WeChat.isWXAppSupportApi(resolve);
-  }).then(callback);
+  });
+  if (callback){
+    ret.then(result=>callback(result), err=>callback(false));
+  }
+  return ret;
 }
 
 export function getApiVersion(callback) {
   const ret = new Promise((resolve, reject) => {
+    if (!registered){
+      return reject(new Error("Must call registerApp() first."));
+    }
     WeChat.getApiVersion((err, result)=>{
       err ? reject(err) : resolve(result);
     });
   }).catch(translateError);
-  return callback ? ret.then(
-    result=>callback(null, result),
-    callback
-  ) : ret;
+  if (callback){
+    ret.then(result=>callback(null, result), callback);
+  }
+  return ret;
 }
 
 export function openWXApp(callback = assertSuccessed) {
-  return new Promise((resolve) => {
+  const ret = new Promise((resolve, reject) => {
+    if (!registered){
+      return reject(new Error("Must call registerApp() first."));
+    }
     WeChat.openWXApp(resolve);
-  }).then(callback);
+  })
+  if (callback){
+    ret.then(result=>callback(result), err=>callback(false));
+  }
+  return ret;
 }
 
 export function sendAuthRequest(state, callback) {
@@ -96,39 +136,67 @@ export function sendAuthRequest(state, callback) {
     // Generate a random, unique state.
     state = Math.random().toString(16).substr(2) + "_" + new Date().getTime();
   }
-  const ret = new Promise((resolve) => {
+  const ret = new Promise((resolve, reject) => {
+    if (!registered){
+      return reject(new Error("Must call registerApp() first."));
+    }
     if (authCallbackList[state]) {
       throw new Error('Last request of state `' + state + '` is not responsed yet.');
     }
     WeChat.openWXApp(resolve);
-  }).then(assumeSuccessed)
+  }).then(assertSuccessed)
     .then(()=>waitForAuthResponse(state));
-  return callback ? ret.then(
-    result=>callback(null, result),
-    callback
-  ) : ret;
+  if (callback){
+    ret.then(result=>callback(null, result), callback);
+  }
+  return ret;
 }
 
-export function sendRequest(openid, callback = assertSuccessed){
-  return new Promise(resolve=>{
+export function sendRequest(openid, callback){
+  const ret = new Promise((resolve, reject) => {
+    if (!registered){
+      return reject(new Error("Must call registerApp() first."));
+    }
     WeChat.sendRequest(openid, resolve);
-  }).then(callback);
+  }).then(assertSuccessed);
+  if (callback){
+    ret.then(result=>callback(null, result), callback);
+  }
+  return ret;
 }
 
-export function sendSuccessResponse(callback = assertSuccessed){
-  return new Promise(resolve=>{
+export function sendSuccessResponse(callback){
+  const ret = new Promise((resolve, reject) => {
+    if (!registered){
+      return reject(new Error("Must call registerApp() first."));
+    }
     WeChat.sendSuccessResponse(resolve);
-  }).then(callback);
+  }).then(assertSuccessed);
+  if (callback){
+    ret.then(result=>callback(null, result), callback);
+  }
+  return ret;
 }
 
-export function sendErrorCommonResponse(message, callback = assertSuccessed){
-  return new Promise(resolve=>{
+export function sendErrorCommonResponse(message, callback){
+  const ret = new Promise((resolve, reject) => {
+    if (!registered){
+      return reject(new Error("Must call registerApp() first."));
+    }
     WeChat.sendErrorCommonResponse(message, resolve);
-  }).then(callback);
+  }).then(assertSuccessed);
+  if (callback){
+    ret.then(result=>callback(null, result), callback);
+  }
+  return ret;
 }
 
-export function sendErrorUserCancelResponse(message, callback = assertSuccessed){
-  return new Promise(resolve=>{
+export function sendErrorUserCancelResponse(message, callback){
+  const ret = new Promise((resolve, reject) => {
     WeChat.sendErrorUserCancelResponse(message, resolve);
-  }).then(callback);
+  }).then(assertSuccessed);
+  if (callback){
+    ret.then(result=>callback(null, result), callback);
+  }
+  return ret;
 }
