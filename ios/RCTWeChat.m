@@ -12,7 +12,7 @@
 #import "WXApi.h"
 #import "WXApiObject.h"
 
-#define NOT_REGISTERED (@"Must call registerApp first")
+#define NOT_REGISTERED (@"registerApp required.")
 #define INVOKE_FAILED (@"WeChat API invoke returns false.")
 
 @implementation RCTWeChat

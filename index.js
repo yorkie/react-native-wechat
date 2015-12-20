@@ -4,7 +4,7 @@ import promisify from 'es6-promisify';
 let isAppRegistered = false;
 const WeChat = NativeModules.WeChat;
 
-// Translate a pure object or message into a Error instance.
+// Used only with promisify. Transform callback to promise result.
 function translateError(err, result) {
   if (!err) {
     this.resolve(result);
@@ -14,7 +14,7 @@ function translateError(err, result) {
       return this.reject(ret);
     }
     return this.reject(Object.assign(new Error(err.message), { errCode: err.errCode }));
-  } else if (typeof(err) === 'string') {
+  } else if (typeof err === 'string') {
     return this.reject(new Error(err));
   }
   this.reject(Object.assign(new Error(), { origin: err }));
@@ -68,7 +68,7 @@ function wrapApi(nativeFunc) {
   const promisified = promisify(nativeFunc, translateError);
   return (...args) => {
     if (!isAppRegistered) {
-      return Promise.reject(new Error('Must call registerApp first.'));
+      return Promise.reject(new Error('registerApp required.'));
     }
     return promisified(...args);
   };
@@ -76,19 +76,19 @@ function wrapApi(nativeFunc) {
 
 export const registerApp = wrapRegisterApp(WeChat.registerApp);
 
-export const registerAppWithDescription = wrapRegisterApp(WeChat.registerAppWithDescription, translateError);
+export const registerAppWithDescription = wrapRegisterApp(WeChat.registerAppWithDescription);
 
-export const isWXAppInstalled = wrapApi(WeChat.isWXAppInstalled, translateError);
+export const isWXAppInstalled = wrapApi(WeChat.isWXAppInstalled);
 
-export const isWXAppSupportApi = wrapApi(WeChat.isWXAppSupportApi, translateError);
+export const isWXAppSupportApi = wrapApi(WeChat.isWXAppSupportApi);
 
-export const getWXAppInstallUrl = wrapApi(WeChat.getWXAppInstallUrl, translateError);
+export const getWXAppInstallUrl = wrapApi(WeChat.getWXAppInstallUrl);
 
-export const getApiVersion = wrapApi(WeChat.getApiVersion, translateError);
+export const getApiVersion = wrapApi(WeChat.getApiVersion);
 
-export const openWXApp = wrapApi(WeChat.openWXApp, translateError);
+export const openWXApp = wrapApi(WeChat.openWXApp);
 
-const nativeSendAuthRequest = wrapApi(WeChat.sendAuthRequest, translateError);
+const nativeSendAuthRequest = wrapApi(WeChat.sendAuthRequest);
 
 export function sendAuthRequest(scopes, state) {
   // Generate a random, unique state if not provided.
