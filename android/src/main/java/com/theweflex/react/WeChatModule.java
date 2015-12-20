@@ -25,6 +25,8 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     private String appId;
 
     private IWXAPI api = null;
+    private final static String NOT_REGISTERED = "registerApp required.";
+    private final static String INVOKE_FAILED = "WeChat API invoke returns false.";
 
     public WeChatModule(ReactApplicationContext context) {
         super(context);
@@ -52,66 +54,64 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         modules.remove(this);
     }
 
-    public static void handleIntent(Intent intent){
+    public static void handleIntent(Intent intent) {
         for (WeChatModule mod : modules){
             mod.api.handleIntent(intent, mod);
         }
     }
 
     @ReactMethod
-    public void registerApp(String appid, Callback resolve){
+    public void registerApp(String appid, Callback callback) {
         api = WXAPIFactory.createWXAPI(this.getReactApplicationContext().getBaseContext(), appid, true);
-        resolve.invoke(api.registerApp(appid));
+        callback.invoke(api.registerApp(appid) ? null : INVOKE_FAILED);
     }
 
     @ReactMethod
-    public void isWXAppInstalled(Callback resolve){
-        if (api == null){
-            resolve.invoke(false);
+    public void isWXAppInstalled(Callback callback) {
+        if (api == null) {
+            callback.invoke(NOT_REGISTERED);
             return;
         }
-        resolve.invoke(api.isWXAppInstalled());
+        callback.invoke(null, api.isWXAppInstalled());
     }
 
     @ReactMethod
-    public void isWXAppSupportApi(Callback resolve){
-        if (api == null){
-            resolve.invoke(false);
+    public void isWXAppSupportApi(Callback resolve) {
+        if (api == null) {
+            callback.invoke(NOT_REGISTERED);
             return;
         }
-        resolve.invoke(api.isWXAppSupportAPI());
+        callback.invoke(null, api.isWXAppSupportAPI());
     }
 
     @ReactMethod
-    public void getApiVersion(Callback resolve){
-        if (api == null){
-            WritableMap map = Arguments.createMap();
-            map.putString("message", "Must call registerApp first.");
-            resolve.invoke(map);
+    public void getApiVersion(Callback resolve) {
+        if (api == null) {
+            callback.invoke(NOT_REGISTERED);
             return;
         }
         resolve.invoke(null, api.getWXAppSupportAPI());
     }
 
     @ReactMethod
-    public void openWXApp(Callback resolve){
-        if (api == null){
-            resolve.invoke(false);
+    public void openWXApp(Callback resolve) {
+        if (api == null) {
+            callback.invoke(NOT_REGISTERED);
             return;
         }
-        resolve.invoke(api.openWXApp());
+        resolve.invoke(api.openWXApp() ? null : INVOKE_FAILED);
     }
 
     @ReactMethod
-    public void sendAuthRequest(String state, Callback resolve){
-        if (api == null){
-            resolve.invoke(false);
+    public void sendAuthRequest(String scope, String state, Callback resolve) {
+        if (api == null) {
+            callback.invoke(NOT_REGISTERED);
             return;
         }
         SendAuth.Req req = new SendAuth.Req();
-        req.scope = "snsapi_userinfo";
+        req.scope = scope;
         req.state = state;
-        resolve.invoke(api.sendReq(req));
+        resolve.invoke(api.sendReq(req) ? null : INVOKE_FAILED);
     }
 
     // TODO: 实现sendRequest、sendSuccessResponse、sendErrorCommonResponse、sendErrorUserCancelResponse
@@ -129,7 +129,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         map.putString("openId", baseResp.openId);
         map.putString("transaction", baseResp.transaction);
 
-        if (baseResp instanceof SendAuth.Resp){
+        if (baseResp instanceof SendAuth.Resp) {
             SendAuth.Resp resp = (SendAuth.Resp)(baseResp);
 
             map.putString("type", "SendAuth.Resp");
