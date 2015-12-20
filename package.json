@@ -35,5 +35,8 @@
   "bugs": {
     "url": "https://github.com/weflex/react-native-wechat/issues"
   },
-  "homepage": "https://github.com/weflex/react-native-wechat#readme"
+  "homepage": "https://github.com/weflex/react-native-wechat#readme",
+  "dependencies": {
+    "es6-promisify": "^3.0.0"
+  }
 }
