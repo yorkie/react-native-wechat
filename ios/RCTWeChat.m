@@ -65,11 +65,12 @@ RCT_EXPORT_METHOD(sendRequest:(NSString *)openid
     callback(@[[WXApi sendReq:req] ? [NSNull null] : INVOKE_FAILED]);
 }
 
-RCT_EXPORT_METHOD(sendAuthRequest:(NSString *)state
+RCT_EXPORT_METHOD(sendAuthRequest:(NSString *)scope
+                  :(NSString *)state
                   :(RCTResponseSenderBlock)callback)
 {
     SendAuthReq* req = [[SendAuthReq alloc] init];
-    req.scope = @"snsapi_userinfo";
+    req.scope = scope;
     req.state = state;
     callback(@[[WXApi sendReq:req] ? [NSNull null] : INVOKE_FAILED]);
 }

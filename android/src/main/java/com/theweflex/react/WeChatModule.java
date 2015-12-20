@@ -103,13 +103,13 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     }
 
     @ReactMethod
-    public void sendAuthRequest(String state, Callback resolve){
+    public void sendAuthRequest(String scope, String state, Callback resolve){
         if (api == null){
             callback.invoke(NOT_REGISTERED);
             return;
         }
         SendAuth.Req req = new SendAuth.Req();
-        req.scope = "snsapi_userinfo";
+        req.scope = scope;
         req.state = state;
         resolve.invoke(api.sendReq(req) ? null : INVOKE_FAILED);
     }

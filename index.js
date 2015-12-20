@@ -92,7 +92,11 @@ const nativeSendAuthRequest = wrapApi(WeChat.sendAuthRequest, translateError);
 
 export function sendAuthRequest(scopes, state) {
   // Generate a random, unique state if not provided.
+  let _scopes = scopes || 'snsapi_userinfo';
+  if (Array.isArray(_scopes)) {
+    _scopes = _scopes.join(',');
+  }
   const _state = state || Math.random().toString(16).substr(2) + '_' + new Date().getTime();
-  return nativeSendAuthRequest(scopes || 'snsapi_userinfo', _state)
+  return nativeSendAuthRequest(_scopes, _state)
     .then(() => waitForAuthResponse(state, resolve));
 }
