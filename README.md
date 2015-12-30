@@ -28,6 +28,7 @@ $ npm install react-native-wechat --save
   - [x] libz
 - add `URL Schema` as your app id for `URL type` in `Targets - info`
   ![Set URL Schema in XCode](https://res.wx.qq.com/open/zh_CN/htmledition/res/img/pic/app-access-guide/ios/image0042168b9.jpg)
+- for iOS 9 support, add `wechat` and `weixin` into `LSApplicationQueriesSchemas` in 'Targets - info - Custom iOS Target Properties'
 
 ## Android: Linking to your gradle Project
 
