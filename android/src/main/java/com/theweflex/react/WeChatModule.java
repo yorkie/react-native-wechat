@@ -327,7 +327,10 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             message.mediaObject = __jsonToFileMedia(data);
         }
 
-        //TODO: create Thumb Data.
+        if (thumbImage != null) {
+            message.setThumbImage(thumbImage);
+        }
+        
         if (data.hasKey("mediaTagName")) {
             message.mediaTagName = data.getString("mediaTagName");
         }
