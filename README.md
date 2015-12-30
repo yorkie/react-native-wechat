@@ -160,6 +160,23 @@ Send authentication request.
 - {String} `state` the state of OAuth2
 - returns {Promise}
 
+#### shareToTimeline(data)
+
+Share a message to timeline (朋友圈).
+
+- {Object} `data` contain the message to send
+    - {String} `thumbImage` Thumb image of the message, which can be a uri or a resource id.
+    - {String} `type` Type of this message. Can be {news|text|image|video|audio|file}
+    - {String} `webpageUrl` Required if type equals `news`. The webpage link to share.
+    - {String} `imageUrl` Provide a remote image if type equals `image`.
+    - {String} `videoUrl` Provide a remote video if type equals `video`.
+    - {String} `musicUrl` Provide a remote music if type equals `audio`.
+    - {String} `filePath` Provide a local file if type equals `file`.
+
+#### shareToSession(data)
+
+Similar to `shareToTimeline` but send message to a friend or a groups.
+
 #### addListener(eventType, listener[, context])
 
 Adds a listener to be invoked when events of the specified type are emitted. An optional calling context may be provided. 
