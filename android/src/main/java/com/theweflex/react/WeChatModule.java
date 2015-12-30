@@ -335,10 +335,10 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             message.mediaTagName = data.getString("mediaTagName");
         }
         if (data.hasKey("messageAction")) {
-            message.mediaTagName = data.getString("messageAction");
+            message.messageAction = data.getString("messageAction");
         }
         if (data.hasKey("messageExt")) {
-            message.mediaTagName = data.getString("messageExt");
+            message.messageExt = data.getString("messageExt");
         }
 
         SendMessageToWX.Req req = new SendMessageToWX.Req();
