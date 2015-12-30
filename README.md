@@ -21,10 +21,13 @@ $ npm install react-native-wechat --save
   [described here](http://facebook.github.io/react-native/docs/linking-libraries-ios.html).
   Don't forget to add it to "Build Phases" of project.
 - Added the following libraries to your "Link Binary With Libraries":
+  - [x] SystemConfiguration.framework
   - [x] CoreTelephony.framework
   - [x] libsqlite3.0
   - [x] libc++
   - [x] libz
+- add `URL Schema` as your app id for `URL type` in `Targets - info`
+  ![Set URL Schema in XCode](https://res.wx.qq.com/open/zh_CN/htmledition/res/img/pic/app-access-guide/ios/image0042168b9.jpg)
 
 ## Android: Linking to your gradle Project
 
