@@ -63,6 +63,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     private IWXAPI api = null;
     private final static String NOT_REGISTERED = "registerApp required.";
     private final static String INVOKE_FAILED = "WeChat API invoke returns false.";
+    private final static String INVALID_ARGUMENTS = "Invalid arguments.";
 
     public WeChatModule(ReactApplicationContext context) {
         super(context);
@@ -345,10 +346,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         boolean success = api.sendReq(req);
 
         if (success == false) {
-            WritableMap event = Arguments.createMap();
-            event.putInt("errCode", -1001);
-            event.putString("message", "参数错误");
-            callback.invoke(event);
+            callback.invoke(INVALID_ARGUMENTS);
         } else {
             callback.invoke();
         }
