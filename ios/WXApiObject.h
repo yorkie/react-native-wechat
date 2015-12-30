@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
 
 /*! @brief 错误码
  *
@@ -128,6 +127,39 @@ enum WXMPWebviewType {
 @end
 
 
+
+/*! @brief 第三方向微信终端发起拆企业红包的消息结构体
+ *
+ *  第三方向微信终端发起拆企业红包的消息结构体，微信终端处理后会向第三方返回处理结果
+ * @see HBReq
+ */
+@interface HBReq : BaseReq
+
+/** 随机串，防重发 */
+@property (nonatomic, retain) NSString *nonceStr;
+/** 时间戳，防重发 */
+@property (nonatomic, assign) UInt32 timeStamp;
+/** 商家根据微信企业红包开发文档填写的数据和签名 */
+@property (nonatomic, retain) NSString *package;
+/** 商家根据微信企业红包开发文档对数据做的签名 */
+@property (nonatomic, retain) NSString *sign;
+
+@end
+
+
+
+#pragma mark - HBResp
+/*! @brief 微信终端返回给第三方的关于拆企业红包结果的结构体
+ *
+ *  微信终端返回给第三方的关于拆企业红包结果的结构体
+ */
+@interface HBResp : BaseResp
+
+@end
+
+
+
+
 #pragma mark - SendAuthReq
 /*! @brief 第三方程序向微信终端请求认证的消息结构
  *
@@ -204,6 +236,7 @@ enum WXMPWebviewType {
 @property(nonatomic, retain) NSString* lang;
 @property(nonatomic, retain) NSString* country;
 @end
+
 
 
 #pragma mark - GetMessageFromWXReq
@@ -294,15 +327,6 @@ enum WXMPWebviewType {
 @property (nonatomic, retain) NSString*  sessionFrom;
 @end
 
-#pragma mark - OpenTempSessionResp
-/*! @brief 微信终端向第三方程序返回的OpenTempSessionReq处理结果。
- *
- * 第三方程序向微信终端发送OpenTempSessionReq后，微信发送回来的处理结果，该结果用OpenTempSessionResp表示。
- */
-@interface OpenTempSessionResp : BaseResp
-
-@end
-
 #pragma mark - OpenWebviewReq
 /* ! @brief 第三方通知微信启动内部浏览器，打开指定网页
  *
@@ -322,6 +346,16 @@ enum WXMPWebviewType {
  * 第三方程序向微信终端发送OpenWebviewReq后，微信发送回来的处理结果，该结果用OpenWebviewResp表示
  */
 @interface OpenWebviewResp : BaseResp
+
+@end
+
+
+#pragma mark - OpenTempSessionResp
+/*! @brief 微信终端向第三方程序返回的OpenTempSessionReq处理结果。
+ *
+ * 第三方程序向微信终端发送OpenTempSessionReq后，微信发送回来的处理结果，该结果用OpenTempSessionResp表示。
+ */
+@interface OpenTempSessionResp : BaseResp
 
 @end
 
@@ -395,7 +429,6 @@ enum WXMPWebviewType {
 @property (nonatomic,retain) NSString* cardId;
 /** ext信息
  * @attention 长度不能超过2024字节
- * 具体见http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#.E9.99.84.E5.BD.954-.E5.8D.A1.E5.88.B8.E6.89.A9.E5.B1.95.E5.AD.97.E6.AE.B5.E5.8F.8A.E7.AD.BE.E5.90.8D.E7.94.9F.E6.88.90.E7.AE.97.E6.B3.95 卡券扩展字段cardExt说明
  */
 @property (nonatomic,retain) NSString* extMsg;
 /**
