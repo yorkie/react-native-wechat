@@ -180,7 +180,7 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
             mediaMessage.mediaObject = webpageObject;
             
             if (webpageObject.webpageUrl.length<=0) {
-                callback(@[@"webpageUrl不能为空"]);
+                callback(@[@"webpageUrl required"]);
                 return;
             }
         }
