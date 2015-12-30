@@ -123,54 +123,77 @@ public class WXEntryActivity extends Activity{
 
 ## API Documentation
 
-#### registerApp(appid)
+#### registerApp(appid[, callback])
 
 - {String} `appid` the appid you get from WeChat dashboard
-- returns {Promise} 
 
-#### registerAppWithDescription(appid, appdesc)
+#### registerAppWithDescription(appid, appdesc[, callback])
 
 Only available on iOS.
 
 - {String} `appid` the appid you get from WeChat dashboard
 - {String} `appdesc` the description of your app
-- returns {Promise} 
 
-#### isWXAppInstalled() 
+#### isWXAppInstalled(callback) 
 
 Check if wechat installed in this app.
 
-- returns {Promise} Contain the result.
+- {Function} `callback` - the result callback.
+  - {Boolean} `installed` - the result.
 
-#### isWXAppSupportApi()
+#### isWXAppSupportApi(callback)
 
 Check if wechat support open url.
 
-- returns {Promise}  Contain the result.
+- {Function} `callback` - the same to `isWXAppInstalled`.
 
-#### getApiVersion()
+#### getApiVersion(callback)
 
 Get api version of WeChat SDK.
 
-- returns {Promise}  Contain the result.
+- {Function} `callback`
+  - {Error} `err` the error if something went wrong
+  - {String} `version` the result
 
-#### openWXApp()
+#### openWXApp(callback)
 
 Open WeChat app with an optional callback argument.
 
-- returns {Promise} 
+- {Function} `callback` callback
 
-#### sendAuthRequest(scope, state)
+#### sendRequest(openid, callback)
+
+Send request to WeChat with an `openid`.
+
+- {String} `openid` the user openid
+- {Function} `callback` the callback
+
+#### sendAuthRequest(state, callback)
 
 Send authentication request.
 
-- {Array|String} `scope` Scopes of auth request.
 - {String} `state` the state of OAuth2
-- returns {Promise} Contain a object returned by WeChat 
-    - code {String} Authorize code
-    - url {String}
-    - lang {String}
-    - country {String}
+- {Function} `callback` callback
+
+#### sendSuccessResponse(callback)
+
+Send a success response.
+
+- {Function} `callback` callback
+
+#### sendErrorCommonResponse(message, callback)
+
+Send an error response to WeChat app.
+
+- {String} `message` the error message
+- {Function} `callback` callback
+
+#### sendErrorUserCancelResponse(message, callback)
+
+Send an error becaosue cancelation by user to WeChat.
+
+- {String} `message` the error message
+- {Function} `callback` callback
 
 For more details, visit [WeChat SDK Documentation](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=1417674108&token=&lang=zh_CN)
 
