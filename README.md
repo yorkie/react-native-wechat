@@ -115,77 +115,83 @@ public class WXEntryActivity extends Activity{
 
 ## API Documentation
 
-#### registerApp(appid[, callback])
+#### registerApp(appid)
 
 - {String} `appid` the appid you get from WeChat dashboard
+- returns {Promise} 
 
-#### registerAppWithDescription(appid, appdesc[, callback])
+#### registerAppWithDescription(appid, appdesc)
 
 Only available on iOS.
 
 - {String} `appid` the appid you get from WeChat dashboard
 - {String} `appdesc` the description of your app
+- returns {Promise} 
 
-#### isWXAppInstalled(callback) 
+#### isWXAppInstalled() 
 
 Check if wechat installed in this app.
 
-- {Function} `callback` - the result callback.
-  - {Boolean} `installed` - the result.
+- returns {Promise} Contain the result.
 
-#### isWXAppSupportApi(callback)
+#### isWXAppSupportApi()
 
 Check if wechat support open url.
 
-- {Function} `callback` - the same to `isWXAppInstalled`.
+- returns {Promise}  Contain the result.
 
-#### getApiVersion(callback)
+#### getApiVersion()
 
 Get api version of WeChat SDK.
 
-- {Function} `callback`
-  - {Error} `err` the error if something went wrong
-  - {String} `version` the result
+- returns {Promise}  Contain the result.
 
-#### openWXApp(callback)
+#### openWXApp()
 
 Open WeChat app with an optional callback argument.
 
-- {Function} `callback` callback
+- returns {Promise} 
 
-#### sendRequest(openid, callback)
-
-Send request to WeChat with an `openid`.
-
-- {String} `openid` the user openid
-- {Function} `callback` the callback
-
-#### sendAuthRequest(state, callback)
+#### sendAuthRequest([scope[, state]])
 
 Send authentication request.
 
+- {Array|String} `scope` Scopes of auth request.
 - {String} `state` the state of OAuth2
-- {Function} `callback` callback
+- returns {Promise}
 
-#### sendSuccessResponse(callback)
+#### addListener(eventType, listener[, context])
 
-Send a success response.
+Adds a listener to be invoked when events of the specified type are emitted. An optional calling context may be provided. 
 
-- {Function} `callback` callback
+Return a object like `{remove: function}` which can be used to remove this listener.
 
-#### sendErrorCommonResponse(message, callback)
+#### once(eventType, listener[, context])
 
-Send an error response to WeChat app.
+Similar to addListener, except that the listener is removed after it is invoked once.
 
-- {String} `message` the error message
-- {Function} `callback` callback
+#### removeAllListeners()
 
-#### sendErrorUserCancelResponse(message, callback)
+Removes all of the registered listeners, including those registered as listener maps.
 
-Send an error becaosue cancelation by user to WeChat.
+## Event Types:
 
-- {String} `message` the error message
-- {Function} `callback` callback
+#### SendAuth.Resp
+
+Receive result for sendAuthRequest
+    - errCode {int} 
+    - errStr {String} Error message if any error occured.
+    - openId {String} 
+    - code {String} Authorize code
+    - url {String}
+    - lang {String}
+    - country {String}
+
+#### SendMessageToWX.Resp
+
+Receive result for shareToTimeline and shareToSession
+    - errCode {int} be 0 if auth successed.
+    - errStr {String} Error message if any error occured.
 
 For more details, visit [WeChat SDK Documentation](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=1417674108&token=&lang=zh_CN)
 
