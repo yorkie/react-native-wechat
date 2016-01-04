@@ -11,7 +11,7 @@ var {
   Text,
   View,
 } = React;
-var WeChat = require('react-native-wechat');
+var WeChat = require('../index');
 
 var Example = React.createClass({
   render: function() {
