@@ -14,7 +14,7 @@ DeviceEventEmitter.addListener('WeChat_Resp', resp => {
 
 // export methods for emitter.
 export const addListener = emitter.addListener.bind(emitter);
-export const once = emitter.once.bind(_emitter);
+export const once = emitter.once.bind(emitter);
 export const removeAllListeners = emitter.removeAllListeners.bind(emitter);
 
 // Used only with promisify. Transform callback to promise result.

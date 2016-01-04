@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node_modules/react-native/packager/packager.sh",
-    "postinstall": "ln -s ../index.js ./react-native-wechat.js"
+    "postinstall": "ln -sf ../index.js ./react-native-wechat.js"
   },
   "dependencies": {
     "es6-promisify": "^3.0.0",
