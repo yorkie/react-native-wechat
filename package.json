@@ -17,6 +17,9 @@
     "react-component",
     "ios"
   ],
+  "dependencies": {
+    "es6-promisify": "3.0.0"
+  },
   "peerDependencies": {
     "react-native": ">=0.5"
   },

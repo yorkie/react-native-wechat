@@ -82,7 +82,7 @@ export function sendAuthRequest(scopes, state) {
     _scopes = _scopes.join(',');
   }
   const _state = state || Math.random().toString(16).substr(2) + '_' + new Date().getTime();
-  return nativeSendAuthRequest(_scopes, _state)]).then(v=>v[0]);
+  return nativeSendAuthRequest(_scopes, _state).then(v => v[0]);
 }
 
 export function shareToTimeline(data) {

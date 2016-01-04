@@ -3,9 +3,11 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node_modules/react-native/packager/packager.sh"
+    "start": "node_modules/react-native/packager/packager.sh",
+    "postinstall": "ln -s ../index.js ./react-native-wechat.js"
   },
   "dependencies": {
+    "es6-promisify": "^3.0.0",
     "react-native": "^0.14.2"
   }
 }
