@@ -18,7 +18,8 @@
     "ios"
   ],
   "dependencies": {
-    "es6-promisify": "3.0.0"
+    "es6-promisify": "3.0.0",
+    "events": "1.0.2"
   },
   "peerDependencies": {
     "react-native": ">=0.5"

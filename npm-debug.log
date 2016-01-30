@@ -1,0 +1,93 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   'EventEmitter',
+1 verbose cli   '--save' ]
+2 info using npm@3.3.6
+3 info using node@v5.0.0
+4 silly loadCurrentTree Starting
+5 silly install loadCurrentTree
+6 silly install readLocalPackageData
+7 silly fetchPackageMetaData EventEmitter
+8 silly fetchNamedPackageData EventEmitter
+9 silly mapToRegistry name EventEmitter
+10 silly mapToRegistry using default registry
+11 silly mapToRegistry registry https://registry.npmjs.org/
+12 silly mapToRegistry uri https://registry.npmjs.org/EventEmitter
+13 verbose request uri https://registry.npmjs.org/EventEmitter
+14 verbose request no auth needed
+15 info attempt registry request try #1 at 6:50:28 PM
+16 verbose request using bearer token for auth
+17 verbose request id 546300d074f8fc59
+18 http request GET https://registry.npmjs.org/EventEmitter
+19 http 404 https://registry.npmjs.org/EventEmitter
+20 verbose headers { 'content-type': 'application/json',
+20 verbose headers   'cache-control': 'max-age=0',
+20 verbose headers   'content-length': '2',
+20 verbose headers   'accept-ranges': 'bytes',
+20 verbose headers   date: 'Sat, 30 Jan 2016 10:50:29 GMT',
+20 verbose headers   via: '1.1 varnish',
+20 verbose headers   connection: 'keep-alive',
+20 verbose headers   'x-served-by': 'cache-sin6925-SIN',
+20 verbose headers   'x-cache': 'MISS',
+20 verbose headers   'x-cache-hits': '0',
+20 verbose headers   'x-timer': 'S1454151028.827838,VS0,VE1029' }
+21 silly get cb [ 404,
+21 silly get   { 'content-type': 'application/json',
+21 silly get     'cache-control': 'max-age=0',
+21 silly get     'content-length': '2',
+21 silly get     'accept-ranges': 'bytes',
+21 silly get     date: 'Sat, 30 Jan 2016 10:50:29 GMT',
+21 silly get     via: '1.1 varnish',
+21 silly get     connection: 'keep-alive',
+21 silly get     'x-served-by': 'cache-sin6925-SIN',
+21 silly get     'x-cache': 'MISS',
+21 silly get     'x-cache-hits': '0',
+21 silly get     'x-timer': 'S1454151028.827838,VS0,VE1029' } ]
+22 silly fetchPackageMetaData Error: Registry returned 404 for GET on https://registry.npmjs.org/EventEmitter
+22 silly fetchPackageMetaData     at makeError (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+22 silly fetchPackageMetaData     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:242:14)
+22 silly fetchPackageMetaData     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+22 silly fetchPackageMetaData     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:198:22)
+22 silly fetchPackageMetaData     at emitTwo (events.js:87:13)
+22 silly fetchPackageMetaData     at Request.emit (events.js:172:7)
+22 silly fetchPackageMetaData     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1063:14)
+22 silly fetchPackageMetaData     at emitOne (events.js:82:20)
+22 silly fetchPackageMetaData     at Request.emit (events.js:169:7)
+22 silly fetchPackageMetaData     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1009:12)
+22 silly fetchPackageMetaData  error for EventEmitter { [Error: Registry returned 404 for GET on https://registry.npmjs.org/EventEmitter] pkgid: 'EventEmitter', statusCode: 404, code: 'E404' }
+23 silly rollbackFailedOptional Starting
+24 silly rollbackFailedOptional Finishing
+25 silly runTopLevelLifecycles Starting
+26 silly runTopLevelLifecycles Finishing
+27 silly install printInstalled
+28 verbose stack Error: Registry returned 404 for GET on https://registry.npmjs.org/EventEmitter
+28 verbose stack     at makeError (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+28 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:242:14)
+28 verbose stack     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+28 verbose stack     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:198:22)
+28 verbose stack     at emitTwo (events.js:87:13)
+28 verbose stack     at Request.emit (events.js:172:7)
+28 verbose stack     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1063:14)
+28 verbose stack     at emitOne (events.js:82:20)
+28 verbose stack     at Request.emit (events.js:169:7)
+28 verbose stack     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1009:12)
+29 verbose statusCode 404
+30 verbose pkgid EventEmitter
+31 verbose cwd /Users/yorkieliu/workspace/weflex/react-native-wechat
+32 error Darwin 15.2.0
+33 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "install" "EventEmitter" "--save"
+34 error node v5.0.0
+35 error npm  v3.3.6
+36 error code E404
+37 error 404 Registry returned 404 for GET on https://registry.npmjs.org/EventEmitter
+37 error 404
+37 error 404 'EventEmitter' is not in the npm registry.
+37 error 404 Your package name is not valid, because
+37 error 404
+37 error 404  1. name can no longer contain capital letters
+37 error 404
+37 error 404 Note that you can also install from a
+37 error 404 tarball, folder, http url, or git url.
+38 verbose exit [ 1, true ]

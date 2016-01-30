@@ -1,6 +1,6 @@
 import { DeviceEventEmitter, NativeModules } from 'react-native';
 import promisify from 'es6-promisify';
-import EventEmitter from 'EventEmitter';
+import { EventEmitter } from 'events';
 
 let isAppRegistered = false;
 const {WeChat} = NativeModules;
