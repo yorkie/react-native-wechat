@@ -86,9 +86,9 @@ export function sendAuthRequest(scopes, state) {
 }
 
 export function shareToTimeline(data) {
-  return nativeShareToTimelineRequest(data);
+  return nativeShareToTimeline(data);
 }
 
 export function shareToSession(data) {
-  return nativeShareToSessionRequest(data);
+  return nativeShareToSession(data);
 }
