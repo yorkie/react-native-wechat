@@ -22,7 +22,7 @@
     "events": "1.0.2"
   },
   "peerDependencies": {
-    "react-native": ">=0.5"
+    "react-native": ">=0.17"
   },
   "author": "Yorkie Liu <yorkiefixer@gmail.com>",
   "contributors": [
