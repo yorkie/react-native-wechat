@@ -6,12 +6,12 @@
 //  Copyright © 2015 WeFlex. All rights reserved.
 //
 
-#import "Base/RCTLog.h"
 #import "RCTWeChat.h"
 #import "WXApi.h"
 #import "WXApiObject.h"
-#import "RCTEventDispatcher.h"
-#import "RCTBridge.h"
+#import "Base/RCTEventDispatcher.h"
+#import "Base/RCTBridge.h"
+#import "Base/RCTLog.h"
 #import "RCTImageLoader.h"
 
 // Define error messages
@@ -55,6 +55,7 @@ RCT_EXPORT_MODULE()
 RCT_EXPORT_METHOD(registerApp:(NSString *)appid
                   :(RCTResponseSenderBlock)callback)
 {
+    self.appId = appid;
     callback(@[[WXApi registerApp:appid] ? [NSNull null] : INVOKE_FAILED]);
 }
 
@@ -146,7 +147,10 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
     [self shareToWeixinWithData:data scene:WXSceneSession callback:callback];
 }
 
-- (void)shareToWeixinWithData:(NSDictionary *)aData thumbImage:(UIImage *)aThumbImage scene:(int)aScene callBack:(RCTResponseSenderBlock)callback
+- (void)shareToWeixinWithData:(NSDictionary *)aData
+                   thumbImage:(UIImage *)aThumbImage
+                        scene:(int)aScene
+                     callBack:(RCTResponseSenderBlock)callback
 {
     SendMessageToWXReq* req = [SendMessageToWXReq new];
     req.scene = aScene;
@@ -160,8 +164,7 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
         if (text && [text isKindOfClass:[NSString class]]) {
             req.text = text;
         }
-    }
-    else {
+    } else {
         req.bText = NO;
         
         WXMediaMessage* mediaMessage = [WXMediaMessage new];
@@ -183,22 +186,19 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
                 callback(@[@"webpageUrl required"]);
                 return;
             }
-        }
-        else if ([type isEqualToString:RCTWXShareTypeAudio]) {
+        } else if ([type isEqualToString:RCTWXShareTypeAudio]) {
             WXMusicObject *musicObject = [WXMusicObject new];
             musicObject.musicUrl = aData[@"musicUrl"];
             musicObject.musicLowBandUrl = aData[@"musicLowBandUrl"];
             musicObject.musicDataUrl = aData[@"musicDataUrl"];
             musicObject.musicLowBandDataUrl = aData[@"musicLowBandDataUrl"];
             mediaMessage.mediaObject = musicObject;
-        }
-        else if ([type isEqualToString:RCTWXShareTypeVideo]) {
+        } else if ([type isEqualToString:RCTWXShareTypeVideo]) {
             WXVideoObject *videoObject = [WXVideoObject new];
             videoObject.videoUrl = aData[@"videoUrl"];
             videoObject.videoLowBandUrl = aData[@"videoLowBandUrl"];
             mediaMessage.mediaObject = videoObject;
-        }
-        else if ([type isEqualToString:RCTWXShareTypeImage]) {
+        } else if ([type isEqualToString:RCTWXShareTypeImage]) {
             WXImageObject *imageObject = [WXImageObject new];
             imageObject.imageUrl = aData[RCTWXShareImageUrl];
             mediaMessage.mediaObject = imageObject;
@@ -207,8 +207,7 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
     }
     
     BOOL success = [WXApi sendReq:req];
-    if (success == NO)
-    {
+    if (success == NO) {
         callback(@[INVOKE_FAILED]);
     }
 }
@@ -221,8 +220,7 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
         [_bridge.imageLoader loadImageWithTag:imageUrl size:CGSizeMake(100, 100) scale:1 resizeMode:UIViewContentModeScaleToFill progressBlock:nil completionBlock:^(NSError *error, UIImage *image) {
             [self shareToWeixinWithData:aData thumbImage:image scene:aScene callBack:aCallBack];
         }];
-    }
-    else {
+    } else {
         [self shareToWeixinWithData:aData thumbImage:nil scene:aScene callBack:aCallBack];
     }
     
@@ -232,7 +230,7 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
 
 -(void) onReq:(BaseReq*)req
 {
-    
+    // TODO(Yorkie)
 }
 
 -(void) onResp:(BaseResp*)resp
@@ -247,8 +245,7 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
 	    body[@"country"] =r.country;
 	    body[@"type"] = @"SendMessageToWX.Resp";
 	    [self.bridge.eventDispatcher sendDeviceEventWithName:@"WeChat_Resp" body:body];
-	}
-	else if ([resp isKindOfClass:[SendAuthResp class]]) {
+	} else if ([resp isKindOfClass:[SendAuthResp class]]) {
 	    SendAuthResp *r = (SendAuthResp *)resp;
 	    NSMutableDictionary *body = @{@"errCode":@(r.errCode)}.mutableCopy;
 	    body[@"errStr"] = r.errStr;
@@ -259,7 +256,7 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
     
 	    if (resp.errCode == WXSuccess)
 	    {
-	        [body addEntriesFromDictionary:@{@"appid":self.appID, @"code" :r.code}];
+	        [body addEntriesFromDictionary:@{@"appid":self.appId, @"code" :r.code}];
 	        [self.bridge.eventDispatcher sendDeviceEventWithName:@"WeChat_Resp" body:body];
 	    }
 	    else {

@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "Base/RCTBridgeModule.h"
+#import "RCTBridgeModule.h"
 
 // define share type constants
 #define RCTWXShareTypeNews @"news"
@@ -23,5 +23,7 @@
 #define RCTWXShareImageUrl @"imageUrl"
 
 @interface RCTWeChat : NSObject <RCTBridgeModule>
+
+@property NSString* appId;
 
 @end

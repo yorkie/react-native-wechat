@@ -37,7 +37,7 @@ class Example extends React.Component {
     } catch (e) {
       console.error(e);
     }
-    // console.log(WeChat);
+    console.log(WeChat);
     // console.log('getApiVersion', typeof WeChat.getApiVersion);
     // console.log('getWXAppInstallUrl', typeof WeChat.getWXAppInstallUrl);
     // console.log('sendRequest', typeof WeChat.sendRequest);

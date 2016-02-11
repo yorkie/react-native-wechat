@@ -218,9 +218,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../../react-native/React",
-					"$(SRCROOT)/../node_modules/react-native/React",
-					"$(SRCROOT)/../Example/node_modules/react-native/React",
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native/React/**",
+					"$(SRCROOT)/../Example/node_modules/react-native/React/**",
+					"$(SRCROOT)/../Example/node_modules/react-native/Libraries/**",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -236,9 +237,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../../react-native/React",
-					"$(SRCROOT)/../node_modules/react-native/React",
-					"$(SRCROOT)/../Example/node_modules/react-native/React",
+					"$(inherited)",
+					"$(SRCROOT)/../node_modules/react-native/React/**",
+					"$(SRCROOT)/../Example/node_modules/react-native/React/**",
+					"$(SRCROOT)/../Example/node_modules/react-native/Libraries/**",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
