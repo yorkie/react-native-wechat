@@ -37,13 +37,17 @@ RCT_EXPORT_MODULE()
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (BOOL)handleOpenUrl:(NSURL *)aUrl
+- (BOOL)handleOpenURL:(NSNotification *)aNotification
 {
-    if ([WXApi handleOpenURL:aUrl delegate:self])
+    NSString * aURLString =  [aNotification userInfo][@"url"];
+    NSURL * aURL = [NSURL URLWithString:aURLString];
+
+    if ([WXApi handleOpenURL:aURL delegate:self])
     {
         return YES;
+    } else {
+        return NO;
     }
-    return NO;
 }
 
 - (dispatch_queue_t)methodQueue
