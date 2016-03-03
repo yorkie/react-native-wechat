@@ -7,7 +7,6 @@
 //
 
 #import "RCTWeChat.h"
-#import "WXApi.h"
 #import "WXApiObject.h"
 #import "Base/RCTEventDispatcher.h"
 #import "Base/RCTBridge.h"

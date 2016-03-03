@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "RCTBridgeModule.h"
+#import "WXApi.h"
 
 // define share type constants
 #define RCTWXShareTypeNews @"news"
@@ -22,7 +23,7 @@
 #define RCTWXShareWebpageUrl @"webpageUrl"
 #define RCTWXShareImageUrl @"imageUrl"
 
-@interface RCTWeChat : NSObject <RCTBridgeModule>
+@interface RCTWeChat : NSObject <RCTBridgeModule, WXApiDelegate>
 
 @property NSString* appId;
 
