@@ -12,6 +12,7 @@
 #import "Base/RCTBridge.h"
 #import "Base/RCTLog.h"
 #import "RCTImageLoader.h"
+#import "RCTImageUtils.h"
 
 // Define error messages
 #define NOT_REGISTERED (@"registerApp required.")
@@ -220,7 +221,7 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
                                        callBack:callback];
 
         } else if ([type isEqualToString:@"imageURL"]) {
-            NSString * imageURL = aData[RCTWXShareImageUrl];
+            NSString * imageURL = aData[@"imageURL"];
 
             WXImageObject *imageObject = [WXImageObject object];
             imageObject.imageUrl = imageURL;
@@ -235,21 +236,15 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
                                        MediaTag:mediaTagName
                                        callBack:callback];
 
-        } else if ([type isEqualToString:@"imageFile"]) {
-            callback(@[@"not implement yet"]);
-        } else if ([type isEqualToString:@"imageResource"]) {
-            NSString * imageURL = aData[RCTWXShareImageUrl];
-
-            if (self.bridge.imageLoader == nil){
-                callback(@[@"fail to load image resource"]);
-            }
-
+        } else if ([type isEqualToString:@"imageFile"] || [type isEqualToString:@"imageResource"]) {
+            NSString * imageURL = aData[@"imageURL"];
+            
             [self.bridge.imageLoader loadImageWithTag:imageURL callback:^(NSError *error, UIImage *image) {
                 if (image == nil){
                     callback(@[@"fail to load image resource"]);
                 } else {
                     WXImageObject *imageObject = [WXImageObject object];
-                    imageObject.imageData = UIImagePNGRepresentation(image);
+                    imageObject.imageData = RCTGetImageData([image CGImage], 1.0F);
 
                     [self shareToWeixinWithMediaMessage:aScene
                                                   Title:title
