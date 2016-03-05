@@ -220,8 +220,8 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
                                        MediaTag:mediaTagName
                                        callBack:callback];
 
-        } else if ([type isEqualToString:@"imageURL"]) {
-            NSString * imageURL = aData[@"imageURL"];
+        } else if ([type isEqualToString:RCTWXShareTypeImageUrl]) {
+            NSString * imageURL = aData[RCTWXShareImageUrl];
 
             WXImageObject *imageObject = [WXImageObject object];
             imageObject.imageUrl = imageURL;
@@ -236,8 +236,8 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
                                        MediaTag:mediaTagName
                                        callBack:callback];
 
-        } else if ([type isEqualToString:@"imageFile"] || [type isEqualToString:@"imageResource"]) {
-            NSString * imageURL = aData[@"imageURL"];
+        } else if ([type isEqualToString:RCTWXShareTypeImageFile] || [type isEqualToString:RCTWXShareTypeImageResource]) {
+            NSString * imageURL = aData[RCTWXShareImageUrl];
             
             [self.bridge.imageLoader loadImageWithTag:imageURL callback:^(NSError *error, UIImage *image) {
                 if (image == nil){
