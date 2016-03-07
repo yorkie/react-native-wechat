@@ -8,13 +8,10 @@
 
 #import <Foundation/Foundation.h>
 #import "RCTBridgeModule.h"
-#import "WXApi.h"
 
 // define share type constants
 #define RCTWXShareTypeNews @"news"
-#define RCTWXShareTypeImageUrl @"imageUrl"
-#define RCTWXShareTypeImageFile @"imageFile"
-#define RCTWXShareTypeImageResource @"imageResource"
+#define RCTWXShareTypeImage @"image"
 #define RCTWXShareTypeText @"text"
 #define RCTWXShareTypeVideo @"video"
 #define RCTWXShareTypeAudio @"audio"
@@ -25,7 +22,7 @@
 #define RCTWXShareWebpageUrl @"webpageUrl"
 #define RCTWXShareImageUrl @"imageUrl"
 
-@interface RCTWeChat : NSObject <RCTBridgeModule, WXApiDelegate>
+@interface RCTWeChat : NSObject <RCTBridgeModule>
 
 @property NSString* appId;
 
