@@ -31,14 +31,14 @@ $ npm install react-native-wechat --save
 - for iOS 9 support, add `wechat` and `weixin` into `LSApplicationQueriesSchemes` in 'Targets - info - Custom iOS Target Properties'
 
 Note: Make sure you have these code in `AppDelegate.m` to enable [LinkingIOS](https://facebook.github.io/react-native/docs/linkingios.html#handling-deep-links)
-```
+```objective-c
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
   return [RCTLinkingManager application:application openURL:url
                             sourceApplication:sourceApplication annotation:annotation];
 }
-
+```
 ## Android: Linking to your gradle Project
 
 - Add following lines into `android/settings.gradle`
@@ -56,26 +56,25 @@ dependencies {
    ...
    compile project(':RCTWeChat')    // Add this line only.
 }
-
+```
 - Add following lines into `MainActivity.java`
 
 ```java
 import com.theweflex.react.WeChatPackage;       // Add this line before public class MainActivity
 
-public class MainActivity extends Activity {
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        ...
-        mReactInstanceManager = ReactInstanceManager.builder()
-            .setApplication(getApplication())
-            .setBundleAssetName("index.android.bundle")
-            .setJSMainModuleName("index.android")
-            .addPackage(new MainReactPackage())
-            .addPackage(new WeChatPackage())        // Add this line
-            .setUseDeveloperSupport(BuildConfig.DEBUG)
-            .setInitialLifecycleState(LifecycleState.RESUMED)
-            .build();
-    }
+...
+
+/**
+ * A list of packages used by the app. If the app uses additional views
+ * or modules besides the default ones, add more packages here.
+ */
+@Override
+protected List<ReactPackage> getPackages() {
+    return Arrays.<ReactPackage>asList(
+        new MainReactPackage()
+        , new ReactVideoPackage()
+        , new WeChatPackage()        // Add this line
+    );
 }
 ```
 
