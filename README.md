@@ -182,15 +182,12 @@ Share a message to timeline (朋友圈).
     - {String} `musicUrl` Provide a remote music if type equals `audio`.
     - {String} `filePath` Provide a local file if type equals `file`.
 
-these example need 'react-native-chat' and 'react-native-fs' plugin.
-```javascript
+These example code need 'react-native-chat' and 'react-native-fs' plugin.
+```js
 import * as WeChat from 'react-native-wechat';
 import fs from 'react-native-fs';
 var resolveAssetSource = require('resolveAssetSource'); // along with Image component
-```
-
-1, code example to share text message:
-```javascript
+// Code example to share text message:
 try {
     var result = await  WeChat.shareToTimeline({type: 'text', description: 'I\'m Wechat, :)'});
     console.log('share text message to time line successful', result);
@@ -198,9 +195,9 @@ try {
 catch (e) {
     console.log('share text message to time line failed', e);
 }
-```
-2, code example to share image url:
-```javascript
+
+// Code example to share image url:
+// Share raw http(s) image from web will always fail with unknown reason, please use image file or image resource instead
 try {
     var result = await WeChat.shareToTimeline({
         type: 'imageUrl',
@@ -216,9 +213,8 @@ try {
 catch (e) {
     console.log('share image url to time line failed', e);
 }
-```
-3, code example to share image file:
-```javascript
+
+// Code example to share image file:
 try {
     var rootPath = fs.DocumentDirectoryPath;
     var savePath = rootPath + '/email-signature-262x100.png'; // like /var/mobile/Containers/Data/Application/B1308E13-35F1-41AB-A20D-3117BE8EE8FE/Documents/email-signature-262x100.png
@@ -240,9 +236,8 @@ try {
 catch (e) {
     console.log('share image file to time line failed', e);
 }
-```
-4, code example to share image resource:
-```javascript
+
+// Code example to share image resource:
 try {
     var imageResource = require('./email-signature-262x100.png');
     var result = await WeChat.shareToTimeline({
