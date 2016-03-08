@@ -176,7 +176,7 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
             }
 
             WXWebpageObject* webpageObject = [WXWebpageObject object];
-            webpageObject.webpageUrl = aData[RCTWXShareWebpageUrl];
+            webpageObject.webpageUrl = webpageUrl;
 
             [self shareToWeixinWithMediaMessage:aScene
                                           Title:title
