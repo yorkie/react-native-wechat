@@ -72,7 +72,6 @@ import com.theweflex.react.WeChatPackage;       // Add this line before public c
 protected List<ReactPackage> getPackages() {
     return Arrays.<ReactPackage>asList(
         new MainReactPackage()
-        , new ReactVideoPackage()
         , new WeChatPackage()        // Add this line
     );
 }
