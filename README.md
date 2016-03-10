@@ -31,14 +31,14 @@ $ npm install react-native-wechat --save
 - for iOS 9 support, add `wechat` and `weixin` into `LSApplicationQueriesSchemes` in 'Targets - info - Custom iOS Target Properties'
 
 Note: Make sure you have these code in `AppDelegate.m` to enable [LinkingIOS](https://facebook.github.io/react-native/docs/linkingios.html#handling-deep-links)
-```
+```objective-c
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
   return [RCTLinkingManager application:application openURL:url
                             sourceApplication:sourceApplication annotation:annotation];
 }
-
+```
 ## Android: Linking to your gradle Project
 
 - Add following lines into `android/settings.gradle`
@@ -57,27 +57,23 @@ dependencies {
    compile project(':RCTWeChat')    // Add this line only.
 }
 ```
-
 - Add following lines into `MainActivity.java`
 
 ```java
-...
 import com.theweflex.react.WeChatPackage;       // Add this line before public class MainActivity
 
-public class MainActivity extends Activity {
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        ...
-        mReactInstanceManager = ReactInstanceManager.builder()
-            .setApplication(getApplication())
-            .setBundleAssetName("index.android.bundle")
-            .setJSMainModuleName("index.android")
-            .addPackage(new MainReactPackage())
-            .addPackage(new WeChatPackage())        // Add this line
-            .setUseDeveloperSupport(BuildConfig.DEBUG)
-            .setInitialLifecycleState(LifecycleState.RESUMED)
-            .build();
-    }
+...
+
+/**
+ * A list of packages used by the app. If the app uses additional views
+ * or modules besides the default ones, add more packages here.
+ */
+@Override
+protected List<ReactPackage> getPackages() {
+    return Arrays.<ReactPackage>asList(
+        new MainReactPackage()
+        , new WeChatPackage()        // Add this line
+    );
 }
 ```
 
@@ -179,12 +175,86 @@ Share a message to timeline (朋友圈).
 
 - {Object} `data` contain the message to send
     - {String} `thumbImage` Thumb image of the message, which can be a uri or a resource id.
-    - {String} `type` Type of this message. Can be {news|text|image|video|audio|file}
+    - {String} `type` Type of this message. Can be {news|text|imageUrl|imageFile|imageResource|video|audio|file}
     - {String} `webpageUrl` Required if type equals `news`. The webpage link to share.
     - {String} `imageUrl` Provide a remote image if type equals `image`.
     - {String} `videoUrl` Provide a remote video if type equals `video`.
     - {String} `musicUrl` Provide a remote music if type equals `audio`.
     - {String} `filePath` Provide a local file if type equals `file`.
+
+These example code need 'react-native-chat' and 'react-native-fs' plugin.
+```js
+import * as WeChat from 'react-native-wechat';
+import fs from 'react-native-fs';
+var resolveAssetSource = require('resolveAssetSource'); // along with Image component
+// Code example to share text message:
+try {
+    var result = await  WeChat.shareToTimeline({type: 'text', description: 'I\'m Wechat, :)'});
+    console.log('share text message to time line successful', result);
+}
+catch (e) {
+    console.log('share text message to time line failed', e);
+}
+
+// Code example to share image url:
+// Share raw http(s) image from web will always fail with unknown reason, please use image file or image resource instead
+try {
+    var result = await WeChat.shareToTimeline({
+        type: 'imageUrl',
+        title: 'web image',
+        description: 'share web image to time line',
+        mediaTagName: 'email signature',
+        messageAction: undefined,
+        messageExt: undefined,
+        imageUrl: 'http://www.ncloud.hk/email-signature-262x100.png'
+    });
+    console.log('share image url to time line successful', result);
+}
+catch (e) {
+    console.log('share image url to time line failed', e);
+}
+
+// Code example to share image file:
+try {
+    var rootPath = fs.DocumentDirectoryPath;
+    var savePath = rootPath + '/email-signature-262x100.png'; // like /var/mobile/Containers/Data/Application/B1308E13-35F1-41AB-A20D-3117BE8EE8FE/Documents/email-signature-262x100.png
+
+    await fs.downloadFile('http://www.ncloud.hk/email-signature-262x100.png', savePath);
+
+    var result = await WeChat.shareToTimeline({
+        type: 'imageFile',
+        title: 'image file download from network',
+        description: 'share image file to time line',
+        mediaTagName: 'email signature',
+        messageAction: undefined,
+        messageExt: undefined,
+        imageUrl: savePath
+    });
+
+    console.log('share image file to time line successful', result);
+}
+catch (e) {
+    console.log('share image file to time line failed', e);
+}
+
+// Code example to share image resource:
+try {
+    var imageResource = require('./email-signature-262x100.png');
+    var result = await WeChat.shareToTimeline({
+        type: 'imageResource',
+        title: 'resource image',
+        description: 'share resource image to time line',
+        mediaTagName: 'email signature',
+        messageAction: undefined,
+        messageExt: undefined,
+        imageUrl: resolveAssetSource(imageResource).uri
+    });
+    console.log('share resource image to time line successful', result);
+}
+catch (e) {
+    console.log('share resource image to time line failed', e);
+}
+```
 
 #### shareToSession(data)
 
