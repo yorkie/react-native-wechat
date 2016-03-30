@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 
 import com.facebook.common.executors.UiThreadImmediateExecutorService;
 import com.facebook.common.internal.Preconditions;
@@ -21,6 +22,7 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.drawable.OrientedDrawable;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.core.ImagePipeline;
+import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableAnimatedImage;
 import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.image.CloseableStaticBitmap;
@@ -53,6 +55,7 @@ import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Created by tdzl2_000 on 2015-10-10.
@@ -63,6 +66,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     private IWXAPI api = null;
     private final static String NOT_REGISTERED = "registerApp required.";
     private final static String INVOKE_FAILED = "WeChat API invoke returns false.";
+    private final static String INVALID_ARGUMENT = "invalid argument.";
 
     public WeChatModule(ReactApplicationContext context) {
         super(context);
@@ -84,14 +88,14 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     @Override
     public void onCatalystInstanceDestroy() {
         super.onCatalystInstanceDestroy();
-        if (api != null){
+        if (api != null) {
             api = null;
         }
         modules.remove(this);
     }
 
     public static void handleIntent(Intent intent) {
-        for (WeChatModule mod : modules){
+        for (WeChatModule mod : modules) {
             mod.api.handleIntent(intent, mod);
         }
     }
@@ -99,7 +103,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     @ReactMethod
     public void registerApp(String appid, Callback callback) {
         api = WXAPIFactory.createWXAPI(this.getReactApplicationContext().getBaseContext(), appid, true);
-        callback.invoke(api.registerApp(appid) ? null : INVOKE_FAILED);
+        callback.invoke(null, api.registerApp(appid));
     }
 
     @ReactMethod
@@ -135,7 +139,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             callback.invoke(NOT_REGISTERED);
             return;
         }
-        callback.invoke(api.openWXApp() ? null : INVOKE_FAILED);
+        callback.invoke(null, api.openWXApp());
     }
 
     @ReactMethod
@@ -147,11 +151,11 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         SendAuth.Req req = new SendAuth.Req();
         req.scope = scope;
         req.state = state;
-        callback.invoke(api.sendReq(req) ? null : INVOKE_FAILED);
+        callback.invoke(null, api.sendReq(req));
     }
 
     @ReactMethod
-    public void shareToTimeline(ReadableMap data, Callback callback){
+    public void shareToTimeline(ReadableMap data, Callback callback) {
         if (api == null) {
             callback.invoke(NOT_REGISTERED);
             return;
@@ -160,7 +164,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     }
 
     @ReactMethod
-    public void shareToSession(ReadableMap data, Callback callback){
+    public void shareToSession(ReadableMap data, Callback callback) {
         if (api == null) {
             callback.invoke(NOT_REGISTERED);
             return;
@@ -168,10 +172,11 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         _share(SendMessageToWX.Req.WXSceneSession, data, callback);
     }
 
-    private void _share(final int scene, final ReadableMap data, final Callback callback){
+    private void _share(final int scene, final ReadableMap data, final Callback callback) {
+        Uri uri = null;
         if (data.hasKey("thumbImage")) {
             String imageUrl = data.getString("thumbImage");
-            Uri uri = null;
+
             try {
                 uri = Uri.parse(imageUrl);
                 // Verify scheme is set, so that relative uri (used by static resources) are not handled.
@@ -183,55 +188,40 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             }
             if (uri == null) {
                 uri = getResourceDrawableUri(getReactApplicationContext(), imageUrl);
-
-                if (uri == null) {
-                    this._share(scene, data, null, callback);
-                    return;
-                }
-            } else {
             }
-
-            DataSubscriber<CloseableReference<CloseableImage>> dataSubscriber =
-                    new BaseDataSubscriber<CloseableReference<CloseableImage>>() {
-                        @Override
-                        public void onNewResultImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-                            // isFinished must be obtained before image, otherwise we might set intermediate result
-                            // as final image.
-                            boolean isFinished = dataSource.isFinished();
-//                        float progress = dataSource.getProgress();
-                            CloseableReference<CloseableImage> image = dataSource.getResult();
-                            if (image != null) {
-                                Drawable drawable = WeChatModule.this._createDrawable(image);
-                                Bitmap bitmap = WeChatModule.this._drawable2Bitmap(drawable);
-                                WeChatModule.this._share(scene, data, bitmap, callback);
-                            } else if (isFinished) {
-                                WeChatModule.this._share(scene, data, null, callback);
-                            }
-                            dataSource.close();
-                        }
-                        @Override
-                        public void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-                            dataSource.close();
-                            WeChatModule.this._share(scene, data, null, callback);
-                        }
-
-                        @Override
-                        public void onProgressUpdate(DataSource<CloseableReference<CloseableImage>> dataSource) {
-                        }
-                    };
-            this._getImage(uri, dataSubscriber);
         }
-        else {
+
+        if (uri != null) {
+            this._getImage(uri, new ResizeOptions(100, 100), new ImageCallback() {
+                @Override
+                public void invoke(@Nullable Bitmap bitmap) {
+                    WeChatModule.this._share(scene, data, bitmap, callback);
+                }
+            });
+        } else {
             this._share(scene, data, null, callback);
         }
     }
 
-    private void  _getImage(Uri uri, DataSubscriber<CloseableReference<CloseableImage>> dataSubscriber) {
-        ResizeOptions resizeOptions = new ResizeOptions(100, 100);
+    private void _getImage(Uri uri, ResizeOptions resizeOptions, final ImageCallback imageCallback) {
+        BaseBitmapDataSubscriber dataSubscriber = new BaseBitmapDataSubscriber() {
+            @Override
+            protected void onNewResultImpl(Bitmap bitmap) {
+                bitmap = bitmap.copy(bitmap.getConfig(), true);
+                imageCallback.invoke(bitmap);
+            }
 
-        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(uri)
-                .setResizeOptions(resizeOptions)
-                .build();
+            @Override
+            protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
+                imageCallback.invoke(null);
+            }
+        };
+
+        ImageRequestBuilder builder = ImageRequestBuilder.newBuilderWithSource(uri);
+        if (resizeOptions != null) {
+            builder = builder.setResizeOptions(resizeOptions);
+        }
+        ImageRequest imageRequest = builder.build();
 
         ImagePipeline imagePipeline = Fresco.getImagePipeline();
         DataSource<CloseableReference<CloseableImage>> dataSource = imagePipeline.fetchDecodedImage(imageRequest, null);
@@ -253,84 +243,72 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
                 .build();
     }
 
-    private Drawable _createDrawable(CloseableReference<CloseableImage> image) {
-        Preconditions.checkState(CloseableReference.isValid(image));
-        CloseableImage closeableImage = image.get();
-        if (closeableImage instanceof CloseableStaticBitmap) {
-            CloseableStaticBitmap closeableStaticBitmap = (CloseableStaticBitmap) closeableImage;
-            BitmapDrawable bitmapDrawable = new BitmapDrawable(
-                    getReactApplicationContext().getResources(),
-                    closeableStaticBitmap.getUnderlyingBitmap());
-            if (closeableStaticBitmap.getRotationAngle() == 0 ||
-                    closeableStaticBitmap.getRotationAngle() == EncodedImage.UNKNOWN_ROTATION_ANGLE) {
-                return bitmapDrawable;
-            } else {
-                return new OrientedDrawable(bitmapDrawable, closeableStaticBitmap.getRotationAngle());
-            }
-        } else if (closeableImage instanceof CloseableAnimatedImage) {
-            return Fresco.getImagePipelineFactory().getAnimatedDrawableFactory().create(
-                    ((CloseableAnimatedImage) closeableImage).getImageResult());
+    private void _share(final int scene, final ReadableMap data, final Bitmap thumbImage, final Callback callback) {
+        if (!data.hasKey("type")) {
+            callback.invoke(INVALID_ARGUMENT);
+            return;
+        }
+        String type = data.getString("type");
+
+        WXMediaMessage.IMediaObject mediaObject = null;
+        if (type.equals("news")) {
+            mediaObject = _jsonToWebpageMedia(data);
+        } else if (type.equals("text")) {
+            mediaObject = _jsonToTextMedia(data);
+        } else if (type.equals("imageUrl") || type.equals("imageResource")) {
+            __jsonToImageUrlMedia(data, new MediaObjectCallback() {
+                @Override
+                public void invoke(@Nullable WXMediaMessage.IMediaObject mediaObject) {
+                    if (mediaObject == null) {
+                        callback.invoke(INVALID_ARGUMENT);
+                    } else {
+                        WeChatModule.this._share(scene, data, thumbImage, mediaObject, callback);
+                    }
+                }
+            });
+            return;
+        } else if (type.equals("imageFile")) {
+            __jsonToImageFileMedia(data, new MediaObjectCallback() {
+                @Override
+                public void invoke(@Nullable WXMediaMessage.IMediaObject mediaObject) {
+                    if (mediaObject == null) {
+                        callback.invoke(INVALID_ARGUMENT);
+                    } else {
+                        WeChatModule.this._share(scene, data, thumbImage, mediaObject, callback);
+                    }
+                }
+            });
+            return;
+        } else if (type.equals("video")) {
+            mediaObject = __jsonToVideoMedia(data);
+        } else if (type.equals("audio")) {
+            mediaObject = __jsonToMusicMedia(data);
+        } else if (type.equals("file")) {
+            mediaObject = __jsonToFileMedia(data);
+        }
+
+        if (mediaObject == null) {
+            callback.invoke(INVALID_ARGUMENT);
         } else {
-            throw new UnsupportedOperationException("Unrecognized image class: " + closeableImage);
+            _share(scene, data, thumbImage, mediaObject, callback);
         }
     }
 
-    private Bitmap _drawable2Bitmap(Drawable drawable) {
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable) drawable).getBitmap();
-        } else if (drawable instanceof NinePatchDrawable) {
-            Bitmap bitmap = Bitmap
-                    .createBitmap(
-                            drawable.getIntrinsicWidth(),
-                            drawable.getIntrinsicHeight(),
-                            drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
-                                    : Bitmap.Config.RGB_565);
-            Canvas canvas = new Canvas(bitmap);
-            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(),
-                    drawable.getIntrinsicHeight());
-            drawable.draw(canvas);
-            return bitmap;
-        } else {
-            return null;
-        }
-    }
+    private void _share(int scene, ReadableMap data, Bitmap thumbImage, WXMediaMessage.IMediaObject mediaObject, Callback callback) {
 
-    private void _share(int scene, ReadableMap data, Bitmap thumbImage, Callback callback) {
         WXMediaMessage message = new WXMediaMessage();
-        if (data.hasKey("title")){
+        message.mediaObject = mediaObject;
+
+        if (thumbImage != null) {
+            message.setThumbImage(thumbImage);
+        }
+
+        if (data.hasKey("title")) {
             message.title = data.getString("title");
         }
         if (data.hasKey("description")) {
             message.description = data.getString("description");
         }
-
-        String type = "news";
-        if (data.hasKey("type")) {
-            type = data.getString("type");
-        }
-        if (type.equals("news")) {
-            message.mediaObject = _jsonToWebpageMedia(data);
-        }
-        else if (type.equals("text")) {
-            message.mediaObject = _jsonToTextMedia(data);
-        }
-        else if (type.equals("image")) {
-            message.mediaObject = __jsonToImageMedia(data);
-        }
-        else if (type.equals("video")) {
-            message.mediaObject = __jsonToVideoMedia(data);
-        }
-        else if (type.equals("audio")) {
-            message.mediaObject = __jsonToMusicMedia(data);
-        }
-        else if (type.equals("file")) {
-            message.mediaObject = __jsonToFileMedia(data);
-        }
-
-        if (thumbImage != null) {
-            message.setThumbImage(thumbImage);
-        }
-        
         if (data.hasKey("mediaTagName")) {
             message.mediaTagName = data.getString("mediaTagName");
         }
@@ -344,61 +322,104 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         SendMessageToWX.Req req = new SendMessageToWX.Req();
         req.message = message;
         req.scene = scene;
-
-        callback.invoke(api.sendReq(req) ? null : INVOKE_FAILED);
+        req.transaction = UUID.randomUUID().toString();
+        callback.invoke(null, api.sendReq(req));
     }
 
-    private WXTextObject _jsonToTextMedia(ReadableMap data)
-    {
-        WXTextObject ret = new WXTextObject();
-        if (data.hasKey("description")) {
-            ret.text = data.getString("description");
+    private WXTextObject _jsonToTextMedia(ReadableMap data) {
+        if (!data.hasKey("description")) {
+            return null;
         }
+
+        WXTextObject ret = new WXTextObject();
+        ret.text = data.getString("description");
         return ret;
     }
 
-    private WXWebpageObject _jsonToWebpageMedia(ReadableMap data){
-        WXWebpageObject ret = new WXWebpageObject();
-        if (data.hasKey("webpageUrl")){
-            ret.webpageUrl = data.getString("webpageUrl");
+    private WXWebpageObject _jsonToWebpageMedia(ReadableMap data) {
+        if (!data.hasKey("webpageUrl")) {
+            return null;
         }
-        if (data.hasKey("extInfo")){
+
+        WXWebpageObject ret = new WXWebpageObject();
+        ret.webpageUrl = data.getString("webpageUrl");
+        if (data.hasKey("extInfo")) {
             ret.extInfo = data.getString("extInfo");
         }
         return ret;
     }
 
-    private WXImageObject __jsonToImageMedia(ReadableMap data){
-        WXImageObject ret = new WXImageObject();
-        if (data.hasKey("imageUrl")) {
-            ret.imageUrl = data.getString("imageUrl");
+    private void __jsonToImageMedia(String imageUrl, final MediaObjectCallback callback) {
+        Uri imageUri;
+        try {
+            imageUri = Uri.parse(imageUrl);
+        } catch (Exception e) {
+            imageUri = null;
         }
-        return ret;
+
+        if (imageUri == null) {
+            callback.invoke(null);
+            return;
+        }
+
+        this._getImage(imageUri, null, new ImageCallback() {
+            @Override
+            public void invoke(@Nullable Bitmap bitmap) {
+                callback.invoke(bitmap == null ? null : new WXImageObject(bitmap));
+            }
+        });
     }
 
-    private WXMusicObject __jsonToMusicMedia(ReadableMap data){
+    private void __jsonToImageUrlMedia(ReadableMap data, MediaObjectCallback callback) {
+        if (!data.hasKey("imageUrl")) {
+            callback.invoke(null);
+            return;
+        }
+        String imageUrl = data.getString("imageUrl");
+        __jsonToImageMedia(imageUrl, callback);
+    }
+
+    private void __jsonToImageFileMedia(ReadableMap data, MediaObjectCallback callback) {
+        if (!data.hasKey("imageUrl")) {
+            callback.invoke(null);
+            return;
+        }
+
+        String imageUrl = data.getString("imageUrl");
+        if (!imageUrl.toLowerCase().startsWith("file://")) {
+            imageUrl = "file://" + imageUrl;
+        }
+        __jsonToImageMedia(imageUrl, callback);
+    }
+
+    private WXMusicObject __jsonToMusicMedia(ReadableMap data) {
+        if (!data.hasKey("musicUrl")) {
+            return null;
+        }
+
         WXMusicObject ret = new WXMusicObject();
-        if (data.hasKey("musicUrl")) {
-            ret.musicUrl = data.getString("musicUrl");
-        }
+        ret.musicUrl = data.getString("musicUrl");
         return ret;
     }
 
-    private WXVideoObject __jsonToVideoMedia(ReadableMap data){
+    private WXVideoObject __jsonToVideoMedia(ReadableMap data) {
+        if (!data.hasKey("videoUrl")) {
+            return null;
+        }
+
         WXVideoObject ret = new WXVideoObject();
-        if (data.hasKey("videoUrl")) {
-            ret.videoUrl = data.getString("videoUrl");
-        }
+        ret.videoUrl = data.getString("videoUrl");
         return ret;
     }
 
-    private WXFileObject __jsonToFileMedia(ReadableMap data){
+    private WXFileObject __jsonToFileMedia(ReadableMap data) {
+        if (!data.hasKey("filePath")) {
+            return null;
+        }
 
         WXFileObject ret = new WXFileObject();
-        if (data.hasKey("filePath")) {
-            String path = new File(URI.create(data.getString("filePath"))).getPath();
-            ret.filePath = path;
-        }
+        String path = new File(URI.create(data.getString("filePath"))).getPath();
+        ret.filePath = path;
         return ret;
     }
 
@@ -418,7 +439,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         map.putString("transaction", baseResp.transaction);
 
         if (baseResp instanceof SendAuth.Resp) {
-            SendAuth.Resp resp = (SendAuth.Resp)(baseResp);
+            SendAuth.Resp resp = (SendAuth.Resp) (baseResp);
 
             map.putString("type", "SendAuth.Resp");
             map.putString("code", resp.code);
@@ -426,8 +447,8 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             map.putString("url", resp.url);
             map.putString("lang", resp.lang);
             map.putString("country", resp.country);
-        } else if (baseResp instanceof SendMessageToWX.Resp){
-            SendMessageToWX.Resp resp = (SendMessageToWX.Resp)(baseResp);
+        } else if (baseResp instanceof SendMessageToWX.Resp) {
+            SendMessageToWX.Resp resp = (SendMessageToWX.Resp) (baseResp);
             map.putString("type", "SendMessageToWX.Resp");
         }
 
@@ -436,5 +457,12 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
                 .emit("WeChat_Resp", map);
     }
 
+    private interface ImageCallback {
+        void invoke(@Nullable Bitmap bitmap);
+    }
+
+    private interface MediaObjectCallback {
+        void invoke(@Nullable WXMediaMessage.IMediaObject mediaObject);
+    }
 
 }
