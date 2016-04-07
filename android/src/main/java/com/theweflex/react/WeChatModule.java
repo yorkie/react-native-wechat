@@ -3,30 +3,19 @@ package com.theweflex.react;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.PixelFormat;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.NinePatchDrawable;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
 import com.facebook.common.executors.UiThreadImmediateExecutorService;
-import com.facebook.common.internal.Preconditions;
+import com.facebook.common.internal.Files;
 import com.facebook.common.references.CloseableReference;
 import com.facebook.common.util.UriUtil;
-import com.facebook.datasource.BaseDataSubscriber;
 import com.facebook.datasource.DataSource;
-import com.facebook.datasource.DataSubscriber;
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.drawable.OrientedDrawable;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.core.ImagePipeline;
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
-import com.facebook.imagepipeline.image.CloseableAnimatedImage;
 import com.facebook.imagepipeline.image.CloseableImage;
-import com.facebook.imagepipeline.image.CloseableStaticBitmap;
-import com.facebook.imagepipeline.image.EncodedImage;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.facebook.react.bridge.Arguments;
@@ -416,11 +405,25 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         if (!data.hasKey("filePath")) {
             return null;
         }
+        String filePath = data.getString("filePath");
+        if (!filePath.toLowerCase().startsWith("file://")) {
+            filePath = "file://" + filePath;
+        }
+        try {
+            URI fileUri = URI.create(filePath);
+            File file = new File(fileUri);
+            if (!file.exists()) {
+                return null;
+            }
 
-        WXFileObject ret = new WXFileObject();
-        String path = new File(URI.create(data.getString("filePath"))).getPath();
-        ret.filePath = path;
-        return ret;
+            byte[] fileData = Files.toByteArray(file);
+
+            WXFileObject ret = new WXFileObject();
+            ret.setFileData(fileData);
+            return ret;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     // TODO: 实现sendRequest、sendSuccessResponse、sendErrorCommonResponse、sendErrorUserCancelResponse
