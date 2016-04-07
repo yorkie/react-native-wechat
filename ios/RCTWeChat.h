@@ -18,6 +18,7 @@
 #define RCTWXShareTypeText @"text"
 #define RCTWXShareTypeVideo @"video"
 #define RCTWXShareTypeAudio @"audio"
+#define RCTWXShareTypeFile @"file"
 
 #define RCTWXShareType @"type"
 #define RCTWXShareTitle @"title"

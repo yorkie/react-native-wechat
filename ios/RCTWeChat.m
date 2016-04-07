@@ -258,6 +258,25 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
 
                 }
             }];
+
+        } else if ([type isEqualToString:RCTWXShareTypeFile]) {
+            NSString * filePath = aData[@"filePath"];
+            NSString * fileExtension = aData[@"fileExtension"];
+
+            WXFileObject *fileObject = [WXFileObject object];
+            fileObject.fileData = [NSData dataWithContentsOfFile:filePath];
+            fileObject.fileExtension = fileExtension;
+
+            [self shareToWeixinWithMediaMessage:aScene
+                                          Title:title
+                                    Description:description
+                                         Object:fileObject
+                                     MessageExt:messageExt
+                                  MessageAction:messageAction
+                                     ThumbImage:aThumbImage
+                                       MediaTag:mediaTagName
+                                       callBack:callback];
+
         } else {
             callback(@[@"message type unsupported"]);
         }
