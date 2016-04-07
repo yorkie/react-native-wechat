@@ -170,13 +170,10 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
                 uri = Uri.parse(imageUrl);
                 // Verify scheme is set, so that relative uri (used by static resources) are not handled.
                 if (uri.getScheme() == null) {
-                    uri = null;
+                    uri = getResourceDrawableUri(getReactApplicationContext(), imageUrl);
                 }
             } catch (Exception e) {
                 // ignore malformed uri, then attempt to extract resource ID.
-            }
-            if (uri == null) {
-                uri = getResourceDrawableUri(getReactApplicationContext(), imageUrl);
             }
         }
 
@@ -226,10 +223,15 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
                 name,
                 "drawable",
                 context.getPackageName());
-        return new Uri.Builder()
-                .scheme(UriUtil.LOCAL_RESOURCE_SCHEME)
-                .path(String.valueOf(resId))
-                .build();
+
+        if (resId == 0) {
+            return null;
+        } else {
+            return new Uri.Builder()
+                    .scheme(UriUtil.LOCAL_RESOURCE_SCHEME)
+                    .path(String.valueOf(resId))
+                    .build();
+        }
     }
 
     private void _share(final int scene, final ReadableMap data, final Bitmap thumbImage, final Callback callback) {
@@ -342,6 +344,10 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         Uri imageUri;
         try {
             imageUri = Uri.parse(imageUrl);
+            // Verify scheme is set, so that relative uri (used by static resources) are not handled.
+            if (imageUri.getScheme() == null) {
+                imageUri = getResourceDrawableUri(getReactApplicationContext(), imageUrl);
+            }
         } catch (Exception e) {
             imageUri = null;
         }
