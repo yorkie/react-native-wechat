@@ -256,6 +256,29 @@ try {
 catch (e) {
     console.log('share resource image to time line failed', e);
 }
+
+//Code example to share file use shareToSession API on android
+try {
+    var rootPath = fs.DocumentDirectoryPath;
+    var filePath = rootPath + '/email-signature-262x100.png'; // like
+
+    await fs.downloadFile('http://www.ncloud.hk/email-signature-262x100.png', filePath);
+
+    var result = await WeChat.shareToSession({
+        type: 'file',
+        title: 'image file download from network',
+        description: 'share file to friend',
+        mediaTagName: 'email signature',
+        messageAction: undefined,
+        messageExt: undefined,
+        filePath: "file://" + filePath
+    });
+
+    console.log('share file to friend successful', result);
+}
+catch (e) {
+    console.log('share file to friend failed', e);
+}
 ```
 
 #### shareToSession(data)
