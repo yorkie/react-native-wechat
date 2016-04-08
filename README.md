@@ -183,6 +183,7 @@ Share a message to timeline (朋友圈).
     - {String} `videoUrl` Provide a remote video if type equals `video`.
     - {String} `musicUrl` Provide a remote music if type equals `audio`.
     - {String} `filePath` Provide a local file if type equals `file`.
+    - {String} `fileExtension` Provide the file type if type equals `file`.
 
 These example code need 'react-native-chat' and 'react-native-fs' plugin.
 ```js
@@ -219,7 +220,15 @@ catch (e) {
 // Code example to share image file:
 try {
     var rootPath = fs.DocumentDirectoryPath;
-    var savePath = rootPath + '/email-signature-262x100.png'; // like /var/mobile/Containers/Data/Application/B1308E13-35F1-41AB-A20D-3117BE8EE8FE/Documents/email-signature-262x100.png
+    var savePath = rootPath + '/email-signature-262x100.png';
+    console.log({savePath});
+    /*
+     * savePath on iOS may be:
+     *  /var/mobile/Containers/Data/Application/B1308E13-35F1-41AB-A20D-3117BE8EE8FE/Documents/email-signature-262x100.png
+     *
+     * savePath on Android may be:
+     *  /data/data/com.wechatsample/files/email-signature-262x100.png
+     * */
 
     await fs.downloadFile('http://www.ncloud.hk/email-signature-262x100.png', savePath);
 
@@ -230,7 +239,7 @@ try {
         mediaTagName: 'email signature',
         messageAction: undefined,
         messageExt: undefined,
-        imageUrl: savePath
+        imageUrl: "file://" + savePath // require the prefix on both iOS and Android platform
     });
 
     console.log('share image file to time line successful', result);
@@ -255,6 +264,40 @@ try {
 }
 catch (e) {
     console.log('share resource image to time line failed', e);
+}
+
+// Code example to download an word file from web, then share it to WeChat session
+// only support to share to session but time line
+try {
+    var rootPath = fs.DocumentDirectoryPath;
+    var fileName = 'signature_method.doc';
+    var savePath = rootPath + '/' + fileName;
+    console.log({savePath});
+    /*
+     * savePath on iOS may be:
+     *  /var/mobile/Containers/Data/Application/B1308E13-35F1-41AB-A20D-3117BE8EE8FE/Documents/signature_method.doc
+     *
+     * savePath on Android may be:
+     *  /data/data/com.wechatsample/files/signature_method.doc
+     * */
+
+    await fs.downloadFile('https://open.weixin.qq.com/zh_CN/htmledition/res/assets/signature_method.doc', savePath);
+
+    var result = await WeChat.shareToSession({
+        type: 'file',
+        title: fileName, // WeChat app treat title as file name
+        description: 'share word file to chat session',
+        mediaTagName: 'word file',
+        messageAction: undefined,
+        messageExt: undefined,
+        filePath: savePath,
+        fileExtension: '.doc'
+    });
+
+    console.log('share word file to chat session successful', result);
+}
+catch (e) {
+    console.log('share word file to chat session failed', e);
 }
 ```
 
