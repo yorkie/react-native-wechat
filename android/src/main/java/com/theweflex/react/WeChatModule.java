@@ -412,20 +412,13 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             return null;
         }
         String filePath = data.getString("filePath");
-        if (!filePath.toLowerCase().startsWith("file://")) {
-            filePath = "file://" + filePath;
-        }
         try {
-            URI fileUri = URI.create(filePath);
+            URI fileUri = URI.create("file://" + filePath);
             File file = new File(fileUri);
             if (!file.exists()) {
                 return null;
             }
-
-            byte[] fileData = Files.toByteArray(file);
-
-            WXFileObject ret = new WXFileObject();
-            ret.setFileData(fileData);
+            WXFileObject ret = new WXFileObject(filePath);
             return ret;
         } catch (Exception e) {
             return null;
