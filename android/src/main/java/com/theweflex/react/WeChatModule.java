@@ -411,18 +411,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         if (!data.hasKey("filePath")) {
             return null;
         }
-        String filePath = data.getString("filePath");
-        try {
-            URI fileUri = URI.create("file://" + filePath);
-            File file = new File(fileUri);
-            if (!file.exists()) {
-                return null;
-            }
-            WXFileObject ret = new WXFileObject(filePath);
-            return ret;
-        } catch (Exception e) {
-            return null;
-        }
+        return new WXFileObject(data.getString("filePath"));
     }
 
     // TODO: 实现sendRequest、sendSuccessResponse、sendErrorCommonResponse、sendErrorUserCancelResponse
