@@ -77,27 +77,18 @@ const nativeSendAuthRequest = wrapApi(WeChat.sendAuthRequest);
 
 export function sendAuthRequest(scopes, state) {
   // Generate a random, unique state if not provided.
-  return new Promise((resolve, reject)=> {
-    let _scopes = scopes || 'snsapi_userinfo';
-    if (Array.isArray(_scopes)) {
-      _scopes = _scopes.join(',');
-    }
-    const _state = state || Math.random().toString(16).substr(2) + '_' + new Date().getTime();
-
+  return new Promise(resolve, reject=> {
+   
     WeChat.sendAuthRequest(_scopes, _state,()=> {});
 
     emitter.on("SendAuth.Resp", (resp) => {
       const result = resp.errCode;
       if(result == 0){
-        const message = "登陆成功";
         const code = resp.code;
-        const eo_data = {result,message,code}
-        resolve(eo_data)
+        resolve(code)
       }else{
         const errorCode = result;
-        const message = "用户取消登陆"
-        const eo_data = {errorCode,message}
-        reject(eo_data)
+        reject(errorCode)
       }
     });
   })
