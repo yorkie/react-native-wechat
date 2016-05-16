@@ -76,8 +76,8 @@ const nativeShareToSession = wrapApi(WeChat.shareToSession);
 const nativeSendAuthRequest = wrapApi(WeChat.sendAuthRequest);
 
 export function sendAuthRequest(scopes, state) {
-  return new Promise((resolve, reject)=> {
-    WeChat.sendAuthRequest(scopes, state,()=> {});
+  return new Promise((resolve, reject) => {
+    WeChat.sendAuthRequest(scopes, state,() => {});
     emitter.on('SendAuth.Resp', (resp) => {
       const result = resp.errCode;
       if(result === 0){
