@@ -76,13 +76,17 @@ const nativeShareToSession = wrapApi(WeChat.shareToSession);
 const nativeSendAuthRequest = wrapApi(WeChat.sendAuthRequest);
 
 export function sendAuthRequest(scopes, state) {
-  // Generate a random, unique state if not provided.
-  let _scopes = scopes || 'snsapi_userinfo';
-  if (Array.isArray(_scopes)) {
-    _scopes = _scopes.join(',');
-  }
-  const _state = state || Math.random().toString(16).substr(2) + '_' + new Date().getTime();
-  return nativeSendAuthRequest(_scopes, _state).then(v => v[0]);
+  return new Promise((resolve, reject) => {
+    WeChat.sendAuthRequest(scopes, state,() => {});
+    emitter.on('SendAuth.Resp', (resp) => {
+      const result = resp.errCode;
+      if (result === 0) {
+        resolve(resp.code);
+      } else {
+        reject(result);
+      }
+    });
+  });
 }
 
 export function shareToTimeline(data) {
