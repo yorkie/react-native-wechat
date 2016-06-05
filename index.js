@@ -80,12 +80,10 @@ export function sendAuthRequest(scopes, state) {
     WeChat.sendAuthRequest(scopes, state,() => {});
     emitter.on('SendAuth.Resp', (resp) => {
       const result = resp.errCode;
-      if(result === 0){
-        const code = resp.code;
-        resolve(code);
-      }else{
-        const errorCode = result;
-        reject(errorCode);
+      if (result === 0) {
+        resolve(resp.code);
+      } else {
+        reject(result);
       }
     });
   });
