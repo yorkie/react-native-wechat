@@ -24,6 +24,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		86C3CF321CE4ED6D0067315A /* WechatAuthSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WechatAuthSDK.h; sourceTree = "<group>"; };
 		86D238421BD0BB9E00C75D01 /* libRCTWeChat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRCTWeChat.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		86D238541BD0BC1000C75D01 /* RCTWeChat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTWeChat.h; sourceTree = SOURCE_ROOT; };
 		86D238551BD0BC1000C75D01 /* RCTWeChat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTWeChat.m; sourceTree = SOURCE_ROOT; };
@@ -47,6 +48,7 @@
 		86D238391BD0BB9E00C75D01 = {
 			isa = PBXGroup;
 			children = (
+				86C3CF321CE4ED6D0067315A /* WechatAuthSDK.h */,
 				86D238571BD0BC2200C75D01 /* libWeChatSDK.a */,
 				86D238581BD0BC2200C75D01 /* WXApi.h */,
 				86D238591BD0BC2200C75D01 /* WXApiObject.h */,
@@ -219,8 +221,8 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../../react-native/React/**",
-					"$(SRCROOT)/../../react-native/Libraries/Image/**",
+					"$(SRCROOT)/../Example/node_modules/react-native/React/**",
+					"$(SRCROOT)/../Example/node_modules/react-native/Libraries/Image",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -237,8 +239,8 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../../react-native/React/**",
-					"$(SRCROOT)/../../react-native/Libraries/Image/**",
+					"$(SRCROOT)/../Example/node_modules/react-native/React/**",
+					"$(SRCROOT)/../Example/node_modules/react-native/Libraries/Image",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

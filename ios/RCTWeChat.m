@@ -7,10 +7,9 @@
 //
 
 #import "RCTWeChat.h"
-#import "WXApiObject.h"
-#import "Base/RCTEventDispatcher.h"
-#import "Base/RCTBridge.h"
-#import "Base/RCTLog.h"
+#import "RCTEventDispatcher.h"
+#import "RCTBridge.h"
+#import "RCTLog.h"
 #import "RCTImageLoader.h"
 #import "RCTImageUtils.h"
 
@@ -43,8 +42,7 @@ RCT_EXPORT_MODULE()
     NSString * aURLString =  [aNotification userInfo][@"url"];
     NSURL * aURL = [NSURL URLWithString:aURLString];
 
-    if ([WXApi handleOpenURL:aURL delegate:self])
-    {
+    if ([WXApi handleOpenURL:aURL delegate:self]) {
         return YES;
     } else {
         return NO;
@@ -224,7 +222,7 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
             NSString * imageURL = aData[RCTWXShareImageUrl];
 
             WXImageObject *imageObject = [WXImageObject object];
-            imageObject.imageUrl = imageURL;
+            imageObject.imageData = [NSData dataWithContentsOfFile:imageURL];
 
             [self shareToWeixinWithMediaMessage:aScene
                                           Title:title
@@ -238,13 +236,12 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
 
         } else if ([type isEqualToString:RCTWXShareTypeImageFile] || [type isEqualToString:RCTWXShareTypeImageResource]) {
             NSString * imageURL = aData[RCTWXShareImageUrl];
-            
             [self.bridge.imageLoader loadImageWithTag:imageURL callback:^(NSError *error, UIImage *image) {
                 if (image == nil){
                     callback(@[@"fail to load image resource"]);
                 } else {
                     WXImageObject *imageObject = [WXImageObject object];
-                    imageObject.imageData = RCTGetImageData([image CGImage], 1.0F);
+                    imageObject.imageData = UIImageJPEGRepresentation(image, 1.0F);
 
                     [self shareToWeixinWithMediaMessage:aScene
                                                   Title:title
