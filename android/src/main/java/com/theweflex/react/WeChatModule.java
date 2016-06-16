@@ -66,6 +66,15 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         return "RCTWeChat";
     }
 
+    /**
+     * fix Native module WeChatModule tried to override WeChatModule for module name RCTWeChat.
+     * If this was your intention, return true from WeChatModule#canOverrideExistingModule() bug
+     * @return
+     */
+    public boolean canOverrideExistingModule(){
+        return true;
+    }
+
     private static ArrayList<WeChatModule> modules = new ArrayList<>();
 
     @Override
