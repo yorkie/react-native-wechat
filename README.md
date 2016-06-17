@@ -25,10 +25,11 @@ React-Native bridge static library for WeChat SDK.
 
 And [react-native-wechat] has the following tracking data in open source world:
 
-[![NPM version][npm-image]][npm-url]
-[![Build status][travis-image]][travis-url]
-[![Dependency Status][david-image]][david-url]
-[![Downloads][downloads-image]][downloads-url]
+| type        | badge                                           |
+|-------------|-------------------------------------------------|
+| NPM         | [![NPM version][npm-image]][npm-url]            |
+| Dependency  | [![Dependency Status][david-image]][david-url]  |
+| Downloads   | [![Downloads][downloads-image]][downloads-url]  |
 
 ## Linking Steps
 
