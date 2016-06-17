@@ -2,8 +2,8 @@
 
 ## Table of Contents
 
-- [Dependencies](#dependencies)
-- [Linking Checklist](#linking-checklist)
+- [Build](#build)
+- [Linking Steps](#linking-steps)
   - [Linking iOS](#linking-ios)
   - [Linking Android with Gradle](#linking-android-with-gradle)
 - [API Documentation](#api-documentation)
@@ -14,7 +14,7 @@
 - [Authors](#authors)
 - [License](#license)
 
-## Dependencies
+## Build
 
 React-Native bridge static library for WeChat SDK.
 
@@ -22,6 +22,13 @@ React-Native bridge static library for WeChat SDK.
 |---------|------|
 | iOS     | 1.6  |
 | Android | 221  |
+
+And [react-native-wechat] has the following tracking data in open source world:
+
+[![NPM version][npm-image]][npm-url]
+[![Build status][travis-image]][travis-url]
+[![Dependency Status][david-image]][david-url]
+[![Downloads][downloads-image]][downloads-url]
 
 ## Linking Steps
 
@@ -409,6 +416,14 @@ $ npm install react-native-wechat --save
 MIT @ [WeFlex], Inc
 
 [react-native-wechat]: https://github.com/weflex/react-native-wechat
+[npm-image]: https://img.shields.io/npm/v/react-native-wechat.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/react-native-wechat
+[travis-image]: https://img.shields.io/travis/weflex/react-native-wechat.svg?style=flat-square
+[travis-url]: https://travis-ci.org/weflex/react-native-wechat
+[david-image]: http://img.shields.io/david/weflex/react-native-wechat.svg?style=flat-square
+[david-url]: https://david-dm.org/weflex/react-native-wechat
+[downloads-image]: http://img.shields.io/npm/dm/react-native-wechat.svg?style=flat-square
+[downloads-url]: https://npmjs.org/package/react-native-wechat
 [Deng Yun]: https://github.com/tdzl2003
 [Xing Zhen]: https://github.com/xing-zheng
 [Yorkie Liu]: https://github.com/yorkie
