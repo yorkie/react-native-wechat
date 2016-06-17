@@ -1,128 +1,140 @@
 ![react-native-wechat logo](./logo.jpg?raw=true)
 
+## Table of Contents
+
+- [Dependencies](#dependencies)
+- [Linking Checklist](#linking-checklist)
+  - [Linking iOS](#linking-ios)
+  - [Linking Android with Gradle](#linking-android-with-gradle)
+- [API Documentation](#api-documentation)
+- [Installation](#installation)
+- [Community](#community)
+- [Authors](#authors)
+- [License](#license)
+
+## Dependencies
+
 React-Native bridge static library for WeChat SDK.
 
-- [x] iOS
-- [x] Android
-
-Requires react-native >= 0.20.0
+| type    | num  |
+|---------|------|
+| iOS     | 1.6  |
+| Android | 221  |
 
 ## Join us at Gitter
 
 [![Join the chat at https://gitter.im/weflex/react-native-wechat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/weflex/react-native-wechat?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-## Installation
+## Linking Checklist
 
-```sh
-$ npm install react-native-wechat --save
-```
+### Linking iOS
 
-## iOS: Linking in your XCode project
+- [ ] Link `RCTWeChat` library from your `node_modules/react-native-wechat/ios` folder like react-native's 
+[Linking Libraries iOS Guidance], Note: _Don't forget to add it to "Build Phases" of your target project_.
 
-- Link `RCTWeChat` library from your `node_modules/react-native-wechat/ios` folder like its
-  [described here](http://facebook.github.io/react-native/docs/linking-libraries-ios.html).
-  Don't forget to add it to "Build Phases" of project.
-- Added the following libraries to your "Link Binary With Libraries":
-  - [x] SystemConfiguration.framework
-  - [x] CoreTelephony.framework
-  - [x] libsqlite3.0
-  - [x] libc++
-  - [x] libz
-- add `URL Schema` as your app id for `URL type` in `Targets - info`
-  ![Set URL Schema in XCode](https://res.wx.qq.com/open/zh_CN/htmledition/res/img/pic/app-access-guide/ios/image0042168b9.jpg)
-- for iOS 9 support, add `wechat` and `weixin` into `LSApplicationQueriesSchemes` in 'Targets - info - Custom iOS Target Properties'
+- [ ]  Add the following libraries to your "Link Binary with Libraries":
+  - [ ] SystemConfiguration.framework
+  - [ ] CoreTelephony.framework
+  - [ ] libsqlite3.0
+  - [ ] libc++
+  - [ ] libz
 
-Note: Make sure you have these code in `AppDelegate.m` to enable [LinkingIOS](https://facebook.github.io/react-native/docs/linkingios.html#handling-deep-links)
-```objective-c
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
-{
-  return [RCTLinkingManager application:application openURL:url
-                            sourceApplication:sourceApplication annotation:annotation];
-}
-```
-## Android: Linking to your gradle Project
+- [ ] Add "URL Schema" as your app id for "URL type" in `Targets` > `info`, See the following screenshot for the view on your XCode
+    ![Set URL Schema in XCode](https://res.wx.qq.com/open/zh_CN/htmledition/res/img/pic/app-access-guide/ios/image0042168b9.jpg)
 
-- Add following lines into `android/settings.gradle`
+- [ ] Only for iOS 9, add `wechat` and `weixin` into `LSApplicationQueriesSchemes` in `Targets` > `info` > `Custom iOS Target Properties`.
 
-```
-include ':RCTWeChat'
-project(':RCTWeChat').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-wechat/android')
-```
+- [ ] Code the following in `AppDelegate.m` of your project to enable [LinkingIOS]
 
-- Add following lines into your `android/app/build.gradle` in section `dependencies`
-
-```
-...
-dependencies {
-   ...
-   compile project(':RCTWeChat')    // Add this line only.
-}
-```
-- Add following lines into `MainActivity.java`
-
-```java
-import com.theweflex.react.WeChatPackage;       // Add this line before public class MainActivity
-
-...
-
-/**
- * A list of packages used by the app. If the app uses additional views
- * or modules besides the default ones, add more packages here.
- */
-@Override
-protected List<ReactPackage> getPackages() {
-    return Arrays.<ReactPackage>asList(
-        new MainReactPackage()
-        , new WeChatPackage()        // Add this line
-    );
-}
-```
-
-- Create a package named 'wxapi' in your application package and a class named 'WXEntryActivity' in it. This is needed to get request and response from wechat.
-
-```java
-package your.package.wxapi;
-
-import android.app.Activity;
-import android.os.Bundle;
-
-import com.theweflex.react.WeChatModule;
-
-public class WXEntryActivity extends Activity{
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        WeChatModule.handleIntent(getIntent());
-        finish();
+    ```objective-c
+    - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+    sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+    {
+      return [RCTLinkingManager application:application openURL:url
+                                sourceApplication:sourceApplication annotation:annotation];
     }
-}
-```
+    ```
 
-- Add activity declare in your AndroidManifest.xml
+### Linking Android with Gradle
 
-```
-<manifest>
-  ...
-  <application>
+- [ ] Add following lines into `android/settings.gradle`
+
+    ```gradle
+    include ':RCTWeChat'
+    project(':RCTWeChat').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-wechat/android')
+    ```
+
+- [ ] Add following lines into your `android/app/build.gradle` in section `dependencies`
+
+    ```gradle
+    dependencies {
+      compile project(':RCTWeChat')    // Add this line only.
+    }
+    ```
+
+- [ ] Add following lines into `MainActivity.java`
+
+    ```java
+    import com.theweflex.react.WeChatPackage;       // Add this line before public class MainActivity
     ...
-    <!-- 微信Activity -->
-    <activity
-      android:name=".wxapi.WXEntryActivity"
-      android:label="@string/app_name"
-      android:exported="true"
-      />
-  </application>
-</manifest>
-```
 
-- Add these lines to 'proguard-rules.pro':
+    /**
+     * A list of packages used by the app. If the app uses additional views
+     * or modules besides the default ones, add more packages here.
+     */
+    @Override
+    protected List<ReactPackage> getPackages() {
+      return Arrays.<ReactPackage>asList(
+        new MainReactPackage(), 
+        new WeChatPackage()        // Add this line
+      );
+    }
+    ```
 
-```
--keep class com.tencent.mm.sdk.** {
-   *;
-}
-```
+- [ ] Create a package named 'wxapi' in your application package and a class named 'WXEntryActivity' in it. 
+      This is needed to get request and response from wechat.
+
+    ```java
+    package your.package.wxapi;
+
+    import android.app.Activity;
+    import android.os.Bundle;
+    import com.theweflex.react.WeChatModule;
+
+    public class WXEntryActivity extends Activity{
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            WeChatModule.handleIntent(getIntent());
+            finish();
+        }
+    }
+    ```
+
+- [ ] Add activity declare in your AndroidManifest.xml
+
+    ```xml
+    <manifest>
+      ...
+      <application>
+        ...
+        <!-- 微信Activity -->
+        <activity
+          android:name=".wxapi.WXEntryActivity"
+          android:label="@string/app_name"
+          android:exported="true"
+          />
+      </application>
+    </manifest>
+    ```
+
+- [ ] Add these lines to 'proguard-rules.pro':
+
+    ```
+    -keep class com.tencent.mm.sdk.** {
+       *;
+    }
+    ```
 
 ## API Documentation
 
@@ -367,10 +379,21 @@ Receive result for shareToTimeline and shareToSession
 
 For more details, visit [WeChat SDK Documentation](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=1417674108&token=&lang=zh_CN)
 
+## Installation
+
+```sh
+$ npm install react-native-wechat --save
+```
+
+## Community
+
+- [Join us at gitter](https://gitter.im/weflex/react-native-wechat?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Authors
 
-- [Yorkie Liu](https://github.com/yorkie) from [WeFlex](https://github.com/weflex)
 - [Deng Yun](https://github.com/tdzl2003) from [React-Native-CN](https://github.com/reactnativecn)
+- [Xing Zhen](https://github.com/xing-zheng)
+- [Yorkie Liu](https://github.com/yorkie) from [WeFlex](https://github.com/weflex)
 
 ## License
 
