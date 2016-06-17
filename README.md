@@ -1,130 +1,155 @@
 ![react-native-wechat logo](./logo.jpg?raw=true)
 
-React-Native bridge static library for WeChat SDK.
+## Table of Contents
 
-- [x] iOS
-- [x] Android
+- [Build](#build)
+- [Linking Steps](#linking-steps)
+  - [Linking iOS](#linking-ios)
+  - [Linking Android with Gradle](#linking-android-with-gradle)
+- [API Documentation](#api-documentation)
+  - [Methods](#methods)
+  - [Events](#events)
+- [Installation](#installation)
+- [Community](#community)
+- [Authors](#authors)
+- [License](#license)
 
-Requires react-native >= 0.20.0
+## Build
 
-## Join us at Gitter
+React-Native bridge static library for WeChat SDK which requires:
 
-[![Join the chat at https://gitter.im/weflex/react-native-wechat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/weflex/react-native-wechat?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+- [x] iOS SDK 1.6
+- [x] Android SDK 221
 
-## Installation
+And [react-native-wechat] has the following tracking data in open source world:
 
-```sh
-$ npm install react-native-wechat --save
-```
+| type        | badge                                           |
+|-------------|-------------------------------------------------|
+| NPM         | [![NPM version][npm-image]][npm-url]            |
+| Dependency  | [![Dependency Status][david-image]][david-url]  |
+| Downloads   | [![Downloads][downloads-image]][downloads-url]  |
 
-## iOS: Linking in your XCode project
+## Linking Steps
 
-- Link `RCTWeChat` library from your `node_modules/react-native-wechat/ios` folder like its
-  [described here](http://facebook.github.io/react-native/docs/linking-libraries-ios.html).
-  Don't forget to add it to "Build Phases" of project.
-- Added the following libraries to your "Link Binary With Libraries":
-  - [x] SystemConfiguration.framework
-  - [x] CoreTelephony.framework
-  - [x] libsqlite3.0
-  - [x] libc++
-  - [x] libz
-- add `URL Schema` as your app id for `URL type` in `Targets - info`
-  ![Set URL Schema in XCode](https://res.wx.qq.com/open/zh_CN/htmledition/res/img/pic/app-access-guide/ios/image0042168b9.jpg)
-- for iOS 9 support, add `wechat` and `weixin` into `LSApplicationQueriesSchemes` in 'Targets - info - Custom iOS Target Properties'
+Before using this library to work with your app, you should follow the below steps to link this library with
+your app project, _if there is something that not working, please check the list here_.
 
-Note: Make sure you have these code in `AppDelegate.m` to enable [LinkingIOS](https://facebook.github.io/react-native/docs/linkingios.html#handling-deep-links)
-```objective-c
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
-{
-  return [RCTLinkingManager application:application openURL:url
-                            sourceApplication:sourceApplication annotation:annotation];
-}
-```
-## Android: Linking to your gradle Project
+### Linking iOS
+
+- Link `RCTWeChat` library from your `node_modules/react-native-wechat/ios` folder like react-native's 
+[Linking Libraries iOS Guidance], Note: _Don't forget to add it to "Build Phases" of your target project_.
+
+- Add the following libraries to your "Link Binary with Libraries":
+
+    ```
+    SystemConfiguration.framework
+    CoreTelephony.framework
+    libsqlite3.0
+    libc++
+    libz
+    ```
+
+- Add "URL Schema" as your app id for "URL type" in `Targets` > `info`, See the following screenshot for the view on your XCode
+    ![Set URL Schema in XCode](https://res.wx.qq.com/open/zh_CN/htmledition/res/img/pic/app-access-guide/ios/image0042168b9.jpg)
+
+- Only for iOS 9, add `wechat` and `weixin` into `LSApplicationQueriesSchemes` in `Targets` > `info` > `Custom iOS Target Properties`.
+
+- Code the following in `AppDelegate.m` of your project to enable [LinkingIOS]
+
+    ```objective-c
+    - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+    sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+    {
+      return [RCTLinkingManager application:application openURL:url
+                                sourceApplication:sourceApplication annotation:annotation];
+    }
+    ```
+
+### Linking Android with Gradle
 
 - Add following lines into `android/settings.gradle`
 
-```
-include ':RCTWeChat'
-project(':RCTWeChat').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-wechat/android')
-```
+    ```gradle
+    include ':RCTWeChat'
+    project(':RCTWeChat').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-wechat/android')
+    ```
 
 - Add following lines into your `android/app/build.gradle` in section `dependencies`
 
-```
-...
-dependencies {
-   ...
-   compile project(':RCTWeChat')    // Add this line only.
-}
-```
+    ```gradle
+    dependencies {
+      compile project(':RCTWeChat')    // Add this line only.
+    }
+    ```
+
 - Add following lines into `MainActivity.java`
 
-```java
-import com.theweflex.react.WeChatPackage;       // Add this line before public class MainActivity
+    ```java
+    import com.theweflex.react.WeChatPackage;       // Add this line before public class MainActivity
+    ...
 
-...
-
-/**
- * A list of packages used by the app. If the app uses additional views
- * or modules besides the default ones, add more packages here.
- */
-@Override
-protected List<ReactPackage> getPackages() {
-    return Arrays.<ReactPackage>asList(
-        new MainReactPackage()
-        , new WeChatPackage()        // Add this line
-    );
-}
-```
-
-- Create a package named 'wxapi' in your application package and a class named 'WXEntryActivity' in it. This is needed to get request and response from wechat.
-
-```java
-package your.package.wxapi;
-
-import android.app.Activity;
-import android.os.Bundle;
-
-import com.theweflex.react.WeChatModule;
-
-public class WXEntryActivity extends Activity{
+    /**
+     * A list of packages used by the app. If the app uses additional views
+     * or modules besides the default ones, add more packages here.
+     */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected List<ReactPackage> getPackages() {
+      return Arrays.<ReactPackage>asList(
+        new MainReactPackage(), 
+        new WeChatPackage()        // Add this line
+      );
+    }
+    ```
+
+- Create a package named 'wxapi' in your application package and a class named 'WXEntryActivity' in it. 
+      This is needed to get request and response from wechat.
+
+    ```java
+    package your.package.wxapi;
+
+    import android.app.Activity;
+    import android.os.Bundle;
+    import com.theweflex.react.WeChatModule;
+
+    public class WXEntryActivity extends Activity{
+      @Override
+      protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         WeChatModule.handleIntent(getIntent());
         finish();
+      }
     }
-}
-```
+    ```
 
 - Add activity declare in your AndroidManifest.xml
 
-```
-<manifest>
-  ...
-  <application>
-    ...
-    <!-- 微信Activity -->
-    <activity
-      android:name=".wxapi.WXEntryActivity"
-      android:label="@string/app_name"
-      android:exported="true"
-      />
-  </application>
-</manifest>
-```
+    ```xml
+    <manifest>
+      <application>
+        <!-- 微信Activity -->
+        <activity
+          android:name=".wxapi.WXEntryActivity"
+          android:label="@string/app_name"
+          android:exported="true"
+          />
+      </application>
+    </manifest>
+    ```
 
 - Add these lines to 'proguard-rules.pro':
 
-```
--keep class com.tencent.mm.sdk.** {
-   *;
-}
-```
+    ```pro
+    -keep class com.tencent.mm.sdk.** {
+       *;
+    }
+    ```
 
 ## API Documentation
+
+### Methods
+
+[react-native-wechat] supports the following methods to get information and do something functions
+with WeChat app.
 
 #### registerApp(appid)
 
@@ -186,145 +211,138 @@ Share a message to timeline (朋友圈).
     - {String} `fileExtension` Provide the file type if type equals `file`.
 
 These example code need 'react-native-chat' and 'react-native-fs' plugin.
+
 ```js
 import * as WeChat from 'react-native-wechat';
 import fs from 'react-native-fs';
-var resolveAssetSource = require('resolveAssetSource'); // along with Image component
+let resolveAssetSource = require('resolveAssetSource');
+
 // Code example to share text message:
 try {
-    var result = await  WeChat.shareToTimeline({type: 'text', description: 'I\'m Wechat, :)'});
-    console.log('share text message to time line successful', result);
-}
-catch (e) {
-    console.log('share text message to time line failed', e);
+  let result = await WeChat.shareToTimeline({
+    type: 'text', 
+    description: 'hello, wechat'
+  });
+  console.log('share text message to time line successful:', result);
+} catch (e) {
+  console.error('share text message to time line failed with:', e);
 }
 
 // Code example to share image url:
 // Share raw http(s) image from web will always fail with unknown reason, please use image file or image resource instead
 try {
-    var result = await WeChat.shareToTimeline({
-        type: 'imageUrl',
-        title: 'web image',
-        description: 'share web image to time line',
-        mediaTagName: 'email signature',
-        messageAction: undefined,
-        messageExt: undefined,
-        imageUrl: 'http://www.ncloud.hk/email-signature-262x100.png'
-    });
-    console.log('share image url to time line successful', result);
-}
-catch (e) {
-    console.log('share image url to time line failed', e);
+  let result = await WeChat.shareToTimeline({
+    type: 'imageUrl',
+    title: 'web image',
+    description: 'share web image to time line',
+    mediaTagName: 'email signature',
+    messageAction: undefined,
+    messageExt: undefined,
+    imageUrl: 'http://www.ncloud.hk/email-signature-262x100.png'
+  });
+  console.log('share image url to time line successful:', result);
+} catch (e) {
+  console.log('share image url to time line failed with:', e);
 }
 
 // Code example to share image file:
 try {
-    var rootPath = fs.DocumentDirectoryPath;
-    var savePath = rootPath + '/email-signature-262x100.png';
-    console.log({savePath});
-    /*
-     * savePath on iOS may be:
-     *  /var/mobile/Containers/Data/Application/B1308E13-35F1-41AB-A20D-3117BE8EE8FE/Documents/email-signature-262x100.png
-     *
-     * savePath on Android may be:
-     *  /data/data/com.wechatsample/files/email-signature-262x100.png
-     * */
-
-    await fs.downloadFile('http://www.ncloud.hk/email-signature-262x100.png', savePath);
-
-    var result = await WeChat.shareToTimeline({
-        type: 'imageFile',
-        title: 'image file download from network',
-        description: 'share image file to time line',
-        mediaTagName: 'email signature',
-        messageAction: undefined,
-        messageExt: undefined,
-        imageUrl: "file://" + savePath // require the prefix on both iOS and Android platform
-    });
-
-    console.log('share image file to time line successful', result);
-}
-catch (e) {
-    console.log('share image file to time line failed', e);
+  let rootPath = fs.DocumentDirectoryPath;
+  let savePath = rootPath + '/email-signature-262x100.png';
+  console.log(savePath);
+  
+  /*
+   * savePath on iOS may be:
+   *  /var/mobile/Containers/Data/Application/B1308E13-35F1-41AB-A20D-3117BE8EE8FE/Documents/email-signature-262x100.png
+   *
+   * savePath on Android may be:
+   *  /data/data/com.wechatsample/files/email-signature-262x100.png
+   **/
+  await fs.downloadFile('http://www.ncloud.hk/email-signature-262x100.png', savePath);
+  let result = await WeChat.shareToTimeline({
+    type: 'imageFile',
+    title: 'image file download from network',
+    description: 'share image file to time line',
+    mediaTagName: 'email signature',
+    messageAction: undefined,
+    messageExt: undefined,
+    imageUrl: "file://" + savePath // require the prefix on both iOS and Android platform
+  });
+  console.log('share image file to time line successful:', result);
+} catch (e) {
+  console.error('share image file to time line failed with:', e);
 }
 
 // Code example to share image resource:
 try {
-    var imageResource = require('./email-signature-262x100.png');
-    var result = await WeChat.shareToTimeline({
-        type: 'imageResource',
-        title: 'resource image',
-        description: 'share resource image to time line',
-        mediaTagName: 'email signature',
-        messageAction: undefined,
-        messageExt: undefined,
-        imageUrl: resolveAssetSource(imageResource).uri
-    });
-    console.log('share resource image to time line successful', result);
+  let imageResource = require('./email-signature-262x100.png');
+  let result = await WeChat.shareToTimeline({
+    type: 'imageResource',
+    title: 'resource image',
+    description: 'share resource image to time line',
+    mediaTagName: 'email signature',
+    messageAction: undefined,
+    messageExt: undefined,
+    imageUrl: resolveAssetSource(imageResource).uri
+  });
+  console.log('share resource image to time line successful', result);
 }
 catch (e) {
-    console.log('share resource image to time line failed', e);
+  console.error('share resource image to time line failed', e);
 }
-
 
 // Code example to download an word file from web, then share it to WeChat session
 // only support to share to session but time line
 // iOS code use DocumentDirectoryPath
 try {
-    var rootPath = fs.DocumentDirectoryPath;
-    var fileName = 'signature_method.doc';    
-    var savePath = rootPath + '/' + fileName;
-    /*
-     * savePath on iOS may be:
-     *  /var/mobile/Containers/Data/Application/B1308E13-35F1-41AB-A20D-3117BE8EE8FE/Documents/signature_method.doc
-     *
-     * */
+  let rootPath = fs.DocumentDirectoryPath;
+  let fileName = 'signature_method.doc';
+  /*
+   * savePath on iOS may be:
+   *  /var/mobile/Containers/Data/Application/B1308E13-35F1-41AB-A20D-3117BE8EE8FE/Documents/signature_method.doc
+   **/ 
+  let savePath = rootPath + '/' + fileName;
 
-    await fs.downloadFile('https://open.weixin.qq.com/zh_CN/htmledition/res/assets/signature_method.doc', savePath);
-
-    var result = await WeChat.shareToSession({
-        type: 'file',
-        title: fileName, // WeChat app treat title as file name
-        description: 'share word file to chat session',
-        mediaTagName: 'word file',
-        messageAction: undefined,
-        messageExt: undefined,
-        filePath: savePath,
-        fileExtension: '.doc'
-    });
-
-    console.log('share word file to chat session successful', result);
+  await fs.downloadFile('https://open.weixin.qq.com/zh_CN/htmledition/res/assets/signature_method.doc', savePath);
+  let result = await WeChat.shareToSession({
+    type: 'file',
+    title: fileName, // WeChat app treat title as file name
+    description: 'share word file to chat session',
+    mediaTagName: 'word file',
+    messageAction: undefined,
+    messageExt: undefined,
+    filePath: savePath,
+    fileExtension: '.doc'
+  });
+  console.log('share word file to chat session successful', result);
+} catch (e) {
+  console.error('share word file to chat session failed', e);
 }
-catch (e) {
-    console.log('share word file to chat session failed', e);
-}
+
 //android code use ExternalDirectoryPath
 try {
-    var rootPath = fs.ExternalDirectoryPath;
-    var fileName = 'signature_method.doc';
-    var savePath = rootPath + '/' + fileName;
-    /*
-     * savePath on Android may be:
-     *  /storage/emulated/0/Android/data/com.wechatsample/files/signature_method.doc
-     * */
-
-    await fs.downloadFile('https://open.weixin.qq.com/zh_CN/htmledition/res/assets/signature_method.doc', savePath);
-
-    var result = await WeChat.shareToSession({
-        type: 'file',
-        title: fileName, // WeChat app treat title as file name
-        description: 'share word file to chat session',
-        mediaTagName: 'word file',
-        messageAction: undefined,
-        messageExt: undefined,
-        filePath: savePath,
-        fileExtension: '.doc'
-    });
-
-    console.log('share word file to chat session successful', result);
+  let rootPath = fs.ExternalDirectoryPath;
+  let fileName = 'signature_method.doc';
+  /*
+   * savePath on Android may be:
+   *  /storage/emulated/0/Android/data/com.wechatsample/files/signature_method.doc
+   **/
+  let savePath = rootPath + '/' + fileName;
+  await fs.downloadFile('https://open.weixin.qq.com/zh_CN/htmledition/res/assets/signature_method.doc', savePath);
+  let result = await WeChat.shareToSession({
+    type: 'file',
+    title: fileName, // WeChat app treat title as file name
+    description: 'share word file to chat session',
+    mediaTagName: 'word file',
+    messageAction: undefined,
+    messageExt: undefined,
+    filePath: savePath,
+    fileExtension: '.doc'
+  });
+  console.log('share word file to chat session successful', result);
 }
 catch (e) {
-    console.log('share word file to chat session failed', e);
+  console.error('share word file to chat session failed', e);
 }
 ```
 
@@ -346,32 +364,68 @@ Similar to addListener, except that the listener is removed after it is invoked 
 
 Removes all of the registered listeners, including those registered as listener maps.
 
-## Event Types:
+### Events
 
-#### SendAuth.Resp
+[react-native-wechat] supports some events which your can register in JavaScript side and get fired when
+something happens
 
-Receive result for sendAuthRequest
-    - errCode {int} 
-    - errStr {String} Error message if any error occured.
-    - openId {String} 
-    - code {String} Authorize code
-    - url {String}
-    - lang {String}
-    - country {String}
+#### `SendAuth.Resp`
 
-#### SendMessageToWX.Resp
+Receive result for `sendAuthRequest` and arguments would be:
 
-Receive result for shareToTimeline and shareToSession
-    - errCode {int} be 0 if auth successed.
-    - errStr {String} Error message if any error occured.
+| name    | type   | description                         |
+|---------|--------|-------------------------------------|
+| errCode | Number |                                     |
+| errStr  | String | Error message if any error occurred |
+| openId  | String |                                     |
+| code    | String | Authorization code                  |
+| url     | String | The URL string                      |
+| lang    | String | The user language                   | 
+| country | String | The user country                    |
 
-For more details, visit [WeChat SDK Documentation](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=1417674108&token=&lang=zh_CN)
+#### `SendMessageToWX.Resp`
+
+Receive result for `shareToTimeline` and `shareToSession` and arguments would be:
+
+| name    | type   | description                         |
+|---------|--------|-------------------------------------|
+| errCode | Number | 0 if authorization successed        |
+| errStr  | String | Error message if any error occurred |
+
+For more details, visit [WeChat SDK].
+
+## Installation
+
+```sh
+$ npm install react-native-wechat --save
+```
+
+## Community
+
+- [Join us at gitter](https://gitter.im/weflex/react-native-wechat?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Authors
 
-- [Yorkie Liu](https://github.com/yorkie) from [WeFlex](https://github.com/weflex)
-- [Deng Yun](https://github.com/tdzl2003) from [React-Native-CN](https://github.com/reactnativecn)
+- [Deng Yun] from [react-native-cn]
+- [Xing Zhen]
+- [Yorkie Liu] from [WeFlex]
 
 ## License
 
-MIT @ WeFlex,Inc
+MIT @ [WeFlex], Inc
+
+[react-native-wechat]: https://github.com/weflex/react-native-wechat
+[npm-image]: https://img.shields.io/npm/v/react-native-wechat.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/react-native-wechat
+[travis-image]: https://img.shields.io/travis/weflex/react-native-wechat.svg?style=flat-square
+[travis-url]: https://travis-ci.org/weflex/react-native-wechat
+[david-image]: http://img.shields.io/david/weflex/react-native-wechat.svg?style=flat-square
+[david-url]: https://david-dm.org/weflex/react-native-wechat
+[downloads-image]: http://img.shields.io/npm/dm/react-native-wechat.svg?style=flat-square
+[downloads-url]: https://npmjs.org/package/react-native-wechat
+[Deng Yun]: https://github.com/tdzl2003
+[Xing Zhen]: https://github.com/xing-zheng
+[Yorkie Liu]: https://github.com/yorkie
+[WeFlex]: https://github.com/weflex
+[react-native-cn]: https://github.com/reactnativecn
+[WeChat SDK]: https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=1417674108&token=&lang=zh_CN
