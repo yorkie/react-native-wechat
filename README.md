@@ -7,6 +7,8 @@
   - [Linking iOS](#linking-ios)
   - [Linking Android with Gradle](#linking-android-with-gradle)
 - [API Documentation](#api-documentation)
+  - [Methods](#methods)
+  - [Events](#events)
 - [Installation](#installation)
 - [Community](#community)
 - [Authors](#authors)
@@ -21,30 +23,32 @@ React-Native bridge static library for WeChat SDK.
 | iOS     | 1.6  |
 | Android | 221  |
 
-## Join us at Gitter
+## Linking Steps
 
-[![Join the chat at https://gitter.im/weflex/react-native-wechat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/weflex/react-native-wechat?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-## Linking Checklist
+Before using this library to work with your app, you should follow the below steps to link this library with
+your app project, _if there is something that not working, please check the list here_.
 
 ### Linking iOS
 
-- [ ] Link `RCTWeChat` library from your `node_modules/react-native-wechat/ios` folder like react-native's 
+- Link `RCTWeChat` library from your `node_modules/react-native-wechat/ios` folder like react-native's 
 [Linking Libraries iOS Guidance], Note: _Don't forget to add it to "Build Phases" of your target project_.
 
-- [ ]  Add the following libraries to your "Link Binary with Libraries":
-  - [ ] SystemConfiguration.framework
-  - [ ] CoreTelephony.framework
-  - [ ] libsqlite3.0
-  - [ ] libc++
-  - [ ] libz
+- Add the following libraries to your "Link Binary with Libraries":
 
-- [ ] Add "URL Schema" as your app id for "URL type" in `Targets` > `info`, See the following screenshot for the view on your XCode
+    ```
+    SystemConfiguration.framework
+    CoreTelephony.framework
+    libsqlite3.0
+    libc++
+    libz
+    ```
+
+- Add "URL Schema" as your app id for "URL type" in `Targets` > `info`, See the following screenshot for the view on your XCode
     ![Set URL Schema in XCode](https://res.wx.qq.com/open/zh_CN/htmledition/res/img/pic/app-access-guide/ios/image0042168b9.jpg)
 
-- [ ] Only for iOS 9, add `wechat` and `weixin` into `LSApplicationQueriesSchemes` in `Targets` > `info` > `Custom iOS Target Properties`.
+- Only for iOS 9, add `wechat` and `weixin` into `LSApplicationQueriesSchemes` in `Targets` > `info` > `Custom iOS Target Properties`.
 
-- [ ] Code the following in `AppDelegate.m` of your project to enable [LinkingIOS]
+- Code the following in `AppDelegate.m` of your project to enable [LinkingIOS]
 
     ```objective-c
     - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
@@ -57,14 +61,14 @@ React-Native bridge static library for WeChat SDK.
 
 ### Linking Android with Gradle
 
-- [ ] Add following lines into `android/settings.gradle`
+- Add following lines into `android/settings.gradle`
 
     ```gradle
     include ':RCTWeChat'
     project(':RCTWeChat').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-wechat/android')
     ```
 
-- [ ] Add following lines into your `android/app/build.gradle` in section `dependencies`
+- Add following lines into your `android/app/build.gradle` in section `dependencies`
 
     ```gradle
     dependencies {
@@ -72,7 +76,7 @@ React-Native bridge static library for WeChat SDK.
     }
     ```
 
-- [ ] Add following lines into `MainActivity.java`
+- Add following lines into `MainActivity.java`
 
     ```java
     import com.theweflex.react.WeChatPackage;       // Add this line before public class MainActivity
@@ -91,7 +95,7 @@ React-Native bridge static library for WeChat SDK.
     }
     ```
 
-- [ ] Create a package named 'wxapi' in your application package and a class named 'WXEntryActivity' in it. 
+- Create a package named 'wxapi' in your application package and a class named 'WXEntryActivity' in it. 
       This is needed to get request and response from wechat.
 
     ```java
@@ -111,7 +115,7 @@ React-Native bridge static library for WeChat SDK.
     }
     ```
 
-- [ ] Add activity declare in your AndroidManifest.xml
+- Add activity declare in your AndroidManifest.xml
 
     ```xml
     <manifest>
@@ -128,15 +132,20 @@ React-Native bridge static library for WeChat SDK.
     </manifest>
     ```
 
-- [ ] Add these lines to 'proguard-rules.pro':
+- Add these lines to 'proguard-rules.pro':
 
-    ```
+    ```pro
     -keep class com.tencent.mm.sdk.** {
        *;
     }
     ```
 
 ## API Documentation
+
+### Methods
+
+[react-native-wechat] supports the following methods to get information and do something functions
+with WeChat app.
 
 #### registerApp(appid)
 
@@ -358,26 +367,35 @@ Similar to addListener, except that the listener is removed after it is invoked 
 
 Removes all of the registered listeners, including those registered as listener maps.
 
-## Event Types:
+### Events
 
-#### SendAuth.Resp
+[react-native-wechat] supports some events which your can register in JavaScript side and get fired when
+something happens
 
-Receive result for sendAuthRequest
-    - errCode {int} 
-    - errStr {String} Error message if any error occured.
-    - openId {String} 
-    - code {String} Authorize code
-    - url {String}
-    - lang {String}
-    - country {String}
+#### `SendAuth.Resp`
 
-#### SendMessageToWX.Resp
+Receive result for `sendAuthRequest` and arguments would be:
 
-Receive result for shareToTimeline and shareToSession
-    - errCode {int} be 0 if auth successed.
-    - errStr {String} Error message if any error occured.
+| name    | type   | description                         |
+|---------|--------|-------------------------------------|
+| errCode | Number |                                     |
+| errStr  | String | Error message if any error occurred |
+| openId  | String |                                     |
+| code    | String | Authorization code                  |
+| url     | String | The URL string                      |
+| lang    | String | The user language                   | 
+| country | String | The user country                    |
 
-For more details, visit [WeChat SDK Documentation](https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=1417674108&token=&lang=zh_CN)
+#### `SendMessageToWX.Resp`
+
+Receive result for `shareToTimeline` and `shareToSession` and arguments would be:
+
+| name    | type   | description                         |
+|---------|--------|-------------------------------------|
+| errCode | Number | 0 if authorization successed        |
+| errStr  | String | Error message if any error occurred |
+
+For more details, visit [WeChat SDK].
 
 ## Installation
 
@@ -391,10 +409,18 @@ $ npm install react-native-wechat --save
 
 ## Authors
 
-- [Deng Yun](https://github.com/tdzl2003) from [React-Native-CN](https://github.com/reactnativecn)
-- [Xing Zhen](https://github.com/xing-zheng)
-- [Yorkie Liu](https://github.com/yorkie) from [WeFlex](https://github.com/weflex)
+- [Deng Yun] from [react-native-cn]
+- [Xing Zhen]
+- [Yorkie Liu] from [WeFlex]
 
 ## License
 
-MIT @ WeFlex,Inc
+MIT @ [WeFlex], Inc
+
+[react-native-wechat]: https://github.com/weflex/react-native-wechat
+[Deng Yun]: https://github.com/tdzl2003
+[Xing Zhen]: https://github.com/xing-zheng
+[Yorkie Liu]: https://github.com/yorkie
+[WeFlex]: https://github.com/weflex
+[react-native-cn]: https://github.com/reactnativecn
+[WeChat SDK]: https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=1417674108&token=&lang=zh_CN
