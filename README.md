@@ -403,6 +403,7 @@ $ npm install react-native-wechat --save
 ## Community
 
 - [Join us at gitter](https://gitter.im/weflex/react-native-wechat?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+- QQ Group: 336021910
 
 ## Authors
 
