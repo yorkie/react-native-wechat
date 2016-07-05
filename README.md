@@ -152,7 +152,15 @@ your app project, _if there is something that not working, please check the list
 with WeChat app.
 
 #### registerApp(appid)
+You should be the global registration, and only one time
+```
+var WeChat=require('react-native-wechat');
 
+// If you register here
+componentDidMount (){
+  WeChat.registerApp('wxb3b6cb97e4c0afbf')
+}
+```
 - {String} `appid` the appid you get from WeChat dashboard
 - returns {Promise} 
 
