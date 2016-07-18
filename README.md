@@ -439,3 +439,5 @@ MIT @ [WeFlex], Inc
 [WeFlex]: https://github.com/weflex
 [react-native-cn]: https://github.com/reactnativecn
 [WeChat SDK]: https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=1417674108&token=&lang=zh_CN
+[Linking Libraries iOS Guidance]:
+https://developer.apple.com/library/ios/recipes/xcode_help-project_editor/Articles/AddingaLibrarytoaTarget.html
