@@ -355,7 +355,7 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
 	    body[@"lang"] = r.lang;
 	    body[@"country"] =r.country;
 	    body[@"type"] = @"SendMessageToWX.Resp";
-	    [self.bridge.eventDispatcher sendDeviceEventWithName:@"WeChat_Resp" body:body];
+	    [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
 	} else if ([resp isKindOfClass:[SendAuthResp class]]) {
 	    SendAuthResp *r = (SendAuthResp *)resp;
 	    NSMutableDictionary *body = @{@"errCode":@(r.errCode)}.mutableCopy;
@@ -368,10 +368,10 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
 	    if (resp.errCode == WXSuccess)
 	    {
 	        [body addEntriesFromDictionary:@{@"appid":self.appId, @"code" :r.code}];
-	        [self.bridge.eventDispatcher sendDeviceEventWithName:@"WeChat_Resp" body:body];
+	        [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
 	    }
 	    else {
-	        [self.bridge.eventDispatcher sendDeviceEventWithName:@"WeChat_Resp" body:body];
+	        [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
 	    }
 	}
 }

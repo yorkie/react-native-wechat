@@ -27,6 +27,8 @@
 #define RCTWXShareWebpageUrl @"webpageUrl"
 #define RCTWXShareImageUrl @"imageUrl"
 
+#define RCTWXEventName @"WeChat_Resp"
+
 @interface RCTWeChat : NSObject <RCTBridgeModule, WXApiDelegate>
 
 @property NSString* appId;
