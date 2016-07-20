@@ -12,6 +12,7 @@
 
 // define share type constants
 #define RCTWXShareTypeNews @"news"
+#define RCTWXShareTypeThumbImageUrl @"thumbImage"
 #define RCTWXShareTypeImageUrl @"imageUrl"
 #define RCTWXShareTypeImageFile @"imageFile"
 #define RCTWXShareTypeImageResource @"imageResource"

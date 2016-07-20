@@ -8,9 +8,9 @@
 
 #import "RCTWeChat.h"
 #import "WXApiObject.h"
-#import "Base/RCTEventDispatcher.h"
-#import "Base/RCTBridge.h"
-#import "Base/RCTLog.h"
+#import "RCTEventDispatcher.h"
+#import "RCTBridge.h"
+#import "RCTLog.h"
 #import "RCTImageLoader.h"
 #import "RCTImageUtils.h"
 
@@ -237,15 +237,14 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
                                        callBack:callback];
 
         } else if ([type isEqualToString:RCTWXShareTypeImageFile] || [type isEqualToString:RCTWXShareTypeImageResource]) {
-            NSString * imageURL = aData[RCTWXShareImageUrl];
-            
-            [self.bridge.imageLoader loadImageWithTag:imageURL callback:^(NSError *error, UIImage *image) {
+            NSURLRequest *imageRequest = [NSURLRequest requestWithURL:aData[RCTWXShareImageUrl]];
+            [self.bridge.imageLoader loadImageWithURLRequest:imageRequest callback:^(NSError *error, UIImage *image) {
                 if (image == nil){
                     callback(@[@"fail to load image resource"]);
                 } else {
                     WXImageObject *imageObject = [WXImageObject object];
-                    imageObject.imageData = RCTGetImageData([image CGImage], 1.0F);
-
+                    imageObject.imageData = UIImagePNGRepresentation(image);
+                    
                     [self shareToWeixinWithMediaMessage:aScene
                                                   Title:title
                                             Description:description
@@ -255,10 +254,9 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
                                              ThumbImage:aThumbImage
                                                MediaTag:mediaTagName
                                                callBack:callback];
-
+                    
                 }
             }];
-
         } else if ([type isEqualToString:RCTWXShareTypeFile]) {
             NSString * filePath = aData[@"filePath"];
             NSString * fileExtension = aData[@"fileExtension"];
@@ -286,13 +284,12 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
 
 - (void)shareToWeixinWithData:(NSDictionary *)aData scene:(int)aScene callback:(RCTResponseSenderBlock)aCallBack
 {
-    NSString *imageUrl = aData[@"thumbImage"];
+    NSString *imageUrl = aData[RCTWXShareTypeThumbImageUrl];
     if (imageUrl.length && _bridge.imageLoader) {
-        [_bridge.imageLoader loadImageWithTag:imageUrl size:CGSizeMake(100, 100) scale:1 resizeMode:RCTResizeModeStretch progressBlock:nil completionBlock:
-            ^(NSError *error, UIImage *image) {
-                [self shareToWeixinWithData:aData thumbImage:image scene:aScene callBack:aCallBack];
-            }
-         ];
+        NSURLRequest *imageRequest = [NSURLRequest requestWithURL:aData[RCTWXShareTypeThumbImageUrl]];
+        [_bridge.imageLoader loadImageWithURLRequest:imageRequest size:CGSizeMake(100, 100) scale:1 clipped:FALSE resizeMode:RCTResizeModeStretch progressBlock:nil completionBlock:^(NSError *error, UIImage *image) {
+            [self shareToWeixinWithData:aData thumbImage:image scene:aScene callBack:aCallBack];
+        }];
     } else {
         [self shareToWeixinWithData:aData thumbImage:nil scene:aScene callBack:aCallBack];
     }

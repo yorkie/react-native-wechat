@@ -219,8 +219,8 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../../react-native/React/**",
-					"$(SRCROOT)/../../react-native/Libraries/Image/**",
+					"$(SRCROOT)/../node_modules/react-native/React/**",
+					"$(SRCROOT)/../node_modules/react-native/Libraries/Image/**",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -237,8 +237,8 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../../react-native/React/**",
-					"$(SRCROOT)/../../react-native/Libraries/Image/**",
+					"$(SRCROOT)/../node_modules/react-native/React/**",
+					"$(SRCROOT)/../node_modules/react-native/Libraries/Image/**",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
