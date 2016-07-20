@@ -1,6 +1,6 @@
 {
   "name": "react-native-wechat",
-  "version": "1.4.7",
+  "version": "1.5.0",
   "description": "react-native library for wechat app",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
     "events": "1.0.2"
   },
   "peerDependencies": {
-    "react-native": ">=0.20"
+    "react-native": ">=0.29"
   },
   "author": "Yorkie Liu <yorkiefixer@gmail.com>",
   "contributors": [
