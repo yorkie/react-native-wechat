@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
 #import "WXApiObject.h"
 
 
@@ -56,10 +55,10 @@
  * iOS7及以上系统需要调起一次微信才会出现在微信的可用应用列表中。
  * @attention 请保证在主线程中调用此函数
  * @param appid 微信开发者ID
+ * @param typeFlag 应用支持打开的文件类型
  * @return 成功返回YES，失败返回NO。
  */
 +(BOOL) registerApp:(NSString *)appid;
-
 
 
 /*! @brief WXApi的成员函数，向微信终端程序注册第三方应用。
@@ -71,6 +70,15 @@
  * @return 成功返回YES，失败返回NO。
  */
 +(BOOL) registerApp:(NSString *)appid withDescription:(NSString *)appdesc;
+
+
+/*! @brief WXApi的成员函数，向微信终端程序注册应用支持打开的文件类型。
+ *
+ * 需要在每次启动第三方应用程序时调用。调用后并第一次成功分享数据到微信后，会在微信的可用应用列表中出现。
+ * @see registerApp
+ * @param typeFlag 应用支持打开的数据类型, enAppSupportContentFlag枚举类型 “|” 操作后结果
+ */
++(void) registerAppSupportContentFlag:(UInt64)typeFlag;
 
 
 
@@ -142,7 +150,7 @@
  * @param delegate  WXApiDelegate对象，用来接收微信触发的消息。
  * @return 成功返回YES，失败返回NO。
  */
-+(BOOL) sendAuthReq:(SendAuthReq*) req viewController : (UIViewController*) viewController delegate:(id<WXApiDelegate>) delegate;
++(BOOL) sendAuthReq:(SendAuthReq*)req viewController:(UIViewController*)viewController delegate:(id<WXApiDelegate>)delegate;
 
 
 /*! @brief 收到微信onReq的请求，发送对应的应答给微信，并切换到微信界面

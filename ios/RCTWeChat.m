@@ -220,23 +220,9 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
                                        MediaTag:mediaTagName
                                        callBack:callback];
 
-        } else if ([type isEqualToString:RCTWXShareTypeImageUrl]) {
-            NSString * imageURL = aData[RCTWXShareImageUrl];
-
-            WXImageObject *imageObject = [WXImageObject object];
-            imageObject.imageUrl = imageURL;
-
-            [self shareToWeixinWithMediaMessage:aScene
-                                          Title:title
-                                    Description:description
-                                         Object:imageObject
-                                     MessageExt:messageExt
-                                  MessageAction:messageAction
-                                     ThumbImage:aThumbImage
-                                       MediaTag:mediaTagName
-                                       callBack:callback];
-
-        } else if ([type isEqualToString:RCTWXShareTypeImageFile] || [type isEqualToString:RCTWXShareTypeImageResource]) {
+        } else if ([type isEqualToString:RCTWXShareTypeImageUrl] ||
+                   [type isEqualToString:RCTWXShareTypeImageFile] ||
+                   [type isEqualToString:RCTWXShareTypeImageResource]) {
             NSURLRequest *imageRequest = [NSURLRequest requestWithURL:aData[RCTWXShareImageUrl]];
             [self.bridge.imageLoader loadImageWithURLRequest:imageRequest callback:^(NSError *error, UIImage *image) {
                 if (image == nil){
