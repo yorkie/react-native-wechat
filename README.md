@@ -414,6 +414,9 @@ $ npm install react-native-wechat --save
 - [Join us at gitter](https://gitter.im/weflex/react-native-wechat?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 - QQ Group: 336021910
 
+## Who Use It
+[reading: iReading App Write In React-Native](https://github.com/attentiveness/reading)
+
 ## Authors
 
 - [Deng Yun] from [react-native-cn]
