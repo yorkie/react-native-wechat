@@ -415,7 +415,7 @@ $ npm install react-native-wechat --save
 - QQ Group: 336021910
 
 ## Who Use It
-[reading: iReading App Write In React-Native](https://github.com/attentiveness/reading)
+- [reading: iReading App Write In React-Native](https://github.com/attentiveness/reading)
 
 ## Authors
 
