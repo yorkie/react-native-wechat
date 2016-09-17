@@ -11,6 +11,7 @@
   - [Events](#events)
 - [Installation](#installation)
 - [Community](#community)
+- [Who Use It](#who-use-it)
 - [Authors](#authors)
 - [License](#license)
 
