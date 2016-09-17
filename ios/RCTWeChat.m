@@ -151,6 +151,32 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
     [self shareToWeixinWithData:data scene:WXSceneSession callback:callback];
 }
 
+RCT_EXPORT_METHOD(jumpToBizWebviewWithAppId:(NSString *)appId
+                  :(NSString *)tousername
+                  :(NSString *)extMsg
+                  :(RCTResponseSenderBlock)callback)
+{
+    JumpToBizWebviewReq *req = [[JumpToBizWebviewReq alloc]init];
+    req.tousrname = tousername;
+    req.extMsg = extMsg;
+    req.webType = 0;
+    BOOL success = [WXApi sendReq:req];
+    callback(@[success ? [NSNull null] : INVOKE_FAILED]);
+}
+
+RCT_EXPORT_METHOD(jumpToBizProfileReqWithAppId:(NSString *)appId
+                  :(NSString *)username
+                  :(NSString *)extMsg
+                  :(RCTResponseSenderBlock)callback)
+{
+    JumpToBizProfileReq *req = [[JumpToBizProfileReq alloc]init];
+    req.username = username;
+    req.extMsg = extMsg;
+    req.profileType = 0;
+    BOOL success = [WXApi sendReq:req];
+    callback(@[success ? [NSNull null] : INVOKE_FAILED]);
+}
+
 - (void)shareToWeixinWithData:(NSDictionary *)aData
                    thumbImage:(UIImage *)aThumbImage
                         scene:(int)aScene
@@ -326,12 +352,12 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
 
 #pragma mark - wx callback
 
--(void) onReq:(BaseReq*)req
+- (void) onReq:(BaseReq*)req
 {
     // TODO(Yorkie)
 }
 
--(void) onResp:(BaseResp*)resp
+- (void) onResp:(BaseResp*)resp
 {
 	if([resp isKindOfClass:[SendMessageToWXResp class]])
 	{
