@@ -151,6 +151,20 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
     [self shareToWeixinWithData:data scene:WXSceneSession callback:callback];
 }
 
+RCT_EXPORT_METHOD(pay:(NSDictionary *)data
+                  :(RCTResponseSenderBlock)callback)
+{
+    PayReq* req             = [PayReq new];
+    req.partnerId           = data[@"partnerId"];
+    req.prepayId            = data[@"prepayId"];
+    req.nonceStr            = data[@"nonceStr"];
+    req.timeStamp           = [data[@"timeStamp"] unsignedIntValue];
+    req.package             = data[@"package"];
+    req.sign                = data[@"sign"];
+    BOOL success = [WXApi sendReq:req];
+    callback(@[success ? [NSNull null] : INVOKE_FAILED]);
+}
+
 - (void)shareToWeixinWithData:(NSDictionary *)aData
                    thumbImage:(UIImage *)aThumbImage
                         scene:(int)aScene
@@ -360,7 +374,15 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
 	    else {
 	        [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
 	    }
-	}
+	} else if ([resp isKindOfClass:[PayResp class]]) {
+	        PayResp *r = (PayResp *)resp;
+	        NSMutableDictionary *body = @{@"errCode":@(r.errCode)}.mutableCopy;
+	        body[@"errStr"] = r.errStr;
+	        body[@"type"] = @(r.type);
+	        body[@"returnKey"] =r.returnKey;
+	        body[@"type"] = @"PayReq.Resp";
+	        [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
+    	}
 }
 
 @end
