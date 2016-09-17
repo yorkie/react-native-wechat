@@ -37,6 +37,8 @@ import com.tencent.mm.sdk.modelmsg.WXMusicObject;
 import com.tencent.mm.sdk.modelmsg.WXTextObject;
 import com.tencent.mm.sdk.modelmsg.WXVideoObject;
 import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.sdk.modelpay.PayReq;
+import com.tencent.mm.sdk.modelpay.PayResp;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
@@ -159,6 +161,34 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             return;
         }
         _share(SendMessageToWX.Req.WXSceneSession, data, callback);
+    }
+
+    @ReactMethod
+    public void pay(ReadableMap data, Callback callback){
+        PayReq payReq = new PayReq();
+        if (data.hasKey("partnerId")) {
+            payReq.partnerId = data.getString("partnerId");
+        }
+        if (data.hasKey("prepayId")) {
+            payReq.prepayId = data.getString("prepayId");
+        }
+        if (data.hasKey("nonceStr")) {
+            payReq.nonceStr = data.getString("nonceStr");
+        }
+        if (data.hasKey("timeStamp")) {
+            payReq.timeStamp = data.getString("timeStamp");
+        }
+        if (data.hasKey("sign")) {
+            payReq.sign = data.getString("sign");
+        }
+        if (data.hasKey("package")) {
+            payReq.packageValue = data.getString("package");
+        }
+        if (data.hasKey("extData")) {
+            payReq.extData = data.getString("extData");
+        }
+        payReq.appId = appId;
+        callback.invoke(api.sendReq(payReq) ? null : INVOKE_FAILED);
     }
 
     private void _share(final int scene, final ReadableMap data, final Callback callback) {
@@ -441,6 +471,10 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         } else if (baseResp instanceof SendMessageToWX.Resp) {
             SendMessageToWX.Resp resp = (SendMessageToWX.Resp) (baseResp);
             map.putString("type", "SendMessageToWX.Resp");
+        } else if (baseResp instanceof PayResp) {
+            PayResp resp = (PayResp) (baseResp);
+            map.putString("type", "PayReq.Resp");
+            map.putString("returnkey", resp.returnKey);
         }
 
         this.getReactApplicationContext()
