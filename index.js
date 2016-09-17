@@ -197,7 +197,9 @@ export function shareToSession(data) {
  */
 export function pay(data) {
   return new Promise((resolve, reject) => {
-    WeChat.pay(data,() => {});
+    WeChat.pay(data, (result) => {
+      if (result) reject(result);
+    });
     emitter.on('PayReq.Resp', (resp) => {
       const result = resp.errCode;
       if (result === 0) {
