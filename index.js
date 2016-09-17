@@ -183,3 +183,28 @@ export function shareToTimeline(data) {
 export function shareToSession(data) {
   return nativeShareToSession(data);
 }
+
+/**
+ * wechat pay
+ * @param {Object} data
+ * @param {String} data.partnerId
+ * @param {String} data.prepayId
+ * @param {String} data.nonceStr
+ * @param {String} data.timeStamp
+ * @param {String} data.package
+ * @param {String} data.sign
+ * @returns {Promise}
+ */
+export function pay(data) {
+  return new Promise((resolve, reject) => {
+    WeChat.pay(data,() => {});
+    emitter.on('PayReq.Resp', (resp) => {
+      const result = resp.errCode;
+      if (result === 0) {
+        resolve(resp.returnKey);
+      } else {
+        reject(result);
+      }
+    });
+  });
+}
