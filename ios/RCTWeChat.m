@@ -237,7 +237,8 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
         } else if ([type isEqualToString:RCTWXShareTypeImageUrl] ||
                    [type isEqualToString:RCTWXShareTypeImageFile] ||
                    [type isEqualToString:RCTWXShareTypeImageResource]) {
-            NSURLRequest *imageRequest = [NSURLRequest requestWithURL:aData[RCTWXShareImageUrl]];
+            NSURL *url = [NSURL URLWithString:aData[RCTWXShareImageUrl]];
+            NSURLRequest *imageRequest = [NSURLRequest requestWithURL:url];
             [self.bridge.imageLoader loadImageWithURLRequest:imageRequest callback:^(NSError *error, UIImage *image) {
                 if (image == nil){
                     callback(@[@"fail to load image resource"]);
