@@ -289,7 +289,8 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
     if (imageUrl.length && _bridge.imageLoader) {
         NSURL *url = [NSURL URLWithString:imageUrl];
         NSURLRequest *imageRequest = [NSURLRequest requestWithURL:url];
-        [_bridge.imageLoader loadImageWithURLRequest:imageRequest size:CGSizeMake(100, 100) scale:1 clipped:FALSE resizeMode:RCTResizeModeStretch progressBlock:nil completionBlock:^(NSError *error, UIImage *image) {
+        [_bridge.imageLoader loadImageWithURLRequest:imageRequest size:CGSizeMake(100, 100) scale:1 clipped:FALSE resizeMode:RCTResizeModeStretch progressBlock:nil partialLoadBlock:nil
+            completionBlock:^(NSError *error, UIImage *image) {
             [self shareToWeixinWithData:aData thumbImage:image scene:aScene callBack:aCallBack];
         }];
     } else {
