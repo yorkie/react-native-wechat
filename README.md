@@ -55,9 +55,22 @@ your app project, _if there is something that not working, please check the list
 
 - Only for iOS 9, add `wechat` and `weixin` into `LSApplicationQueriesSchemes` in `Targets` > `info` > `Custom iOS Target Properties`.
 
+or edit Info.plist add:
+
+    ```
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>weixin</string>
+        <string>wechat</string>
+    </array>
+    ```
+
+
 - Code the following in `AppDelegate.m` of your project to enable [LinkingIOS]
 
     ```objective-c
+    #import "../Libraries/LinkingIOS/RCTLinkingManager.h"
+    
     - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
     sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
     {
