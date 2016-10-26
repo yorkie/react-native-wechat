@@ -83,7 +83,7 @@ your app project, _if there is something that not working, please check the list
     }
     ```
 
-- Add following lines into `MainActivity.java`
+- Add following lines into `MainApplication.java`
 
     ```java
     import com.theweflex.react.WeChatPackage;       // Add this line before public class MainActivity
