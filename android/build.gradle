@@ -14,8 +14,14 @@ android {
   }
 }
 
-dependencies {
-  compile 'com.facebook.react:react-native:0.15.+'
-  compile files('libs/libammsdk.jar')
+allprojects {
+  repositories {
+    jcenter()
+    maven { url "$projectDir/../../react-native/android" }
+  }
 }
 
+dependencies {
+  compile 'com.facebook.react:react-native:+'
+  compile files('libs/libammsdk.jar')
+}
