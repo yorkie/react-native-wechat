@@ -164,7 +164,22 @@ export function sendAuthRequest(scopes, state) {
  * @param {String} data.fileExtension - Provide the file type if type equals file.
  */
 export function shareToTimeline(data) {
-  return nativeShareToTimeline(data);
+  return new Promise((resolve, reject) => {
+    nativeShareToTimeline(data)
+    .then(resp => {
+      emitter.on('SendMessageToWX.Resp', (resp) => {
+        const result = resp.errCode;
+        if (result === 0) {
+          resolve(resp);
+        } else {
+          reject(result);
+        }
+      });
+    })
+    .catch(err => {
+      reject(err);
+    })
+  });
 }
 
 /**
@@ -181,7 +196,23 @@ export function shareToTimeline(data) {
  * @param {String} data.fileExtension - Provide the file type if type equals file.
  */
 export function shareToSession(data) {
-  return nativeShareToSession(data);
+  return new Promise((resolve, reject) => {
+    nativeShareToSession(data)
+    .then(resp => {
+      emitter.on('SendMessageToWX.Resp', (resp) => {
+        const result = resp.errCode;
+        if (result === 0) {
+          resolve(resp);
+        } else {
+          reject(result);
+        }
+      });
+    })
+    .catch(err=> {
+      reject(err);
+    })
+    
+  })
 }
 
 /**
