@@ -166,7 +166,7 @@ export function sendAuthRequest(scopes, state) {
 export function shareToTimeline(data) {
   return new Promise((resolve, reject) => {
     nativeShareToTimeline(data)
-    then(resp => {
+    .then(resp => {
       emitter.on('SendMessageToWX.Resp', (resp) => {
         const result = resp.errCode;
         if (result === 0) {
