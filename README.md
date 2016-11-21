@@ -8,7 +8,23 @@
   - [Linking Android with Gradle](#linking-android-with-gradle)
 - [API Documentation](#api-documentation)
   - [Methods](#methods)
+    - [`registerApp(appid)`](#registerappappid)
+    - [`registerAppWithDescription(appid, appdesc)`](#registerappappid)
+    - [`isWXAppInstalled()`](#iswxappinstalled)
+    - [`isWXAppSupportApi()`](#iswxappsupportapi)
+    - [`getApiVersion()`](#iswxappsupportapi)
+    - [`openWXApp()`](#openwxapp)
+    - [`sendAuthRequest([scope[, state]])`](#sendauthrequestscope-state)
+    - [`shareToTimeline(data)`](#sharetotimelinedata)
+    - [`shareToSession(data)`](#sharetosessiondata)
+    - [`pay(data)`](#paydata)
+    - [`addListener(eventType, listener[, context])`](#addlistenereventtype-listener-context)
+    - [`once(eventType, listener[, context])`](#onceeventtype-listener-context)
+    - [`removeAllListeners()`](#removealllisteners)
   - [Events](#events)
+    - [`SendAuth.Resp`](#sendauthresp)
+    - [`SendMessageToWX.Resp`](#sendmessagetowxresp)
+    - [`PayReq.Resp`](#payreqresp)
 - [Installation](#installation)
 - [Community](#community)
 - [Who Use It](#who-use-it)
@@ -373,6 +389,23 @@ catch (e) {
 
 Similar to `shareToTimeline` but send message to a friend or a groups.
 
+#### pay(data)
+
+Create a request to proceeding payment.
+
+```js
+const result = await WeChat.pay(
+  {
+    partnerId: '',  // 商家向财付通申请的商家id
+    prepayId: '',   // 预支付订单
+    nonceStr: '',   // 随机串，防重发
+    timeStamp: '',  // 时间戳，防重发
+    package: '',    // 商家根据财付通文档填写的数据和签名
+    sign: ''        // 商家根据微信开放平台文档对数据做的签名
+  }
+);
+```
+
 #### addListener(eventType, listener[, context])
 
 Adds a listener to be invoked when events of the specified type are emitted. An optional calling context may be provided. 
@@ -417,25 +450,12 @@ Receive result for `shareToTimeline` and `shareToSession` and arguments would be
 
 For more details, visit [WeChat SDK].
 
-#### `pay`
+#### `PayReq.Resp`
 
-```
-try {
-  let result = await WeChat.pay(
-    {
-      partnerId: '', // 商家向财付通申请的商家id
-      prepayId: '', // 预支付订单
-      nonceStr: '', // 随机串，防重发
-      timeStamp: '', // 时间戳，防重发
-      package: '', // 商家根据财付通文档填写的数据和签名
-      sign: '' // 商家根据微信开放平台文档对数据做的签名
-    }
-  );
-  console.log('Pay for success!');
-} catch (error) {
-  console.log('Pay for failure!');
-}
-```
+| name    | type   | description                         |
+|---------|--------|-------------------------------------|
+| errCode | Number | 0 if authorization successed        |
+| errStr  | String | Error message if any error occurred |
 
 ## Installation
 
@@ -453,9 +473,9 @@ $ npm install react-native-wechat --save
 
 ## Authors
 
-- [Deng Yun] from [react-native-cn]
+- [Deng Yun]
 - [Xing Zhen]
-- [Yorkie Liu] from [WeFlex]
+- [Yorkie Liu]
 
 ## License
 
