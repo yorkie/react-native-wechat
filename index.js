@@ -10,7 +10,7 @@ const {WeChat} = NativeModules;
 // Event emitter to dispatch request and response from WeChat.
 const emitter = new EventEmitter();
 
-DeviceEventEmitter.addListener('WeChat_Resp', resp => {
+DeviceEventEmitter.addListener('WeChat_Resp', (resp) => {
   emitter.emit(resp.type, resp);
 });
 
@@ -138,8 +138,7 @@ const nativeSendAuthRequest = wrapApi(WeChat.sendAuthRequest);
 export function sendAuthRequest(scopes, state) {
   return new Promise((resolve, reject) => {
     WeChat.sendAuthRequest(scopes, state,() => {});
-    // TODO(Yorkie): should we use once to instead?
-    emitter.on('SendAuth.Resp', (resp) => {
+    emitter.once('SendAuth.Resp', (resp) => {
       const result = resp.errCode;
       if (result === 0) {
         resolve(resp.code);
@@ -164,7 +163,17 @@ export function sendAuthRequest(scopes, state) {
  * @param {String} data.fileExtension - Provide the file type if type equals file.
  */
 export function shareToTimeline(data) {
-  return nativeShareToTimeline(data);
+  return new Promise((resolve, reject) => {
+    nativeShareToTimeline(data);
+    WeChat.once('SendMessageToWX.Resp', (resp) => {
+      const result = resp.errCode;
+      if (result === 0) {
+        resolve(resp.code);
+      } else {
+        reject(result);
+      }
+    });
+  });
 }
 
 /**
@@ -181,7 +190,17 @@ export function shareToTimeline(data) {
  * @param {String} data.fileExtension - Provide the file type if type equals file.
  */
 export function shareToSession(data) {
-  return nativeShareToSession(data);
+  return new Promise((resolve, reject) => {
+    nativeShareToSession(data);
+    WeChat.once('SendMessageToWX.Resp', (resp) => {
+      const result = resp.errCode;
+      if (result === 0) {
+        resolve(resp.code);
+      } else {
+        reject(result);
+      }
+    });
+  });
 }
 
 /**
@@ -200,7 +219,7 @@ export function pay(data) {
     WeChat.pay(data, (result) => {
       if (result) reject(result);
     });
-    emitter.on('PayReq.Resp', (resp) => {
+    emitter.once('PayReq.Resp', (resp) => {
       const result = resp.errCode;
       if (result === 0) {
         resolve(resp.returnKey);
