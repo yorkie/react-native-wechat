@@ -165,7 +165,7 @@ export function sendAuthRequest(scopes, state) {
 export function shareToTimeline(data) {
   return new Promise((resolve, reject) => {
     nativeShareToTimeline(data);
-    WeChat.once('SendMessageToWX.Resp', (resp) => {
+    emitter.once('SendMessageToWX.Resp', (resp) => {
       const result = resp.errCode;
       if (result === 0) {
         resolve(resp.code);
@@ -192,7 +192,7 @@ export function shareToTimeline(data) {
 export function shareToSession(data) {
   return new Promise((resolve, reject) => {
     nativeShareToSession(data);
-    WeChat.once('SendMessageToWX.Resp', (resp) => {
+    emitter.once('SendMessageToWX.Resp', (resp) => {
       const result = resp.errCode;
       if (result === 0) {
         resolve(resp.code);
