@@ -141,7 +141,7 @@ export function sendAuthRequest(scopes, state) {
     emitter.once('SendAuth.Resp', (resp) => {
       const result = resp.errCode;
       if (result === 0) {
-        resolve(resp.code);
+        resolve(resp);
       } else {
         reject(result);
       }
@@ -168,7 +168,7 @@ export function shareToTimeline(data) {
     emitter.once('SendMessageToWX.Resp', (resp) => {
       const result = resp.errCode;
       if (result === 0) {
-        resolve(resp.code);
+        resolve(resp);
       } else {
         reject(result);
       }
@@ -195,7 +195,7 @@ export function shareToSession(data) {
     emitter.once('SendMessageToWX.Resp', (resp) => {
       const result = resp.errCode;
       if (result === 0) {
-        resolve(resp.code);
+        resolve(resp);
       } else {
         reject(result);
       }
@@ -222,7 +222,7 @@ export function pay(data) {
     emitter.once('PayReq.Resp', (resp) => {
       const result = resp.errCode;
       if (result === 0) {
-        resolve(resp.returnKey);
+        resolve(resp);
       } else {
         reject(result);
       }
