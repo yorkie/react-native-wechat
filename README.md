@@ -21,10 +21,6 @@
     - [`addListener(eventType, listener[, context])`](#addlistenereventtype-listener-context)
     - [`once(eventType, listener[, context])`](#onceeventtype-listener-context)
     - [`removeAllListeners()`](#removealllisteners)
-  - [Events](#events)
-    - [`SendAuth.Resp`](#sendauthresp)
-    - [`SendMessageToWX.Resp`](#sendmessagetowxresp)
-    - [`PayReq.Resp`](#payreqresp)
 - [Installation](#installation)
 - [Community](#community)
 - [Who Use It](#who-use-it)
@@ -132,7 +128,7 @@ or edit Info.plist add:
     ```
 
 - Create a package named 'wxapi' in your application package and a class named 'WXEntryActivity' in it. 
-      This is needed to get request and response from wechat.
+  This is required to get authorization and sharing response from wechat.
 
     ```java
     package your.package.wxapi;
@@ -141,7 +137,27 @@ or edit Info.plist add:
     import android.os.Bundle;
     import com.theweflex.react.WeChatModule;
 
-    public class WXEntryActivity extends Activity{
+    public class WXEntryActivity extends Activity {
+      @Override
+      protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        WeChatModule.handleIntent(getIntent());
+        finish();
+      }
+    }
+    ```
+
+- (Optional) Create a package named 'wxapi' in your application package and a class named 'WXPayEntryActivity'
+  in it. This is required to get payment response from WeChat.
+
+    ```java
+    package your.package.wxapi;
+
+    import android.app.Activity;
+    import android.os.Bundle;
+    import com.theweflex.react.WeChatModule;
+
+    public class WXPayEntryActivity extends Activity {
       @Override
       protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
