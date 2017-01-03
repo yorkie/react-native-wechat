@@ -171,12 +171,18 @@ or edit Info.plist add:
     ```xml
     <manifest>
       <application>
-        <!-- 微信Activity -->
+        <!-- WeChat Auth/Share Activity -->
         <activity
           android:name=".wxapi.WXEntryActivity"
           android:label="@string/app_name"
           android:exported="true"
-          />
+        />
+        <!-- WeChat Payment Activity -->
+        <activity
+          android:name=".wxapi.WXPayEntryActivity"
+          android:label="@string/app_name"
+          android:exported="true"
+        />
       </application>
     </manifest>
     ```
