@@ -7,20 +7,19 @@
   - [Linking iOS](#linking-ios)
   - [Linking Android with Gradle](#linking-android-with-gradle)
 - [API Documentation](#api-documentation)
-  - [Methods](#methods)
-    - [`registerApp(appid)`](#registerappappid)
-    - [`registerAppWithDescription(appid, appdesc)`](#registerappappid)
-    - [`isWXAppInstalled()`](#iswxappinstalled)
-    - [`isWXAppSupportApi()`](#iswxappsupportapi)
-    - [`getApiVersion()`](#iswxappsupportapi)
-    - [`openWXApp()`](#openwxapp)
-    - [`sendAuthRequest([scope[, state]])`](#sendauthrequestscope-state)
-    - [`shareToTimeline(data)`](#sharetotimelinedata)
-    - [`shareToSession(data)`](#sharetosessiondata)
-    - [`pay(data)`](#paydata)
-    - [`addListener(eventType, listener[, context])`](#addlistenereventtype-listener-context)
-    - [`once(eventType, listener[, context])`](#onceeventtype-listener-context)
-    - [`removeAllListeners()`](#removealllisteners)
+  - [`registerApp(appid)`](#registerappappid)
+  - [`registerAppWithDescription(appid, appdesc)`](#registerappappid)
+  - [`isWXAppInstalled()`](#iswxappinstalled)
+  - [`isWXAppSupportApi()`](#iswxappsupportapi)
+  - [`getApiVersion()`](#iswxappsupportapi)
+  - [`openWXApp()`](#openwxapp)
+  - [`sendAuthRequest([scope[, state]])`](#sendauthrequestscope-state)
+  - [`shareToTimeline(data)`](#sharetotimelinedata)
+  - [`shareToSession(data)`](#sharetosessiondata)
+  - [`pay(data)`](#paydata)
+  - [`addListener(eventType, listener[, context])`](#addlistenereventtype-listener-context)
+  - [`once(eventType, listener[, context])`](#onceeventtype-listener-context)
+  - [`removeAllListeners()`](#removealllisteners)
 - [Installation](#installation)
 - [Community](#community)
 - [Who Use It](#who-use-it)
@@ -192,8 +191,6 @@ or edit Info.plist add:
 
 ## API Documentation
 
-### Methods
-
 [react-native-wechat] supports the following methods to get information and do something functions
 with WeChat app.
 
@@ -245,11 +242,23 @@ Open WeChat app with an optional callback argument.
 
 #### sendAuthRequest([scope[, state]])
 
-Send authentication request.
+Send authentication request, namely login.
 
 - {Array|String} `scope` Scopes of auth request.
 - {String} `state` the state of OAuth2
 - returns {Promise}
+
+And it returns:
+
+| name    | type   | description                         |
+|---------|--------|-------------------------------------|
+| errCode | Number |                                     |
+| errStr  | String | Error message if any error occurred |
+| openId  | String |                                     |
+| code    | String | Authorization code                  |
+| url     | String | The URL string                      |
+| lang    | String | The user language                   | 
+| country | String | The user country                    |
 
 #### shareToTimeline(data)
 
@@ -264,6 +273,13 @@ Share a message to timeline (朋友圈).
     - {String} `musicUrl` Provide a remote music if type equals `audio`.
     - {String} `filePath` Provide a local file if type equals `file`.
     - {String} `fileExtension` Provide the file type if type equals `file`.
+
+And returns:
+
+| name    | type   | description                         |
+|---------|--------|-------------------------------------|
+| errCode | Number | 0 if authorization successed        |
+| errStr  | String | Error message if any error occurred |
 
 These example code need 'react-native-chat' and 'react-native-fs' plugin.
 
@@ -422,6 +438,13 @@ const result = await WeChat.pay(
 );
 ```
 
+It returns an object like this:
+
+| name    | type   | description                         |
+|---------|--------|-------------------------------------|
+| errCode | Number | 0 if authorization successed        |
+| errStr  | String | Error message if any error occurred |
+
 #### addListener(eventType, listener[, context])
 
 Adds a listener to be invoked when events of the specified type are emitted. An optional calling context may be provided. 
@@ -435,43 +458,6 @@ Similar to addListener, except that the listener is removed after it is invoked 
 #### removeAllListeners()
 
 Removes all of the registered listeners, including those registered as listener maps.
-
-### Events
-
-[react-native-wechat] supports some events which your can register in JavaScript side and get fired when
-something happens
-
-#### `SendAuth.Resp`
-
-Receive result for `sendAuthRequest` and arguments would be:
-
-| name    | type   | description                         |
-|---------|--------|-------------------------------------|
-| errCode | Number |                                     |
-| errStr  | String | Error message if any error occurred |
-| openId  | String |                                     |
-| code    | String | Authorization code                  |
-| url     | String | The URL string                      |
-| lang    | String | The user language                   | 
-| country | String | The user country                    |
-
-#### `SendMessageToWX.Resp`
-
-Receive result for `shareToTimeline` and `shareToSession` and arguments would be:
-
-| name    | type   | description                         |
-|---------|--------|-------------------------------------|
-| errCode | Number | 0 if authorization successed        |
-| errStr  | String | Error message if any error occurred |
-
-For more details, visit [WeChat SDK].
-
-#### `PayReq.Resp`
-
-| name    | type   | description                         |
-|---------|--------|-------------------------------------|
-| errCode | Number | 0 if authorization successed        |
-| errStr  | String | Error message if any error occurred |
 
 ## Installation
 
