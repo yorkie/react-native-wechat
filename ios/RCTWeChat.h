@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <React/RCTBridge.h>
+#import <React/RCTBridgeModule.h>
 #import "WXApi.h"
 
 // define share type constants
