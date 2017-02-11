@@ -7,19 +7,24 @@
   - [Linking iOS](#linking-ios)
   - [Linking Android with Gradle](#linking-android-with-gradle)
 - [API Documentation](#api-documentation)
-  - [`registerApp(appid)`](#registerappappid)
-  - [`registerAppWithDescription(appid, appdesc)`](#registerappappid)
-  - [`isWXAppInstalled()`](#iswxappinstalled)
-  - [`isWXAppSupportApi()`](#iswxappsupportapi)
-  - [`getApiVersion()`](#iswxappsupportapi)
-  - [`openWXApp()`](#openwxapp)
-  - [`sendAuthRequest([scope[, state]])`](#sendauthrequestscope-state)
-  - [`shareToTimeline(data)`](#sharetotimelinedata)
-  - [`shareToSession(data)`](#sharetosessiondata)
-  - [`pay(data)`](#paydata)
-  - [`addListener(eventType, listener[, context])`](#addlistenereventtype-listener-context)
-  - [`once(eventType, listener[, context])`](#onceeventtype-listener-context)
-  - [`removeAllListeners()`](#removealllisteners)
+  - [Methods](#methods)
+    - [`registerApp(appid)`](#registerappappid)
+    - [`registerAppWithDescription(appid, appdesc)`](#registerappappid)
+    - [`isWXAppInstalled()`](#iswxappinstalled)
+    - [`isWXAppSupportApi()`](#iswxappsupportapi)
+    - [`getApiVersion()`](#iswxappsupportapi)
+    - [`openWXApp()`](#openwxapp)
+    - [`sendAuthRequest([scope[, state]])`](#sendauthrequestscope-state)
+    - [`shareToTimeline(data)`](#sharetotimelinedata)
+    - [`shareToSession(data)`](#sharetosessiondata)
+    - [`pay(data)`](#paydata)
+    - [`addListener(eventType, listener[, context])`](#addlistenereventtype-listener-context)
+    - [`once(eventType, listener[, context])`](#onceeventtype-listener-context)
+    - [`removeAllListeners()`](#removealllisteners)
+  - [Events](#events)
+    - [`SendAuth.Resp`](#sendauthresp)
+    - [`SendMessageToWX.Resp`](#sendmessagetowxresp)
+    - [`PayReq.Resp`](#payreqresp)
 - [Installation](#installation)
 - [Community](#community)
 - [Who Use It](#who-use-it)
@@ -127,7 +132,7 @@ or edit Info.plist add:
     ```
 
 - Create a package named 'wxapi' in your application package and a class named 'WXEntryActivity' in it. 
-  This is required to get authorization and sharing response from wechat.
+      This is needed to get request and response from wechat.
 
     ```java
     package your.package.wxapi;
@@ -136,27 +141,7 @@ or edit Info.plist add:
     import android.os.Bundle;
     import com.theweflex.react.WeChatModule;
 
-    public class WXEntryActivity extends Activity {
-      @Override
-      protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        WeChatModule.handleIntent(getIntent());
-        finish();
-      }
-    }
-    ```
-
-- (Optional) Create a package named 'wxapi' in your application package and a class named 'WXPayEntryActivity'
-  in it. This is required to get payment response from WeChat.
-
-    ```java
-    package your.package.wxapi;
-
-    import android.app.Activity;
-    import android.os.Bundle;
-    import com.theweflex.react.WeChatModule;
-
-    public class WXPayEntryActivity extends Activity {
+    public class WXEntryActivity extends Activity{
       @Override
       protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -171,18 +156,12 @@ or edit Info.plist add:
     ```xml
     <manifest>
       <application>
-        <!-- WeChat Auth/Share Activity -->
+        <!-- 微信Activity -->
         <activity
           android:name=".wxapi.WXEntryActivity"
           android:label="@string/app_name"
           android:exported="true"
-        />
-        <!-- WeChat Payment Activity -->
-        <activity
-          android:name=".wxapi.WXPayEntryActivity"
-          android:label="@string/app_name"
-          android:exported="true"
-        />
+          />
       </application>
     </manifest>
     ```
@@ -197,17 +176,34 @@ or edit Info.plist add:
 
 ## API Documentation
 
+### Methods
+
 [react-native-wechat] supports the following methods to get information and do something functions
 with WeChat app.
 
 #### registerApp(appid)
 
-You should call this function in global, calling over twice would throw an error.
+You should call this function in global.
 
   ```js
   // If you register here
   componentDidMount (){
     wechat.registerApp('your appid')
+  }
+  ```
+
+- {String} `appid` the appid you get from WeChat dashboard
+- returns {Promise} 
+
+#### isWXAppSupportApi()
+
+Check if you registered wechat app.
+
+  ```js
+  // If you register here
+  componentDidMount (){
+    if(!wechat.isWXAppSupportApi())
+      wechat.registerApp('your appid')
   }
   ```
 
@@ -248,23 +244,11 @@ Open WeChat app with an optional callback argument.
 
 #### sendAuthRequest([scope[, state]])
 
-Send authentication request, namely login.
+Send authentication request.
 
 - {Array|String} `scope` Scopes of auth request.
 - {String} `state` the state of OAuth2
 - returns {Promise}
-
-And it returns:
-
-| name    | type   | description                         |
-|---------|--------|-------------------------------------|
-| errCode | Number |                                     |
-| errStr  | String | Error message if any error occurred |
-| openId  | String |                                     |
-| code    | String | Authorization code                  |
-| url     | String | The URL string                      |
-| lang    | String | The user language                   | 
-| country | String | The user country                    |
 
 #### shareToTimeline(data)
 
@@ -279,13 +263,6 @@ Share a message to timeline (朋友圈).
     - {String} `musicUrl` Provide a remote music if type equals `audio`.
     - {String} `filePath` Provide a local file if type equals `file`.
     - {String} `fileExtension` Provide the file type if type equals `file`.
-
-And returns:
-
-| name    | type   | description                         |
-|---------|--------|-------------------------------------|
-| errCode | Number | 0 if authorization successed        |
-| errStr  | String | Error message if any error occurred |
 
 These example code need 'react-native-chat' and 'react-native-fs' plugin.
 
@@ -444,13 +421,6 @@ const result = await WeChat.pay(
 );
 ```
 
-It returns an object like this:
-
-| name    | type   | description                         |
-|---------|--------|-------------------------------------|
-| errCode | Number | 0 if authorization successed        |
-| errStr  | String | Error message if any error occurred |
-
 #### addListener(eventType, listener[, context])
 
 Adds a listener to be invoked when events of the specified type are emitted. An optional calling context may be provided. 
@@ -464,6 +434,43 @@ Similar to addListener, except that the listener is removed after it is invoked 
 #### removeAllListeners()
 
 Removes all of the registered listeners, including those registered as listener maps.
+
+### Events
+
+[react-native-wechat] supports some events which your can register in JavaScript side and get fired when
+something happens
+
+#### `SendAuth.Resp`
+
+Receive result for `sendAuthRequest` and arguments would be:
+
+| name    | type   | description                         |
+|---------|--------|-------------------------------------|
+| errCode | Number |                                     |
+| errStr  | String | Error message if any error occurred |
+| openId  | String |                                     |
+| code    | String | Authorization code                  |
+| url     | String | The URL string                      |
+| lang    | String | The user language                   | 
+| country | String | The user country                    |
+
+#### `SendMessageToWX.Resp`
+
+Receive result for `shareToTimeline` and `shareToSession` and arguments would be:
+
+| name    | type   | description                         |
+|---------|--------|-------------------------------------|
+| errCode | Number | 0 if authorization successed        |
+| errStr  | String | Error message if any error occurred |
+
+For more details, visit [WeChat SDK].
+
+#### `PayReq.Resp`
+
+| name    | type   | description                         |
+|---------|--------|-------------------------------------|
+| errCode | Number | 0 if authorization successed        |
+| errStr  | String | Error message if any error occurred |
 
 ## Installation
 
