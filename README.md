@@ -9,6 +9,7 @@
 - [API Documentation](#api-documentation)
   - [Methods](#methods)
     - [`registerApp(appid)`](#registerappappid)
+    - [`isWXAppRegistered`](#iswxappregistered)
     - [`registerAppWithDescription(appid, appdesc)`](#registerappappid)
     - [`isWXAppInstalled()`](#iswxappinstalled)
     - [`isWXAppSupportApi()`](#iswxappsupportapi)
@@ -195,14 +196,14 @@ You should call this function in global.
 - {String} `appid` the appid you get from WeChat dashboard
 - returns {Promise} 
 
-#### isWXAppSupportApi()
+#### isWXAppRegistered()
 
 Check if you registered wechat app.
 
   ```js
   // If you register here
   componentDidMount (){
-    if(!wechat.isWXAppSupportApi())
+    if(!wechat.isWXAppRegistered())
       wechat.registerApp('your appid')
   }
   ```
