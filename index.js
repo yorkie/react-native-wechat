@@ -1,41 +1,41 @@
-"use strict";
+'use strict';
 
 import { DeviceEventEmitter, NativeModules } from 'react-native';
-import promisify from 'es6-promisify';
 import { EventEmitter } from 'events';
 
 let isAppRegistered = false;
-const {WeChat} = NativeModules;
+const { WeChat } = NativeModules;
 
 // Event emitter to dispatch request and response from WeChat.
 const emitter = new EventEmitter();
 
-DeviceEventEmitter.addListener('WeChat_Resp', (resp) => {
+DeviceEventEmitter.addListener('WeChat_Resp', resp => {
   emitter.emit(resp.type, resp);
 });
-
-// Used only with promisify. Transform callback to promise result.
-function translateError(err, result) {
-  if (!err) {
-    return this.resolve(result);
-  }
-  if (typeof err === 'string') {
-    return this.reject(new Error(err));
-  }
-  this.reject(err);
-}
 
 function wrapRegisterApp(nativeFunc) {
   if (!nativeFunc) {
     return undefined;
   }
-  const promisified = promisify(nativeFunc, translateError);
   return (...args) => {
     if (isAppRegistered) {
       return Promise.reject(new Error('App is already registered.'));
     }
     isAppRegistered = true;
-    return promisified(...args);
+    return new Promise((resolve, reject) => {
+      nativeFunc.apply(null, [
+        ...args,
+        (error, result) => {
+          if (!error) {
+            return resolve(result);
+          }
+          if (typeof error === 'string') {
+            return reject(new Error(error));
+          }
+          reject(error);
+        },
+      ]);
+    });
   };
 }
 
@@ -43,12 +43,24 @@ function wrapApi(nativeFunc) {
   if (!nativeFunc) {
     return undefined;
   }
-  const promisified = promisify(nativeFunc, translateError);
   return (...args) => {
     if (!isAppRegistered) {
       return Promise.reject(new Error('registerApp required.'));
     }
-    return promisified(...args);
+    return new Promise((resolve, reject) => {
+      nativeFunc.apply(null, [
+        ...args,
+        (error, result) => {
+          if (!error) {
+            return resolve(result);
+          }
+          if (typeof error === 'string') {
+            return reject(new Error(error));
+          }
+          reject(error);
+        },
+      ]);
+    });
   };
 }
 
@@ -88,7 +100,9 @@ export const registerApp = wrapRegisterApp(WeChat.registerApp);
  * @param {String} appdesc - the app description
  * @return {Promise}
  */
-export const registerAppWithDescription = wrapRegisterApp(WeChat.registerAppWithDescription);
+export const registerAppWithDescription = wrapRegisterApp(
+  WeChat.registerAppWithDescription,
+);
 
 /**
  * Return if the wechat app is installed in the device.
@@ -137,8 +151,8 @@ const nativeSendAuthRequest = wrapApi(WeChat.sendAuthRequest);
  */
 export function sendAuthRequest(scopes, state) {
   return new Promise((resolve, reject) => {
-    WeChat.sendAuthRequest(scopes, state,() => {});
-    emitter.once('SendAuth.Resp', (resp) => {
+    WeChat.sendAuthRequest(scopes, state, () => {});
+    emitter.once('SendAuth.Resp', resp => {
       const result = resp.errCode;
       if (result === 0) {
         resolve(resp);
@@ -165,7 +179,7 @@ export function sendAuthRequest(scopes, state) {
 export function shareToTimeline(data) {
   return new Promise((resolve, reject) => {
     nativeShareToTimeline(data);
-    emitter.once('SendMessageToWX.Resp', (resp) => {
+    emitter.once('SendMessageToWX.Resp', resp => {
       const result = resp.errCode;
       if (result === 0) {
         resolve(resp);
@@ -192,7 +206,7 @@ export function shareToTimeline(data) {
 export function shareToSession(data) {
   return new Promise((resolve, reject) => {
     nativeShareToSession(data);
-    emitter.once('SendMessageToWX.Resp', (resp) => {
+    emitter.once('SendMessageToWX.Resp', resp => {
       const result = resp.errCode;
       if (result === 0) {
         resolve(resp);
@@ -216,10 +230,10 @@ export function shareToSession(data) {
  */
 export function pay(data) {
   return new Promise((resolve, reject) => {
-    WeChat.pay(data, (result) => {
+    WeChat.pay(data, result => {
       if (result) reject(result);
     });
-    emitter.once('PayReq.Resp', (resp) => {
+    emitter.once('PayReq.Resp', resp => {
       const result = resp.errCode;
       if (result === 0) {
         resolve(resp);
