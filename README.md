@@ -41,7 +41,21 @@ And [react-native-wechat] has the following tracking data in open source world:
 | Dependency  | [![Dependency Status][david-image]][david-url]  |
 | Downloads   | [![Downloads][downloads-image]][downloads-url]  |
 
-## Linking Steps
+## Link with RNPM:
+- run
+`rnpm link react-native-wechat`
+- Add the following libraries to your "Link Binary with Libraries":
+
+    ```
+    SystemConfiguration.framework
+    CoreTelephony.framework
+    libsqlite3.0
+    libc++
+    libz
+    ```
+And you're all set!
+
+## Manual Linking Steps
 
 Before using this library to work with your app, you should follow the below steps to link this library with
 your app project, _if there is something that not working, please check the list here_.
