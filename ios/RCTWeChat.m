@@ -66,7 +66,7 @@ RCT_EXPORT_METHOD(registerAppWithDescription:(NSString *)appid
                   :(NSString *)appdesc
                   :(RCTResponseSenderBlock)callback)
 {
-    callback(@[[WXApi registerApp:appid withDescription:appdesc] ? [NSNull null] : INVOKE_FAILED]);
+    callback(@[[WXApi registerApp:appid] ? [NSNull null] : INVOKE_FAILED]);
 }
 
 RCT_EXPORT_METHOD(isWXAppInstalled:(RCTResponseSenderBlock)callback)
@@ -154,10 +154,10 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
                   :(RCTResponseSenderBlock)callback)
 {
     PayReq* req             = [PayReq new];
-    req.partnerId           = data[@"partnerId"];
-    req.prepayId            = data[@"prepayId"];
-    req.nonceStr            = data[@"nonceStr"];
-    req.timeStamp           = [data[@"timeStamp"] unsignedIntValue];
+    req.partnerId           = data[@"partnerid"];
+    req.prepayId            = data[@"prepayid"];
+    req.nonceStr            = data[@"noncestr"];
+    req.timeStamp           = [data[@"timestamp"] unsignedIntValue];
     req.package             = data[@"package"];
     req.sign                = data[@"sign"];
     BOOL success = [WXApi sendReq:req];
