@@ -244,3 +244,20 @@ export function pay(data) {
     });
   });
 }
+
+export default const wx = {
+  addListener,
+  once,
+  removeAllListeners,
+  registerApp,
+  registerAppWithDescription,
+  isWXAppInstalled,
+  isWXAppSupportApi,
+  getWXAppInstallUrl,
+  getApiVersion,
+  openWXApp,
+  sendAuthRequest,
+  shareToTimeline,
+  shareToSession,
+  pay,
+};

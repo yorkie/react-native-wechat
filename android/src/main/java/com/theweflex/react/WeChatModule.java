@@ -176,17 +176,17 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     @ReactMethod
     public void pay(ReadableMap data, Callback callback){
         PayReq payReq = new PayReq();
-        if (data.hasKey("partnerId")) {
-            payReq.partnerId = data.getString("partnerId");
+        if (data.hasKey("partnerid")) {
+            payReq.partnerId = data.getString("partnerid");
         }
-        if (data.hasKey("prepayId")) {
-            payReq.prepayId = data.getString("prepayId");
+        if (data.hasKey("prepayid")) {
+            payReq.prepayId = data.getString("prepayid");
         }
-        if (data.hasKey("nonceStr")) {
-            payReq.nonceStr = data.getString("nonceStr");
+        if (data.hasKey("noncestr")) {
+            payReq.nonceStr = data.getString("noncestr");
         }
-        if (data.hasKey("timeStamp")) {
-            payReq.timeStamp = data.getString("timeStamp");
+        if (data.hasKey("timestamp")) {
+            payReq.timeStamp = data.getString("timestamp");
         }
         if (data.hasKey("sign")) {
             payReq.sign = data.getString("sign");
@@ -194,9 +194,9 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         if (data.hasKey("package")) {
             payReq.packageValue = data.getString("package");
         }
-        if (data.hasKey("extData")) {
-            payReq.extData = data.getString("extData");
-        }
+        // if (data.hasKey("extData")) {
+            // payReq.extData = data.getString("extData");
+        // }
         payReq.appId = appId;
         callback.invoke(api.sendReq(payReq) ? null : INVOKE_FAILED);
     }
