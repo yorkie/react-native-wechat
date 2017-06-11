@@ -299,7 +299,7 @@ try {
   console.log('share text message to time line successful:', result);
 } catch (e) {
   if (e instanceof WeChat.WechatError) {
-    console.error('share text message to time line failed with:', e.code);
+    console.error(e.stack);
   } else {
     throw e;
   }
@@ -320,7 +320,7 @@ try {
   console.log('share image url to time line successful:', result);
 } catch (e) {
   if (e instanceof WeChat.WechatError) {
-    console.log('share image url to time line failed with:', e.code);
+    console.error(e.stack);
   } else {
     throw e;
   }
@@ -352,7 +352,7 @@ try {
   console.log('share image file to time line successful:', result);
 } catch (e) {
   if (e instanceof WeChat.WechatError) {
-    console.error('share image file to time line failed with:', e.code);
+    console.error(e.stack);
   } else {
     throw e;
   }
@@ -374,7 +374,7 @@ try {
 }
 catch (e) {
   if (e instanceof WeChat.WechatError) {
-    console.error('share resource image to time line failed', e.code);
+    console.error(e.stack);
   } else {
     throw e;
   }
@@ -406,7 +406,7 @@ try {
   console.log('share word file to chat session successful', result);
 } catch (e) {
   if (e instanceof WeChat.WechatError) {
-    console.error('share word file to chat session failed', e.code);
+    console.error(e.stack);
   } else {
     throw e;
   }
@@ -436,7 +436,7 @@ try {
 }
 catch (e) {
   if (e instanceof WeChat.WechatError) {
-    console.error('share word file to chat session failed', e.code);
+    console.error(e.stack);
   } else {
     throw e;
   }

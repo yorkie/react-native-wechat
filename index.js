@@ -244,8 +244,11 @@ export function pay(data) {
 /**
  * promises will reject with this error when API call finish with an errCode other than zero.
  */
-export function WechatError(apiResp) {
-  this.code = apiResp.errCode;
-  this.message = apiResp.errStr || apiResp.errCode.toString();
+export function WechatError(resp) {
+  this.name = 'WechatError';
+  this.code = resp.errCode;
+  this.message = resp.errStr || resp.errCode.toString();
+  this.stack = (new Error()).stack;
 }
-WechatError.prototype = Error.prototype;
+WechatError.prototype = Object.create(Error.prototype);
+WechatError.prototype.constructor = WechatError;
