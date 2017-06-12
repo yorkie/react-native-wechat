@@ -154,11 +154,10 @@ export function sendAuthRequest(scopes, state) {
   return new Promise((resolve, reject) => {
     WeChat.sendAuthRequest(scopes, state, () => {});
     emitter.once('SendAuth.Resp', resp => {
-      const result = resp.errCode;
-      if (result === 0) {
+      if (resp.errCode === 0) {
         resolve(resp);
       } else {
-        reject(result);
+        reject(new WechatError(resp));
       }
     });
   });
@@ -181,11 +180,10 @@ export function shareToTimeline(data) {
   return new Promise((resolve, reject) => {
     nativeShareToTimeline(data);
     emitter.once('SendMessageToWX.Resp', resp => {
-      const result = resp.errCode;
-      if (result === 0) {
+      if (resp.errCode === 0) {
         resolve(resp);
       } else {
-        reject(result);
+        reject(new WechatError(resp));
       }
     });
   });
@@ -208,11 +206,10 @@ export function shareToSession(data) {
   return new Promise((resolve, reject) => {
     nativeShareToSession(data);
     emitter.once('SendMessageToWX.Resp', resp => {
-      const result = resp.errCode;
-      if (result === 0) {
+      if (resp.errCode === 0) {
         resolve(resp);
       } else {
-        reject(result);
+        reject(new WechatError(resp));
       }
     });
   });
@@ -235,12 +232,28 @@ export function pay(data) {
       if (result) reject(result);
     });
     emitter.once('PayReq.Resp', resp => {
-      const result = resp.errCode;
-      if (result === 0) {
+      if (resp.errCode === 0) {
         resolve(resp);
       } else {
-        reject(result);
+        reject(new WechatError(resp));
       }
     });
   });
 }
+
+/**
+ * promises will reject with this error when API call finish with an errCode other than zero.
+ */
+export class WechatError extends Error {
+  constructor(resp) {
+    const message = resp.errStr || resp.errCode.toString();
+    super(message);
+    this.name = 'WechatError';
+    this.code = resp.errCode;
+
+    // avoid babel's limition about extending Error class
+    // https://github.com/babel/babel/issues/3083
+    Object.setPrototypeOf(this, WechatError.prototype);
+  }
+}
+

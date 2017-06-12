@@ -298,7 +298,11 @@ try {
   });
   console.log('share text message to time line successful:', result);
 } catch (e) {
-  console.error('share text message to time line failed with:', e);
+  if (e instanceof WeChat.WechatError) {
+    console.error(e.stack);
+  } else {
+    throw e;
+  }
 }
 
 // Code example to share image url:
@@ -315,7 +319,11 @@ try {
   });
   console.log('share image url to time line successful:', result);
 } catch (e) {
-  console.log('share image url to time line failed with:', e);
+  if (e instanceof WeChat.WechatError) {
+    console.error(e.stack);
+  } else {
+    throw e;
+  }
 }
 
 // Code example to share image file:
@@ -343,7 +351,11 @@ try {
   });
   console.log('share image file to time line successful:', result);
 } catch (e) {
-  console.error('share image file to time line failed with:', e);
+  if (e instanceof WeChat.WechatError) {
+    console.error(e.stack);
+  } else {
+    throw e;
+  }
 }
 
 // Code example to share image resource:
@@ -361,7 +373,11 @@ try {
   console.log('share resource image to time line successful', result);
 }
 catch (e) {
-  console.error('share resource image to time line failed', e);
+  if (e instanceof WeChat.WechatError) {
+    console.error(e.stack);
+  } else {
+    throw e;
+  }
 }
 
 // Code example to download an word file from web, then share it to WeChat session
@@ -389,7 +405,11 @@ try {
   });
   console.log('share word file to chat session successful', result);
 } catch (e) {
-  console.error('share word file to chat session failed', e);
+  if (e instanceof WeChat.WechatError) {
+    console.error(e.stack);
+  } else {
+    throw e;
+  }
 }
 
 //android code use ExternalDirectoryPath
@@ -415,7 +435,11 @@ try {
   console.log('share word file to chat session successful', result);
 }
 catch (e) {
-  console.error('share word file to chat session failed', e);
+  if (e instanceof WeChat.WechatError) {
+    console.error(e.stack);
+  } else {
+    throw e;
+  }
 }
 ```
 
