@@ -251,6 +251,10 @@ export class WechatError extends Error {
     this.name = 'WechatError';
     this.code = resp.errCode;
     this.stack = (new Error(message)).stack;
+
+    // avoid babel's limition about extending Error class
+    // https://github.com/babel/babel/issues/3083
+    Object.setPrototypeOf(this, WechatError.prototype);
   }
 }
 
