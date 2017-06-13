@@ -227,6 +227,12 @@ export function shareToSession(data) {
  * @returns {Promise}
  */
 export function pay(data) {
+  // FIXME(Yorkie): see https://github.com/yorkie/react-native-wechat/issues/203
+  // Here the server-side returns timestamp in lowercase, but here SDK requires timeStamp
+  // for compatibility, we make this correction for users.
+  if (!data.timeStamp && data.timestamp) {
+    data.timeStamp = data.timestamp;
+  }
   return new Promise((resolve, reject) => {
     WeChat.pay(data, result => {
       if (result) reject(result);
