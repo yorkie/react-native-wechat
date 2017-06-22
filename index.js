@@ -267,7 +267,11 @@ export class WechatError extends Error {
 
     // avoid babel's limition about extending Error class
     // https://github.com/babel/babel/issues/3083
-    Object.setPrototypeOf(this, WechatError.prototype);
+    if (typeof Object.setPrototypeOf === 'function') {
+      Object.setPrototypeOf(this, WechatError.prototype);
+    } else {
+      this.__proto__ = WechatError.prototype;
+    }
   }
 }
 
