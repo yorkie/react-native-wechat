@@ -1,4 +1,16 @@
+# node
 
 node_modules
+
+# android
+
 /android/build
 /android/RCTWeChat.iml
+
+# IDE
+
+.idea
+
+# MacOS
+
+.DS_Store

@@ -7,15 +7,20 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 
 import com.facebook.common.executors.UiThreadImmediateExecutorService;
-import com.facebook.common.internal.Files;
+import com.facebook.common.internal.Closeables;
+import com.facebook.common.internal.Preconditions;
 import com.facebook.common.references.CloseableReference;
 import com.facebook.common.util.UriUtil;
+import com.facebook.datasource.BaseDataSubscriber;
 import com.facebook.datasource.DataSource;
+import com.facebook.datasource.DataSubscriber;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.core.ImagePipeline;
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
+import com.facebook.imagepipeline.memory.PooledByteBuffer;
+import com.facebook.imagepipeline.memory.PooledByteBufferInputStream;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.facebook.react.bridge.Arguments;
@@ -30,6 +35,7 @@ import com.tencent.mm.sdk.modelbase.BaseReq;
 import com.tencent.mm.sdk.modelbase.BaseResp;
 import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.sdk.modelmsg.WXEmojiObject;
 import com.tencent.mm.sdk.modelmsg.WXFileObject;
 import com.tencent.mm.sdk.modelmsg.WXImageObject;
 import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
@@ -43,8 +49,9 @@ import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
-import java.io.File;
-import java.net.URI;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -217,7 +224,10 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             }
         }
 
-        if (uri != null) {
+        String type = data.getString("type");
+
+        if (uri != null &&  !(type.equals("imageUrl") || type.equals("imageResource") || type.equals("imageFile"))) {
+            this._share(scene, data, null, callback);
             this._getImage(uri, new ResizeOptions(100, 100), new ImageCallback() {
                 @Override
                 public void invoke(@Nullable Bitmap bitmap) {
@@ -252,6 +262,63 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         ImagePipeline imagePipeline = Fresco.getImagePipeline();
         DataSource<CloseableReference<CloseableImage>> dataSource = imagePipeline.fetchDecodedImage(imageRequest, null);
         dataSource.subscribe(dataSubscriber, UiThreadImmediateExecutorService.getInstance());
+    }
+
+    private void _getImageData(Uri uri, ResizeOptions resizeOptions, final ImageDataCallback imageCallback) {
+        DataSubscriber<CloseableReference<PooledByteBuffer>> dataSubscriber =
+            new BaseDataSubscriber<CloseableReference<PooledByteBuffer>>() {
+
+                @Override
+                protected void onNewResultImpl(DataSource<CloseableReference<PooledByteBuffer>> dataSource) {
+                    // isFinished must be obtained before image, otherwise we might set intermediate result
+                    // as final image.
+                    boolean isFinished = dataSource.isFinished();
+                    CloseableReference<PooledByteBuffer> image = dataSource.getResult();
+                    if (image != null) {
+                        Preconditions.checkState(CloseableReference.isValid(image));
+                        PooledByteBuffer result = image.get();
+                        InputStream inputStream = new PooledByteBufferInputStream(result);
+                        try {
+                            imageCallback.invoke(getBytes(inputStream));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            imageCallback.invoke(null);
+                        } finally {
+                            Closeables.closeQuietly(inputStream);
+                        }
+                    } else if (isFinished) {
+                        imageCallback.invoke(null);
+                    }
+                    dataSource.close();
+                }
+
+                @Override
+                protected void onFailureImpl(DataSource<CloseableReference<PooledByteBuffer>> dataSource) {
+                    imageCallback.invoke(null);
+                }
+            };
+
+        ImageRequestBuilder builder = ImageRequestBuilder.newBuilderWithSource(uri);
+        if (resizeOptions != null) {
+            builder = builder.setResizeOptions(resizeOptions);
+        }
+        ImageRequest imageRequest = builder.build();
+
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+        DataSource<CloseableReference<PooledByteBuffer>> dataSource = imagePipeline.fetchEncodedImage(imageRequest, getReactApplicationContext());
+        dataSource.subscribe(dataSubscriber, UiThreadImmediateExecutorService.getInstance());
+    }
+
+    public byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
     }
 
     private static Uri getResourceDrawableUri(Context context, String name) {
@@ -329,7 +396,6 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
 
         WXMediaMessage message = new WXMediaMessage();
         message.mediaObject = mediaObject;
-
         if (thumbImage != null) {
             message.setThumbImage(thumbImage);
         }
@@ -397,12 +463,21 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             return;
         }
 
-        this._getImage(imageUri, null, new ImageCallback() {
-            @Override
-            public void invoke(@Nullable Bitmap bitmap) {
-                callback.invoke(bitmap == null ? null : new WXImageObject(bitmap));
-            }
-        });
+        if (imageUrl.toLowerCase().contains(".gif")) { // gif
+            this._getImageData(imageUri,  null, new ImageDataCallback() {
+                @Override
+                public void invoke(@Nullable byte[] bytes) {
+                    callback.invoke(bytes == null ? null : new WXEmojiObject(bytes));
+                }
+            });
+        } else {
+            this._getImage(imageUri, null, new ImageCallback() {
+                @Override
+                public void invoke(@Nullable Bitmap bitmap) {
+                    callback.invoke(bitmap == null ? null : new WXImageObject(bitmap));
+                }
+            });
+        }
     }
 
     private void __jsonToImageUrlMedia(ReadableMap data, MediaObjectCallback callback) {
@@ -494,6 +569,10 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
 
     private interface ImageCallback {
         void invoke(@Nullable Bitmap bitmap);
+    }
+
+    private interface ImageDataCallback {
+        void invoke(@Nullable byte[] bytes);
     }
 
     private interface MediaObjectCallback {
