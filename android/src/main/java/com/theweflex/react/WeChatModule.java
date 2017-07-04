@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.webkit.MimeTypeMap;
 
 import com.facebook.common.executors.UiThreadImmediateExecutorService;
 import com.facebook.common.internal.Closeables;
@@ -52,6 +53,8 @@ import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -341,6 +344,25 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         }
     }
 
+    /**
+     * 获取链接指向文件后缀
+     *
+     * @param src
+     * @return
+     */
+    public static String getExtension(String src) {
+        String extension = null;
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            String contentType = connection.getContentType();
+            extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(contentType);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return extension;
+    }
+
     private void _share(final int scene, final ReadableMap data, final Bitmap thumbImage, final Callback callback) {
         if (!data.hasKey("type")) {
             callback.invoke(INVALID_ARGUMENT);
@@ -463,7 +485,8 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             return;
         }
 
-        if (imageUrl.toLowerCase().contains(".gif")) { // gif
+        String extension = getExtension(imageUrl);
+        if (extension != null && extension.toLowerCase().equals(".gif")) {
             this._getImageData(imageUri,  null, new ImageDataCallback() {
                 @Override
                 public void invoke(@Nullable byte[] bytes) {
