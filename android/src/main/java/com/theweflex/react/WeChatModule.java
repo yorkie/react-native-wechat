@@ -230,14 +230,13 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         String type = data.getString("type");
 
         if (uri != null &&  !(type.equals("imageUrl") || type.equals("imageResource") || type.equals("imageFile"))) {
-            this._share(scene, data, null, callback);
             this._getImage(uri, new ResizeOptions(100, 100), new ImageCallback() {
                 @Override
                 public void invoke(@Nullable Bitmap bitmap) {
                     WeChatModule.this._share(scene, data, bitmap, callback);
                 }
             });
-        } else {
+        } else { // no need thumb when share image
             this._share(scene, data, null, callback);
         }
     }
