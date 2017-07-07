@@ -53,10 +53,14 @@ import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
+
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by tdzl2_000 on 2015-10-10.
@@ -68,6 +72,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     private final static String NOT_REGISTERED = "registerApp required.";
     private final static String INVOKE_FAILED = "WeChat API invoke returns false.";
     private final static String INVALID_ARGUMENT = "invalid argument.";
+    private HashMap<String, String> extensionMap = new HashMap<>();
 
     public WeChatModule(ReactApplicationContext context) {
         super(context);
@@ -81,9 +86,10 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     /**
      * fix Native module WeChatModule tried to override WeChatModule for module name RCTWeChat.
      * If this was your intention, return true from WeChatModule#canOverrideExistingModule() bug
+     *
      * @return
      */
-    public boolean canOverrideExistingModule(){
+    public boolean canOverrideExistingModule() {
         return true;
     }
 
@@ -184,7 +190,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     }
 
     @ReactMethod
-    public void pay(ReadableMap data, Callback callback){
+    public void pay(ReadableMap data, Callback callback) {
         PayReq payReq = new PayReq();
         if (data.hasKey("partnerId")) {
             payReq.partnerId = data.getString("partnerId");
@@ -212,154 +218,54 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     }
 
     private void _share(final int scene, final ReadableMap data, final Callback callback) {
-        Uri uri = null;
+        Uri thumbUri = null;
         if (data.hasKey("thumbImage")) {
-            String imageUrl = data.getString("thumbImage");
-
+            String thumbImage = data.getString("thumbImage");
             try {
-                uri = Uri.parse(imageUrl);
+                thumbUri = Uri.parse(thumbImage);
                 // Verify scheme is set, so that relative uri (used by static resources) are not handled.
-                if (uri.getScheme() == null) {
-                    uri = getResourceDrawableUri(getReactApplicationContext(), imageUrl);
+                if (thumbUri.getScheme() == null) {
+                    thumbUri = getResourceDrawableUri(getReactApplicationContext(), thumbImage);
                 }
             } catch (Exception e) {
                 // ignore malformed uri, then attempt to extract resource ID.
             }
         }
 
-        String type = data.getString("type");
+        String imageUrl = data.hasKey("imageUrl") ? data.getString("imageUrl") : null;
+        String type = data.hasKey("type") ? data.getString("type") : null;
+        if (type == null) {
+            callback.invoke(INVALID_ARGUMENT);
+        }
 
-        if (uri != null &&  !(type.equals("imageUrl") || type.equals("imageResource") || type.equals("imageFile"))) {
-            this._getImage(uri, new ResizeOptions(100, 100), new ImageCallback() {
-                @Override
-                public void invoke(@Nullable Bitmap bitmap) {
-                    WeChatModule.this._share(scene, data, bitmap, callback);
-                }
-            });
-        } else { // no need thumb when share image
+        if (thumbUri == null) { // 无缩略图
             this._share(scene, data, null, callback);
-        }
-    }
-
-    private void _getImage(Uri uri, ResizeOptions resizeOptions, final ImageCallback imageCallback) {
-        BaseBitmapDataSubscriber dataSubscriber = new BaseBitmapDataSubscriber() {
-            @Override
-            protected void onNewResultImpl(Bitmap bitmap) {
-                bitmap = bitmap.copy(bitmap.getConfig(), true);
-                imageCallback.invoke(bitmap);
-            }
-
-            @Override
-            protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-                imageCallback.invoke(null);
-            }
-        };
-
-        ImageRequestBuilder builder = ImageRequestBuilder.newBuilderWithSource(uri);
-        if (resizeOptions != null) {
-            builder = builder.setResizeOptions(resizeOptions);
-        }
-        ImageRequest imageRequest = builder.build();
-
-        ImagePipeline imagePipeline = Fresco.getImagePipeline();
-        DataSource<CloseableReference<CloseableImage>> dataSource = imagePipeline.fetchDecodedImage(imageRequest, null);
-        dataSource.subscribe(dataSubscriber, UiThreadImmediateExecutorService.getInstance());
-    }
-
-    private void _getImageData(Uri uri, ResizeOptions resizeOptions, final ImageDataCallback imageCallback) {
-        DataSubscriber<CloseableReference<PooledByteBuffer>> dataSubscriber =
-            new BaseDataSubscriber<CloseableReference<PooledByteBuffer>>() {
-
-                @Override
-                protected void onNewResultImpl(DataSource<CloseableReference<PooledByteBuffer>> dataSource) {
-                    // isFinished must be obtained before image, otherwise we might set intermediate result
-                    // as final image.
-                    boolean isFinished = dataSource.isFinished();
-                    CloseableReference<PooledByteBuffer> image = dataSource.getResult();
-                    if (image != null) {
-                        Preconditions.checkState(CloseableReference.isValid(image));
-                        PooledByteBuffer result = image.get();
-                        InputStream inputStream = new PooledByteBufferInputStream(result);
-                        try {
-                            imageCallback.invoke(getBytes(inputStream));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            imageCallback.invoke(null);
-                        } finally {
-                            Closeables.closeQuietly(inputStream);
+        } else { // 有缩略图
+            if ("imageUrl".equals(type) || "imageResource".equals(type) || "imageFile".equals(type)) { // 分享图片
+                if (imageUrl == null) {
+                    callback.invoke(INVALID_ARGUMENT);
+                } else {
+                    final Uri finalThumbUri = thumbUri;
+                    getExtension(imageUrl, new ExtensionCallback() {
+                        @Override
+                        public void invoke(@Nullable String extension) {
+                            if (extension != null && extension.equals("gif")) { // gif 图片不传缩略图分享不出去
+                                getImage(finalThumbUri, new ResizeOptions(100, 100), new ImageCallback() {
+                                    @Override
+                                    public void invoke(@Nullable Bitmap bitmap) {
+                                        _share(scene, data, bitmap, callback);
+                                    }
+                                });
+                            } else { // 普通图片传缩略图会只分享缩略图
+                                _share(scene, data, null, callback);
+                            }
                         }
-                    } else if (isFinished) {
-                        imageCallback.invoke(null);
-                    }
-                    dataSource.close();
+                    });
                 }
-
-                @Override
-                protected void onFailureImpl(DataSource<CloseableReference<PooledByteBuffer>> dataSource) {
-                    imageCallback.invoke(null);
-                }
-            };
-
-        ImageRequestBuilder builder = ImageRequestBuilder.newBuilderWithSource(uri);
-        if (resizeOptions != null) {
-            builder = builder.setResizeOptions(resizeOptions);
+            } else { // 分享非图片
+                _share(scene, data, null, callback);
+            }
         }
-        ImageRequest imageRequest = builder.build();
-
-        ImagePipeline imagePipeline = Fresco.getImagePipeline();
-        DataSource<CloseableReference<PooledByteBuffer>> dataSource = imagePipeline.fetchEncodedImage(imageRequest, getReactApplicationContext());
-        dataSource.subscribe(dataSubscriber, UiThreadImmediateExecutorService.getInstance());
-    }
-
-    public byte[] getBytes(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-        int bufferSize = 1024;
-        byte[] buffer = new byte[bufferSize];
-
-        int len = 0;
-        while ((len = inputStream.read(buffer)) != -1) {
-            byteBuffer.write(buffer, 0, len);
-        }
-        return byteBuffer.toByteArray();
-    }
-
-    private static Uri getResourceDrawableUri(Context context, String name) {
-        if (name == null || name.isEmpty()) {
-            return null;
-        }
-        name = name.toLowerCase().replace("-", "_");
-        int resId = context.getResources().getIdentifier(
-                name,
-                "drawable",
-                context.getPackageName());
-
-        if (resId == 0) {
-            return null;
-        } else {
-            return new Uri.Builder()
-                    .scheme(UriUtil.LOCAL_RESOURCE_SCHEME)
-                    .path(String.valueOf(resId))
-                    .build();
-        }
-    }
-
-    /**
-     * 获取链接指向文件后缀
-     *
-     * @param src
-     * @return
-     */
-    public static String getExtension(String src) {
-        String extension = null;
-        try {
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            String contentType = connection.getContentType();
-            extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(contentType);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return extension;
     }
 
     private void _share(final int scene, final ReadableMap data, final Bitmap thumbImage, final Callback callback) {
@@ -484,22 +390,28 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             return;
         }
 
-        String extension = getExtension(imageUrl);
-        if (extension != null && extension.toLowerCase().equals(".gif")) {
-            this._getImageData(imageUri,  null, new ImageDataCallback() {
-                @Override
-                public void invoke(@Nullable byte[] bytes) {
-                    callback.invoke(bytes == null ? null : new WXEmojiObject(bytes));
+        final Uri finalImageUri = imageUri;
+        getExtension(imageUrl, new ExtensionCallback() {
+            @Override
+            public void invoke(String extension) {
+                if (extension != null && extension.toLowerCase().equals("gif")) {
+                    getImageData(finalImageUri, null, new ImageDataCallback() {
+                        @Override
+                        public void invoke(@Nullable byte[] bytes) {
+                            callback.invoke(bytes == null ? null : new WXEmojiObject(bytes));
+                        }
+                    });
+                } else {
+                    getImage(finalImageUri, null, new ImageCallback() {
+                        @Override
+                        public void invoke(@Nullable Bitmap bitmap) {
+                            callback.invoke(bitmap == null ? null : new WXImageObject(bitmap));
+                        }
+                    });
                 }
-            });
-        } else {
-            this._getImage(imageUri, null, new ImageCallback() {
-                @Override
-                public void invoke(@Nullable Bitmap bitmap) {
-                    callback.invoke(bitmap == null ? null : new WXImageObject(bitmap));
-                }
-            });
-        }
+            }
+        });
+
     }
 
     private void __jsonToImageUrlMedia(ReadableMap data, MediaObjectCallback callback) {
@@ -516,7 +428,6 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             callback.invoke(null);
             return;
         }
-
         String imageUrl = data.getString("imageUrl");
         if (!imageUrl.toLowerCase().startsWith("file://")) {
             imageUrl = "file://" + imageUrl;
@@ -528,7 +439,6 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         if (!data.hasKey("musicUrl")) {
             return null;
         }
-
         WXMusicObject ret = new WXMusicObject();
         ret.musicUrl = data.getString("musicUrl");
         return ret;
@@ -538,7 +448,6 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         if (!data.hasKey("videoUrl")) {
             return null;
         }
-
         WXVideoObject ret = new WXVideoObject();
         ret.videoUrl = data.getString("videoUrl");
         return ret;
@@ -549,6 +458,146 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             return null;
         }
         return new WXFileObject(data.getString("filePath"));
+    }
+
+    private void getImage(Uri uri, ResizeOptions resizeOptions, final ImageCallback imageCallback) {
+        BaseBitmapDataSubscriber dataSubscriber = new BaseBitmapDataSubscriber() {
+            @Override
+            protected void onNewResultImpl(Bitmap bitmap) {
+                if (bitmap != null) {
+                    bitmap = bitmap.copy(bitmap.getConfig(), true);
+                }
+                imageCallback.invoke(bitmap);
+            }
+
+            @Override
+            protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
+                imageCallback.invoke(null);
+            }
+        };
+
+        ImageRequestBuilder builder = ImageRequestBuilder.newBuilderWithSource(uri);
+        if (resizeOptions != null) {
+            builder = builder.setResizeOptions(resizeOptions);
+        }
+        ImageRequest imageRequest = builder.build();
+
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+        DataSource<CloseableReference<CloseableImage>> dataSource = imagePipeline.fetchDecodedImage(imageRequest, null);
+        dataSource.subscribe(dataSubscriber, UiThreadImmediateExecutorService.getInstance());
+    }
+
+    private void getImageData(Uri uri, ResizeOptions resizeOptions, final ImageDataCallback imageCallback) {
+        DataSubscriber<CloseableReference<PooledByteBuffer>> dataSubscriber =
+            new BaseDataSubscriber<CloseableReference<PooledByteBuffer>>() {
+
+                @Override
+                protected void onNewResultImpl(DataSource<CloseableReference<PooledByteBuffer>> dataSource) {
+                    // isFinished must be obtained before image, otherwise we might set intermediate result
+                    // as final image.
+                    boolean isFinished = dataSource.isFinished();
+                    CloseableReference<PooledByteBuffer> image = dataSource.getResult();
+                    if (image != null) {
+                        Preconditions.checkState(CloseableReference.isValid(image));
+                        PooledByteBuffer result = image.get();
+                        InputStream inputStream = new PooledByteBufferInputStream(result);
+                        byte[] bytes = null;
+                        try {
+                            bytes = getBytes(inputStream);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            imageCallback.invoke(bytes);
+                            Closeables.closeQuietly(inputStream);
+                        }
+                    } else if (isFinished) {
+                        imageCallback.invoke(null);
+                    }
+                    dataSource.close();
+                }
+
+                @Override
+                protected void onFailureImpl(DataSource<CloseableReference<PooledByteBuffer>> dataSource) {
+                    imageCallback.invoke(null);
+                }
+            };
+
+        ImageRequestBuilder builder = ImageRequestBuilder.newBuilderWithSource(uri);
+        if (resizeOptions != null) {
+            builder = builder.setResizeOptions(resizeOptions);
+        }
+        ImageRequest imageRequest = builder.build();
+
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+        DataSource<CloseableReference<PooledByteBuffer>> dataSource = imagePipeline.fetchEncodedImage(imageRequest, getReactApplicationContext());
+        dataSource.subscribe(dataSubscriber, UiThreadImmediateExecutorService.getInstance());
+    }
+
+    private byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
+    }
+
+    private static Uri getResourceDrawableUri(Context context, String name) {
+        if (name == null || name.isEmpty()) {
+            return null;
+        }
+        name = name.toLowerCase().replace("-", "_");
+        int resId = context.getResources().getIdentifier(
+            name,
+            "drawable",
+            context.getPackageName());
+
+        if (resId == 0) {
+            return null;
+        } else {
+            return new Uri.Builder()
+                .scheme(UriUtil.LOCAL_RESOURCE_SCHEME)
+                .path(String.valueOf(resId))
+                .build();
+        }
+    }
+
+    /**
+     * 获取链接指向文件后缀
+     *
+     * @param url
+     * @return
+     */
+    private void getExtension(final String url, final ExtensionCallback callback) {
+        if (url == null) {
+            callback.invoke(null);
+            return;
+        }
+        String temp = extensionMap.get(url);
+        if (temp != null) {
+            callback.invoke(temp);
+            return;
+        }
+        Request request = new Request.Builder().url(url).head().build();
+        OkHttpClient client = new OkHttpClient();
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.invoke(null);
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String contentType = response.body().contentType().toString();
+                String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(contentType);
+                if (extension != null) {
+                    extensionMap.put(url, extension);
+                }
+                callback.invoke(extension);
+            }
+        });
     }
 
     // TODO: 实现sendRequest、sendSuccessResponse、sendErrorCommonResponse、sendErrorUserCancelResponse
@@ -585,8 +634,8 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         }
 
         this.getReactApplicationContext()
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit("WeChat_Resp", map);
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+            .emit("WeChat_Resp", map);
     }
 
     private interface ImageCallback {
@@ -599,6 +648,10 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
 
     private interface MediaObjectCallback {
         void invoke(@Nullable WXMediaMessage.IMediaObject mediaObject);
+    }
+
+    private interface ExtensionCallback {
+        void invoke(@Nullable String extension);
     }
 
 }
