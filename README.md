@@ -515,6 +515,7 @@ MIT
 [david-url]: https://david-dm.org/yorkie/react-native-wechat
 [downloads-image]: http://img.shields.io/npm/dm/react-native-wechat.svg?style=flat-square
 [downloads-url]: https://npmjs.org/package/react-native-wechat
+[React Native]: https://github.com/facebook/react-native
 [Deng Yun]: https://github.com/tdzl2003
 [Xing Zhen]: https://github.com/xing-zheng
 [Yorkie Liu]: https://github.com/yorkie
