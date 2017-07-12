@@ -160,6 +160,12 @@ export function sendAuthRequest(scopes, state) {
         reject(new WechatError(resp));
       }
     });
+    // 微信 SDK Bug，认证的时候，如果没登录微信，进入微信登录界面，然后点返回。响应的类型是 SendMessageToWX.Resp
+    emitter.once('SendMessageToWX.Resp', resp => {
+      if (resp.errCode === -2) {
+        reject(new WechatError(resp));
+      }
+    });
   });
 }
 
