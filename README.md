@@ -9,12 +9,9 @@
 
 And [react-native-wechat] has the following tracking data in open source world:
 
-| type        | badge                                           |
-|-------------|-------------------------------------------------|
-| NPM         | [![NPM version][npm-image]][npm-url]            |
-| Dependency  | [![Dependency Status][david-image]][david-url]  |
-| Downloads   | [![Downloads][downloads-image]][downloads-url]  |
-| Build       | [![Build Status][travis-image]][travis-url]     |
+| NPM | Dependency | Downloads | Build |
+|-----|------------|-----------|-------|
+| [![NPM version][npm-image]][npm-url] | [![Dependency Status][david-image]][david-url] | [![Downloads][downloads-image]][downloads-url] | [![Build Status][travis-image]][travis-url] |
 
 ## Table of Contents
 
