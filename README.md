@@ -42,7 +42,7 @@ And [react-native-wechat] has the following tracking data in open source world:
 | NPM         | [![NPM version][npm-image]][npm-url]            |
 | Dependency  | [![Dependency Status][david-image]][david-url]  |
 | Downloads   | [![Downloads][downloads-image]][downloads-url]  |
-| Build       | [![Build Status](travis-image)](travis-url)     |
+| Build       | [![Build Status](travis-image)][travis-url]     |
 
 ## Linking Steps
 
