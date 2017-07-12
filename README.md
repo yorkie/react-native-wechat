@@ -80,7 +80,6 @@ Open the WeChat app from your application.
 
 #### sendAuthRequest([scope[, state]])
 
-
 - `scope` {Array|String} Scopes of auth request.
 - `state` {String} the state of OAuth2
 - returns {Object}
@@ -102,6 +101,7 @@ following fields:
 
 - `type` {Number} type of this message. Can be {news|text|imageUrl|imageFile|imageResource|video|audio|file}
 - `thumbImage` {String} Thumb image of the message, which can be a uri or a resource id.
+- `description` {String} The description about the sharing.
 - `webpageUrl` {String} Required if type equals `news`. The webpage link to share.
 - `imageUrl` {String} Provide a remote image if type equals `image`.
 - `videoUrl` {String} Provide a remote video if type equals `video`.
@@ -114,9 +114,7 @@ following fields:
 - `message` {ShareMetadata} This object saves the metadata for sharing
 - returns {Object}
 
-Share a `ShareMetadata` message to timeline(朋友圈).
-
-And returns:
+Share a `ShareMetadata` message to timeline(朋友圈) and returns:
 
 | name    | type   | description                         |
 |---------|--------|-------------------------------------|
