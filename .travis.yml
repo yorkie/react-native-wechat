@@ -9,9 +9,10 @@ cache:
     - $HOME/.gradle/wrapper/
 env:
   - NODE_ENV='test'
+install:
+  - npm install
 script:
   - npm test
-  - npm run bundle:ios
 matrix:
   include:
     - language: android
@@ -20,13 +21,8 @@ matrix:
       before_cache:
         - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
         - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-      sudo: true
       node_js: false
-      install:
-        - npm install
-      before_install:
         - nvm install 7
-        - node --version
       android:
         components:
           - android-23
@@ -40,4 +36,3 @@ matrix:
       script:
         - cd ios
         - xcodebuild -scheme RCTWeChat -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO | xcpretty
-        - travis_retry xctool run-tests -scheme RCTWeChat -sdk iphonesimulator -launch-timeout 90  ONLY_ACTIVE_ARCH=NO
