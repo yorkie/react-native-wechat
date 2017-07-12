@@ -30,88 +30,91 @@ And [react-native-wechat] has the following tracking data in open source world:
 
 ## API Documentation
 
-[react-native-wechat] supports the following methods to get information and do something functions
-with WeChat app.
+[react-native-wechat] exposes the promise-based, therefore you could use `Promise`
+or `async/await` to manage your dataflow.
 
 #### registerApp(appid)
 
-You should call this function in global, calling over twice would throw an error.
+- `appid` {String} the appid you get from WeChat dashboard
+- returns {Boolean} explains if your application is registered done
 
-  ```js
-  // If you register here
-  componentDidMount (){
-    wechat.registerApp('your appid')
-  }
-  ```
+This method should be called once globally.
 
-- {String} `appid` the appid you get from WeChat dashboard
-- returns {Promise} 
+```js
+import * as WeChat from 'react-native-wechat';
 
-#### registerAppWithDescription(appid, appdesc)
+WeChat.registerApp('appid');
+```
 
-Only available on iOS.
+#### registerAppWithDescription(appid, description)
 
-- {String} `appid` the appid you get from WeChat dashboard
-- {String} `appdesc` the description of your app
-- returns {Promise} 
+- `appid` {String} the appid you get from WeChat dashboard
+- `description` {String} the description of your app
+- returns {Boolean} explains if your application is registered done
+
+This method is only available on iOS.
 
 #### isWXAppInstalled() 
 
-Check if wechat installed in this app.
+- returns {Boolean} if WeChat is installed.
 
-- returns {Promise} Contain the result.
+Check if wechat installed in this app.
 
 #### isWXAppSupportApi()
 
-Check if wechat support open url.
+- returns {Boolean}  Contain the result.
 
-- returns {Promise}  Contain the result.
+Check if wechat support open url.
 
 #### getApiVersion()
 
-Get api version of WeChat SDK.
+- returns {String}  Contain the result.
 
-- returns {Promise}  Contain the result.
+Get api version of WeChat SDK.
 
 #### openWXApp()
 
-Open WeChat app with an optional callback argument.
+- returns {Boolean} 
 
-- returns {Promise} 
+Open the WeChat app from your application.
 
 #### sendAuthRequest([scope[, state]])
 
-Send authentication request, namely login.
 
-- {Array|String} `scope` Scopes of auth request.
-- {String} `state` the state of OAuth2
-- returns {Promise}
+- `scope` {Array|String} Scopes of auth request.
+- `state` {String} the state of OAuth2
+- returns {Object}
 
-And it returns:
+Send authentication request, and it returns an object with the 
+following fields:
 
-| name    | type   | description                         |
+| field   | type   | description                         |
 |---------|--------|-------------------------------------|
-| errCode | Number |                                     |
+| errCode | Number | Error Code                          |
 | errStr  | String | Error message if any error occurred |
 | openId  | String |                                     |
 | code    | String | Authorization code                  |
 | url     | String | The URL string                      |
-| lang    | String | The user language                   | 
+| lang    | String | The user language                   |
 | country | String | The user country                    |
 
-#### shareToTimeline(data)
+#### class `ShareMetadata`
 
-Share a message to timeline (朋友圈).
+- `type` {Number} type of this message. Can be {news|text|imageUrl|imageFile|imageResource|video|audio|file}
+- `thumbImage` {String} Thumb image of the message, which can be a uri or a resource id.
+- `webpageUrl` {String} Required if type equals `news`. The webpage link to share.
+- `imageUrl` {String} Provide a remote image if type equals `image`.
+- `videoUrl` {String} Provide a remote video if type equals `video`.
+- `musicUrl` {String} Provide a remote music if type equals `audio`.
+- `filePath` {String} Provide a local file if type equals `file`.
+- `fileExtension` {String} Provide the file type if type equals `file`.
 
-- {Object} `data` contain the message to send
-    - {String} `thumbImage` Thumb image of the message, which can be a uri or a resource id.
-    - {String} `type` Type of this message. Can be {news|text|imageUrl|imageFile|imageResource|video|audio|file}
-    - {String} `webpageUrl` Required if type equals `news`. The webpage link to share.
-    - {String} `imageUrl` Provide a remote image if type equals `image`.
-    - {String} `videoUrl` Provide a remote video if type equals `video`.
-    - {String} `musicUrl` Provide a remote music if type equals `audio`.
-    - {String} `filePath` Provide a local file if type equals `file`.
-    - {String} `fileExtension` Provide the file type if type equals `file`.
+#### shareToTimeline(message)
+
+- `message` {ShareMetadata} This object saves the metadata for sharing
+- returns {Object}
+
+Share a `ShareMetadata` message to timeline(朋友圈).
 
 And returns:
 
@@ -280,47 +283,30 @@ catch (e) {
 }
 ```
 
-#### shareToSession(data)
+#### shareToSession(message)
 
-Similar to `shareToTimeline` but send message to a friend or a groups.
+- `message` {ShareMetadata} This object saves the metadata for sharing
+- returns {Object}
 
-#### pay(data)
+Similar to `shareToTimeline` but send message to a friend or chat group.
 
-Create a request to proceeding payment.
+#### pay(payload)
 
-```js
-const result = await WeChat.pay(
-  {
-    partnerId: '',  // 商家向财付通申请的商家id
-    prepayId: '',   // 预支付订单
-    nonceStr: '',   // 随机串，防重发
-    timeStamp: '',  // 时间戳，防重发
-    package: '',    // 商家根据财付通文档填写的数据和签名
-    sign: ''        // 商家根据微信开放平台文档对数据做的签名
-  }
-);
-```
+- `payload` {Object} the payment data
+  - `partnerId` {String} 商家向财付通申请的商家ID
+  - `prepayId` {String} 预支付订单ID
+  - `nonceStr` {String} 随机串
+  - `timeStamp` {String} 时间戳
+  - `package` {String} 商家根据财付通文档填写的数据和签名
+  - `sign` {String} 商家根据微信开放平台文档对数据做的签名
+- returns {Object}
 
-It returns an object like this:
+Sends request for proceeding payment, then returns an object:
 
 | name    | type   | description                         |
 |---------|--------|-------------------------------------|
 | errCode | Number | 0 if authorization successed        |
 | errStr  | String | Error message if any error occurred |
-
-#### addListener(eventType, listener[, context])
-
-Adds a listener to be invoked when events of the specified type are emitted. An optional calling context may be provided. 
-
-Return a object like `{remove: function}` which can be used to remove this listener.
-
-#### once(eventType, listener[, context])
-
-Similar to addListener, except that the listener is removed after it is invoked once.
-
-#### removeAllListeners()
-
-Removes all of the registered listeners, including those registered as listener maps.
 
 ## Installation
 
