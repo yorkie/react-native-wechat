@@ -1,0 +1,43 @@
+language: node_js
+node_js:
+  - "7.1"
+sudo: false
+cache:
+  directories:
+    - $HOME/.yarn-cache
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+env:
+  - NODE_ENV='test'
+script:
+  - npm test
+  - npm run bundle:ios
+matrix:
+  include:
+    - language: android
+      os: linux
+      jdk: oraclejdk8
+      before_cache:
+        - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+        - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+      sudo: true
+      node_js: false
+      install:
+        - npm install
+      before_install:
+        - nvm install 7
+        - node --version
+      android:
+        components:
+          - android-23
+          - build-tools-23.0.1
+    - language: objective-c
+      os: osx
+      osx_image: xcode8.2
+      node_js: false
+      xcode_project: ios/RCTWeChat.xcodeproj
+      xcode_scheme: ios/RCTWeChat
+      script:
+        - cd ios
+        - xcodebuild -scheme RCTWeChat -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO | xcpretty
+        - travis_retry xctool run-tests -scheme RCTWeChat -sdk iphonesimulator -launch-timeout 90  ONLY_ACTIVE_ARCH=NO

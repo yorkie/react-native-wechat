@@ -1,4 +1,6 @@
-![wechat logo](weixin.png?raw=true) React-Native Bridge
+![weixin logo](weixin.png?raw=true) 
+
+# React-Native-Wechat
 
 ## Table of Contents
 
@@ -40,6 +42,7 @@ And [react-native-wechat] has the following tracking data in open source world:
 | NPM         | [![NPM version][npm-image]][npm-url]            |
 | Dependency  | [![Dependency Status][david-image]][david-url]  |
 | Downloads   | [![Downloads][downloads-image]][downloads-url]  |
+| Build       | [![Build Status](travis-image)](travis-url)     |
 
 ## Linking Steps
 
@@ -507,22 +510,20 @@ $ npm install react-native-wechat --save
 
 ## License
 
-MIT @ [WeFlex], Inc
+MIT
 
-[react-native-wechat]: https://github.com/weflex/react-native-wechat
+[react-native-wechat]: https://github.com/yorkie/react-native-wechat
 [npm-image]: https://img.shields.io/npm/v/react-native-wechat.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/react-native-wechat
-[travis-image]: https://img.shields.io/travis/weflex/react-native-wechat.svg?style=flat-square
-[travis-url]: https://travis-ci.org/weflex/react-native-wechat
-[david-image]: http://img.shields.io/david/weflex/react-native-wechat.svg?style=flat-square
-[david-url]: https://david-dm.org/weflex/react-native-wechat
+[travis-image]: https://travis-ci.org/yorkie/react-native-wechat.svg?branch=master
+[travis-url]: https://travis-ci.org/yorkie/react-native-wechat
+[david-image]: http://img.shields.io/david/yorkie/react-native-wechat.svg?style=flat-square
+[david-url]: https://david-dm.org/yorkie/react-native-wechat
 [downloads-image]: http://img.shields.io/npm/dm/react-native-wechat.svg?style=flat-square
 [downloads-url]: https://npmjs.org/package/react-native-wechat
 [Deng Yun]: https://github.com/tdzl2003
 [Xing Zhen]: https://github.com/xing-zheng
 [Yorkie Liu]: https://github.com/yorkie
-[WeFlex]: https://github.com/weflex
 [react-native-cn]: https://github.com/reactnativecn
 [WeChat SDK]: https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=1417674108&token=&lang=zh_CN
-[Linking Libraries iOS Guidance]:
-https://developer.apple.com/library/ios/recipes/xcode_help-project_editor/Articles/AddingaLibrarytoaTarget.html
+[Linking Libraries iOS Guidance]: https://developer.apple.com/library/ios/recipes/xcode_help-project_editor/Articles/AddingaLibrarytoaTarget.html
