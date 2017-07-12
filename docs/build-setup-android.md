@@ -15,6 +15,14 @@ dependencies {
 }
 ```
 
+Copy lines to `proguard-rules.pro`:
+
+```pro
+-keep class com.tencent.mm.sdk.** {
+  *;
+}
+```
+
 Then update `MainActivity.java` or `MainApplication.java`:
 
 ```java
@@ -33,7 +41,7 @@ protected List<ReactPackage> getPackages() {
 
 If you are going to integrate login or share functions, you need to 
 create a package named 'wxapi' in your application package and a class 
-named 'WXEntryActivity' in it.
+named `WXEntryActivity` in it.
 
 ```java
 package your.package.wxapi;
@@ -101,12 +109,4 @@ Then add the following node to `AndroidManifest.xml`:
     />
   </application>
 </manifest>
-```
-
-The last step to make build be working, copy lines to `proguard-rules.pro`:
-
-```pro
--keep class com.tencent.mm.sdk.** {
-  *;
-}
 ```
