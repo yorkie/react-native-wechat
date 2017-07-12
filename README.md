@@ -2,9 +2,22 @@
 
 # React-Native-Wechat
 
+[React Native] bridging library that integrates WeChat SDKs:
+
+- [x] iOS SDK 1.7.2
+- [x] Android SDK 221
+
+And [react-native-wechat] has the following tracking data in open source world:
+
+| type        | badge                                           |
+|-------------|-------------------------------------------------|
+| NPM         | [![NPM version][npm-image]][npm-url]            |
+| Dependency  | [![Dependency Status][david-image]][david-url]  |
+| Downloads   | [![Downloads][downloads-image]][downloads-url]  |
+| Build       | [![Build Status][travis-image]][travis-url]     |
+
 ## Table of Contents
 
-- [Build](#build)
 - [Linking Steps](#linking-steps)
   - [Linking iOS](#linking-ios)
   - [Linking Android with Gradle](#linking-android-with-gradle)
@@ -27,22 +40,6 @@
 - [Who Use It](#who-use-it)
 - [Authors](#authors)
 - [License](#license)
-
-## Build
-
-React-Native bridge static library for WeChat SDK which requires:
-
-- [x] iOS SDK 1.7.2
-- [x] Android SDK 221
-
-And [react-native-wechat] has the following tracking data in open source world:
-
-| type        | badge                                           |
-|-------------|-------------------------------------------------|
-| NPM         | [![NPM version][npm-image]][npm-url]            |
-| Dependency  | [![Dependency Status][david-image]][david-url]  |
-| Downloads   | [![Downloads][downloads-image]][downloads-url]  |
-| Build       | [![Build Status][travis-image]][travis-url]     |
 
 ## Linking Steps
 
@@ -515,7 +512,7 @@ MIT
 [react-native-wechat]: https://github.com/yorkie/react-native-wechat
 [npm-image]: https://img.shields.io/npm/v/react-native-wechat.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/react-native-wechat
-[travis-image]: https://travis-ci.org/yorkie/react-native-wechat.svg?branch=master
+[travis-image]: https://img.shields.io/travis/yorkie/react-native-wechat.svg?style=flat-square
 [travis-url]: https://travis-ci.org/yorkie/react-native-wechat
 [david-image]: http://img.shields.io/david/yorkie/react-native-wechat.svg?style=flat-square
 [david-url]: https://david-dm.org/yorkie/react-native-wechat
