@@ -1,4 +1,4 @@
-![wechat logo](wechat.jpg?raw=true) React-Native Bridge
+![wechat logo](wechat.png?raw=true) React-Native Bridge
 
 ## Table of Contents
 
