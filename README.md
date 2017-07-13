@@ -19,7 +19,6 @@ And [react-native-wechat] has the following tracking data in open source world:
 - [API Documentation](#api-documentation)
 - [Installation](#installation)
 - [Community](#community)
-- [Who Use It](#who-use-it)
 - [Authors](#authors)
 - [License](#license)
 
@@ -314,24 +313,32 @@ $ npm install react-native-wechat --save
 
 ## Community
 
+#### IRC
+
 - [Join us at gitter](https://gitter.im/weflex/react-native-wechat?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 - QQ Group: 336021910
 
-### Tutorials by third-party
+#### Tutorials
 
 - [react-native-wechat微信组件的使用](http://www.jianshu.com/p/3f424cccb888)
 - [超详细React Native实现微信好友/朋友圈分享功能-Android/iOS双平台通用](http://www.jianshu.com/p/ce5439dd1f52)
 - [柳轩涤俗 - 微信登录](http://www.cnblogs.com/zhangdw/p/6194345.html)
 
-### Who use it
+#### Who use it
 
 <img height="40" width="40" src="https://raw.githubusercontent.com/attentiveness/reading/master/Reading_Logo.png">
 
 ## Authors
 
-- [Deng Yun]
-- [Xing Zhen]
-- [Yorkie Liu]
+| GitHub        | Role       | Email                 |
+|---------------|------------|-----------------------|
+| [@yorkie]     | Author     | yorkiefixer@gmail.com |
+| [@xing-zheng] | Emeriti    |                       |
+| [@tdzl2003]   | Emeriti    | tdzl2003@gmail.com    |
+
+[@yorkie]: https://github.com/yorkie
+[@xing-zheng]: https://github.com/xing-zheng
+[@tdzl2003]: https://github.com/tdzl2003
 
 ## License
 
@@ -347,9 +354,6 @@ MIT
 [downloads-image]: http://img.shields.io/npm/dm/react-native-wechat.svg?style=flat-square
 [downloads-url]: https://npmjs.org/package/react-native-wechat
 [React Native]: https://github.com/facebook/react-native
-[Deng Yun]: https://github.com/tdzl2003
-[Xing Zhen]: https://github.com/xing-zheng
-[Yorkie Liu]: https://github.com/yorkie
 [react-native-cn]: https://github.com/reactnativecn
 [WeChat SDK]: https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=1417674108&token=&lang=zh_CN
 [Linking Libraries iOS Guidance]: https://developer.apple.com/library/ios/recipes/xcode_help-project_editor/Articles/AddingaLibrarytoaTarget.html
