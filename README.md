@@ -317,8 +317,15 @@ $ npm install react-native-wechat --save
 - [Join us at gitter](https://gitter.im/weflex/react-native-wechat?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 - QQ Group: 336021910
 
-## Who Use It
-- [reading: iReading App Write In React-Native](https://github.com/attentiveness/reading)
+### Tutorials by third-party
+
+- [react-native-wechat微信组件的使用](http://www.jianshu.com/p/3f424cccb888)
+- [超详细React Native实现微信好友/朋友圈分享功能-Android/iOS双平台通用](http://www.jianshu.com/p/ce5439dd1f52)
+- [柳轩涤俗 - 微信登录](http://www.cnblogs.com/zhangdw/p/6194345.html)
+
+### Who use it
+
+<img height="40" width="40" src="https://raw.githubusercontent.com/attentiveness/reading/master/Reading_Logo.png">
 
 ## Authors
 
