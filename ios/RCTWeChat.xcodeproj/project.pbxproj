@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		10D6D7841F160B350066F0F3 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 10D6D76D1F160B090066F0F3 /* libReact.a */; settings = {ATTRIBUTES = (Weak, ); }; };
 		10D6D7A71F160C250066F0F3 /* RCTWeChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 10D6D7A61F160C250066F0F3 /* RCTWeChatTests.m */; };
 		10D6D7A91F160C250066F0F3 /* libRCTWeChat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86D238421BD0BB9E00C75D01 /* libRCTWeChat.a */; };
 		10D6D7AF1F160C3A0066F0F3 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 10D6D76D1F160B090066F0F3 /* libReact.a */; };
@@ -148,7 +147,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				10D6D7841F160B350066F0F3 /* libReact.a in Frameworks */,
 				86D2385D1BD0CA3D00C75D01 /* libWeChatSDK.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -590,6 +588,7 @@
 				10D6D7AE1F160C250066F0F3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		86D2383D1BD0BB9E00C75D01 /* Build configuration list for PBXProject "RCTWeChat" */ = {
 			isa = XCConfigurationList;
