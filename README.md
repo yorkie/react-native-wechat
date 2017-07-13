@@ -326,7 +326,7 @@ $ npm install react-native-wechat --save
 
 #### Who use it
 
-<img height="40" width="40" src="https://raw.githubusercontent.com/attentiveness/reading/master/Reading_Logo.png">
+<a href="https://github.com/attentiveness/reading"><img height="40" width="40" src="https://raw.githubusercontent.com/attentiveness/reading/master/Reading_Logo.png"></a>
 
 ## Authors
 
