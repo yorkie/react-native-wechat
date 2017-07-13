@@ -1,4 +1,6 @@
-# <img height="200" src="./weixin.png?raw=true"> React-Native-Wechat
+<img height="200" src="./weixin.png?raw=true">
+
+# React-Native-Wechat
 
 [React Native] bridging library that integrates WeChat SDKs:
 
