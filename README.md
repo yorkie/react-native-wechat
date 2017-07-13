@@ -315,8 +315,10 @@ $ npm install react-native-wechat --save
 
 #### IRC
 
-<a href="http://qm.qq.com/cgi-bin/qm/qr?k=cg3irEFCGxjkm2YJCt5V9OeJA1pNo5Ui"><img height="150" src="./qrcode_qq.jpg"></a>
-<a href="https://h5.dingtalk.com/base/download.html?action=joingroup&code=v1,k1,pOYzPIXhFqXTT2QdsLM1GKu1AJsbCLYhArGTnO9604syhMsTvoSpg3O5NNgGaj738lQUt62++36lUGlitEQSc/hdyTETjyJW79T5v7cnWH3tXEE/jeC7s99eqZ5KK22abFsThqmvoe7hm0gm2lnOMvYDbQfrcc3P"><img height="150" src="./qrcode_dingtalk.jpg"></a>
+<a href="http://qm.qq.com/cgi-bin/qm/qr?k=cg3irEFCGxjkm2YJCt5V9OeJA1pNo5Ui"><img src="./qrcode_qq.jpg"></a>
+
+<a href="https://h5.dingtalk.com/base/download.html?action=joingroup&code=v1,k1,pOYzPIXhFqXTT2QdsLM1GKu1AJsbCLYhArGTnO9604syhMsTvoSpg3O5NNgGaj738lQUt62++36lUGlitEQSc/hdyTETjyJW79T5v7cnWH3tXEE/jeC7s99eqZ5KK22abFsThqmvoe7hm0gm2lnOMvYDbQfrcc3P"><img src="./qrcode_dingtalk.jpg"></a>
+
 <a href="https://gitter.im/weflex/react-native-wechat?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"><img height="150" src="./qrcode_gitter.jpg"></a>
 
 #### Tutorials
