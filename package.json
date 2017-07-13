@@ -1,6 +1,6 @@
 {
   "name": "react-native-wechat",
-  "version": "1.9.7",
+  "version": "1.9.8",
   "description": "react-native library for wechat app",
   "main": "index.js",
   "scripts": {
