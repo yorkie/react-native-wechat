@@ -327,7 +327,6 @@ $ npm install react-native-wechat --save
 #### Who use it
 
 <a href="https://github.com/attentiveness/reading"><img height="40" width="40" src="https://raw.githubusercontent.com/attentiveness/reading/master/Reading_Logo.png"></a>
-
 <a href="https://github.com/lipeiwei-szu/ReactNativeOne"><img height="40" width="40" src="http://android-artworks.25pp.com/fs08/2017/05/22/3/110_ed42e5c8f701ae26be6b0c423cb51858_con_130x130.png"></a>
 
 ## Authors
