@@ -2,11 +2,11 @@
 
 Add the following libraries to your "Link Binary with Libraries":
 
-- `SystemConfiguration.framework`
-- `CoreTelephony.framework`
-- `libsqlite3.0`
-- `libc++`
-- `libz`
+- [x] `SystemConfiguration.framework`
+- [x] `CoreTelephony.framework`
+- [x] `libsqlite3.0`
+- [x] `libc++`
+- [x] `libz`
 
 Add "URL Schema" as your app id for "URL type" in Targets > info, See 
 the following screenshot for the view on your XCode:
