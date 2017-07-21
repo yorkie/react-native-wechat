@@ -249,7 +249,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
                     getExtension(imageUrl, new ExtensionCallback() {
                         @Override
                         public void invoke(@Nullable String extension) {
-                            if (extension != null && extension.equals("gif")) { // gif 图片不传缩略图分享不出去
+                            if (extension != null && extension.equals("gif")) { // gif 图片不传缩略图会分享不出去
                                 getImage(finalThumbUri, new ResizeOptions(100, 100), new ImageCallback() {
                                     @Override
                                     public void invoke(@Nullable Bitmap bitmap) {
@@ -402,7 +402,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
                         }
                     });
                 } else {
-                    getImage(finalImageUri, null, new ImageCallback() {
+                    getImage(finalImageUri, new ResizeOptions(600, 600), new ImageCallback() {
                         @Override
                         public void invoke(@Nullable Bitmap bitmap) {
                             callback.invoke(bitmap == null ? null : new WXImageObject(bitmap));
