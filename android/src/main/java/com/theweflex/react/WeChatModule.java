@@ -249,16 +249,12 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
                     getExtension(imageUrl, new ExtensionCallback() {
                         @Override
                         public void invoke(@Nullable String extension) {
-                            if (extension != null && extension.equals("gif")) { // gif 图片不传缩略图会分享不出去
-                                getImage(finalThumbUri, new ResizeOptions(100, 100), new ImageCallback() {
-                                    @Override
-                                    public void invoke(@Nullable Bitmap bitmap) {
-                                        _share(scene, data, bitmap, callback);
-                                    }
-                                });
-                            } else { // 普通图片传缩略图会只分享缩略图
-                                _share(scene, data, null, callback);
-                            }
+                            getImage(finalThumbUri, new ResizeOptions(100, 100), new ImageCallback() {
+                                @Override
+                                public void invoke(@Nullable Bitmap bitmap) {
+                                    _share(scene, data, bitmap, callback);
+                                }
+                            });
                         }
                     });
                 }
