@@ -143,6 +143,7 @@ export const openWXApp = wrapApi(WeChat.openWXApp);
 // wrap the APIs
 const nativeShareToTimeline = wrapApi(WeChat.shareToTimeline);
 const nativeShareToSession = wrapApi(WeChat.shareToSession);
+const nativeShareToFavorite = wrapApi(WeChat.shareToFavorite);
 const nativeSendAuthRequest = wrapApi(WeChat.sendAuthRequest);
 
 /**
@@ -205,6 +206,32 @@ export function shareToTimeline(data) {
 export function shareToSession(data) {
   return new Promise((resolve, reject) => {
     nativeShareToSession(data);
+    emitter.once('SendMessageToWX.Resp', resp => {
+      if (resp.errCode === 0) {
+        resolve(resp);
+      } else {
+        reject(new WechatError(resp));
+      }
+    });
+  });
+}
+
+/**
+ * Share something to favorite
+ * @method shareToFavorite
+ * @param {Object} data
+ * @param {String} data.thumbImage - Thumb image of the message, which can be a uri or a resource id.
+ * @param {String} data.type - Type of this message. Could be {news|text|imageUrl|imageFile|imageResource|video|audio|file}
+ * @param {String} data.webpageUrl - Required if type equals news. The webpage link to share.
+ * @param {String} data.imageUrl - Provide a remote image if type equals image.
+ * @param {String} data.videoUrl - Provide a remote video if type equals video.
+ * @param {String} data.musicUrl - Provide a remote music if type equals audio.
+ * @param {String} data.filePath - Provide a local file if type equals file.
+ * @param {String} data.fileExtension - Provide the file type if type equals file.
+ */
+export function shareToFavorite(data) {
+  return new Promise((resolve, reject) => {
+    nativeShareToFavorite(data);
     emitter.once('SendMessageToWX.Resp', resp => {
       if (resp.errCode === 0) {
         resolve(resp);
