@@ -172,6 +172,15 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         }
         _share(SendMessageToWX.Req.WXSceneSession, data, callback);
     }
+    
+    @ReactMethod
+    public void shareToFavorite(ReadableMap data, Callback callback) {
+        if (api == null) {
+            callback.invoke(NOT_REGISTERED);
+            return;
+        }
+        _share(SendMessageToWX.Req.WXSceneFavorite, data, callback);
+    }
 
     @ReactMethod
     public void pay(ReadableMap data, Callback callback){
