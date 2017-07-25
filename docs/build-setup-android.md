@@ -103,7 +103,7 @@ Then add the following node to `AndroidManifest.xml`:
 <manifest>
   <application>
     <activity
-      android:name=".wxapi.WXEntryActivity"
+      android:name=".wxapi.WXPayEntryActivity"
       android:label="@string/app_name"
       android:exported="true"
     />
