@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		10D6D7A71F160C250066F0F3 /* RCTWeChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 10D6D7A61F160C250066F0F3 /* RCTWeChatTests.m */; };
-		10D6D7A91F160C250066F0F3 /* libRCTWeChat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86D238421BD0BB9E00C75D01 /* libRCTWeChat.a */; };
-		10D6D7AF1F160C3A0066F0F3 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 10D6D76D1F160B090066F0F3 /* libReact.a */; };
 		86D238561BD0BC1000C75D01 /* RCTWeChat.m in Sources */ = {isa = PBXBuildFile; fileRef = 86D238551BD0BC1000C75D01 /* RCTWeChat.m */; };
 		86D2385D1BD0CA3D00C75D01 /* libWeChatSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86D238571BD0BC2200C75D01 /* libWeChatSDK.a */; settings = {ATTRIBUTES = (Required, ); }; };
 /* End PBXBuildFile section */
@@ -99,13 +96,6 @@
 			remoteGlobalIDString = 3D383D621EBD27B9005632C8;
 			remoteInfo = "double-conversion-tvOS";
 		};
-		10D6D7AA1F160C250066F0F3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 86D2383A1BD0BB9E00C75D01 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 86D238411BD0BB9E00C75D01;
-			remoteInfo = RCTWeChat;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -122,9 +112,6 @@
 
 /* Begin PBXFileReference section */
 		10D6D75D1F160B090066F0F3 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
-		10D6D7A41F160C250066F0F3 /* RCTWeChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RCTWeChatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		10D6D7A61F160C250066F0F3 /* RCTWeChatTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCTWeChatTests.m; sourceTree = "<group>"; };
-		10D6D7A81F160C250066F0F3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		86D238421BD0BB9E00C75D01 /* libRCTWeChat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRCTWeChat.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		86D238541BD0BC1000C75D01 /* RCTWeChat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTWeChat.h; sourceTree = SOURCE_ROOT; };
 		86D238551BD0BC1000C75D01 /* RCTWeChat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTWeChat.m; sourceTree = SOURCE_ROOT; };
@@ -134,15 +121,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		10D6D7A11F160C250066F0F3 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				10D6D7AF1F160C3A0066F0F3 /* libReact.a in Frameworks */,
-				10D6D7A91F160C250066F0F3 /* libRCTWeChat.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		86D2383F1BD0BB9E00C75D01 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -173,15 +151,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		10D6D7A51F160C250066F0F3 /* RCTWeChatTests */ = {
-			isa = PBXGroup;
-			children = (
-				10D6D7A61F160C250066F0F3 /* RCTWeChatTests.m */,
-				10D6D7A81F160C250066F0F3 /* Info.plist */,
-			);
-			path = RCTWeChatTests;
-			sourceTree = "<group>";
-		};
 		86D238391BD0BB9E00C75D01 = {
 			isa = PBXGroup;
 			children = (
@@ -189,7 +158,6 @@
 				86D238581BD0BC2200C75D01 /* WXApi.h */,
 				86D238591BD0BC2200C75D01 /* WXApiObject.h */,
 				86D238441BD0BB9E00C75D01 /* RCTWeChat */,
-				10D6D7A51F160C250066F0F3 /* RCTWeChatTests */,
 				86D238431BD0BB9E00C75D01 /* Products */,
 				10D6D75D1F160B090066F0F3 /* React.xcodeproj */,
 			);
@@ -199,7 +167,6 @@
 			isa = PBXGroup;
 			children = (
 				86D238421BD0BB9E00C75D01 /* libRCTWeChat.a */,
-				10D6D7A41F160C250066F0F3 /* RCTWeChatTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -216,24 +183,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		10D6D7A31F160C250066F0F3 /* RCTWeChatTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 10D6D7AC1F160C250066F0F3 /* Build configuration list for PBXNativeTarget "RCTWeChatTests" */;
-			buildPhases = (
-				10D6D7A01F160C250066F0F3 /* Sources */,
-				10D6D7A11F160C250066F0F3 /* Frameworks */,
-				10D6D7A21F160C250066F0F3 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				10D6D7AB1F160C250066F0F3 /* PBXTargetDependency */,
-			);
-			name = RCTWeChatTests;
-			productName = RCTWeChatTests;
-			productReference = 10D6D7A41F160C250066F0F3 /* RCTWeChatTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		86D238411BD0BB9E00C75D01 /* RCTWeChat */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 86D2384B1BD0BB9E00C75D01 /* Build configuration list for PBXNativeTarget "RCTWeChat" */;
@@ -260,11 +209,6 @@
 				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = WeFlex;
 				TargetAttributes = {
-					10D6D7A31F160C250066F0F3 = {
-						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = QMP96B5DPW;
-						ProvisioningStyle = Automatic;
-					};
 					86D238411BD0BB9E00C75D01 = {
 						CreatedOnToolsVersion = 7.0;
 						DevelopmentTeam = JP4369ZCVM;
@@ -290,7 +234,6 @@
 			projectRoot = "";
 			targets = (
 				86D238411BD0BB9E00C75D01 /* RCTWeChat */,
-				10D6D7A31F160C250066F0F3 /* RCTWeChatTests */,
 			);
 		};
 /* End PBXProject section */
@@ -382,25 +325,7 @@
 		};
 /* End PBXReferenceProxy section */
 
-/* Begin PBXResourcesBuildPhase section */
-		10D6D7A21F160C250066F0F3 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
-		10D6D7A01F160C250066F0F3 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				10D6D7A71F160C250066F0F3 /* RCTWeChatTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		86D2383E1BD0BB9E00C75D01 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -411,51 +336,7 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		10D6D7AB1F160C250066F0F3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 86D238411BD0BB9E00C75D01 /* RCTWeChat */;
-			targetProxy = 10D6D7AA1F160C250066F0F3 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		10D6D7AD1F160C250066F0F3 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = QMP96B5DPW;
-				INFOPLIST_FILE = RCTWeChatTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = yorkie.RCTWeChatTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		10D6D7AE1F160C250066F0F3 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = QMP96B5DPW;
-				INFOPLIST_FILE = RCTWeChatTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = yorkie.RCTWeChatTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		86D238491BD0BB9E00C75D01 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -581,15 +462,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		10D6D7AC1F160C250066F0F3 /* Build configuration list for PBXNativeTarget "RCTWeChatTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				10D6D7AD1F160C250066F0F3 /* Debug */,
-				10D6D7AE1F160C250066F0F3 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		86D2383D1BD0BB9E00C75D01 /* Build configuration list for PBXProject "RCTWeChat" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
