@@ -1,6 +1,6 @@
 'use strict';
 
-import { DeviceEventEmitter, NativeModules } from 'react-native';
+import { DeviceEventEmitter, NativeModules, Platform } from 'react-native';
 import { EventEmitter } from 'events';
 
 let isAppRegistered = false;
@@ -253,6 +253,7 @@ export function pay(data) {
   // FIXME(Yorkie): see https://github.com/yorkie/react-native-wechat/issues/203
   // Here the server-side returns params in lowercase, but here SDK requires timeStamp
   // for compatibility, we make this correction for users.
+  if(Platform.OS !== 'ios') data.timeStamp = String(timeStamp)
   function correct(actual, fixed) {
     if (!data[fixed] && data[actual]) {
       data[fixed] = data[actual];
