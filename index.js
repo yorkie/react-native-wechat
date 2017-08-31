@@ -18,10 +18,6 @@ function wrapRegisterApp(nativeFunc) {
     return undefined;
   }
   return (...args) => {
-    if (isAppRegistered) {
-      // FIXME(Yorkie): we ignore this error if AppRegistered is true.
-      return Promise.resolve(true);
-    }
     isAppRegistered = true;
     return new Promise((resolve, reject) => {
       nativeFunc.apply(null, [
