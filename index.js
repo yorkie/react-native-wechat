@@ -3,7 +3,7 @@
 import { DeviceEventEmitter, NativeModules, Platform } from 'react-native';
 import { EventEmitter } from 'events';
 
-let isAppRegistered = false;
+let wxAppId = null;
 const { WeChat } = NativeModules;
 
 // Event emitter to dispatch request and response from WeChat.
@@ -18,7 +18,8 @@ function wrapRegisterApp(nativeFunc) {
     return undefined;
   }
   return (...args) => {
-    isAppRegistered = true;
+    if(wxAppId === args[0]) return true;
+    wxAppId = true;
     return new Promise((resolve, reject) => {
       nativeFunc.apply(null, [
         ...args,
@@ -41,7 +42,7 @@ function wrapApi(nativeFunc) {
     return undefined;
   }
   return (...args) => {
-    if (!isAppRegistered) {
+    if (!wxAppId) {
       return Promise.reject(new Error('registerApp required.'));
     }
     return new Promise((resolve, reject) => {
