@@ -1,9 +1,9 @@
 'use strict';
 
-import { DeviceEventEmitter, NativeModules } from 'react-native';
+import { DeviceEventEmitter, NativeModules, Platform } from 'react-native';
 import { EventEmitter } from 'events';
 
-let isAppRegistered = false;
+let wxAppId = null;
 const { WeChat } = NativeModules;
 
 // Event emitter to dispatch request and response from WeChat.
@@ -18,11 +18,8 @@ function wrapRegisterApp(nativeFunc) {
     return undefined;
   }
   return (...args) => {
-    if (isAppRegistered) {
-      // FIXME(Yorkie): we ignore this error if AppRegistered is true.
-      return Promise.resolve(true);
-    }
-    isAppRegistered = true;
+    if(wxAppId === args[0]) return true;
+    wxAppId = true;
     return new Promise((resolve, reject) => {
       nativeFunc.apply(null, [
         ...args,
@@ -45,7 +42,7 @@ function wrapApi(nativeFunc) {
     return undefined;
   }
   return (...args) => {
-    if (!isAppRegistered) {
+    if (!wxAppId) {
       return Promise.reject(new Error('registerApp required.'));
     }
     return new Promise((resolve, reject) => {
@@ -257,6 +254,7 @@ export function pay(data) {
   // FIXME(Yorkie): see https://github.com/yorkie/react-native-wechat/issues/203
   // Here the server-side returns params in lowercase, but here SDK requires timeStamp
   // for compatibility, we make this correction for users.
+  if(Platform.OS !== 'ios') data.timeStamp = String(timeStamp)
   function correct(actual, fixed) {
     if (!data[fixed] && data[actual]) {
       data[fixed] = data[actual];
