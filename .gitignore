@@ -1,5 +1,6 @@
 # node
 
+.DS_Store
 node_modules
 
 # android
@@ -14,3 +15,6 @@ node_modules
 # MacOS
 
 .DS_Store
+
+# ios
+ios/build

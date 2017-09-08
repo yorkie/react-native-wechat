@@ -1,10 +1,10 @@
 {
   "name": "react-native-wechat",
-  "version": "1.9.5",
+  "version": "1.9.9",
   "description": "react-native library for wechat app",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo 1"
   },
   "repository": {
     "type": "git",

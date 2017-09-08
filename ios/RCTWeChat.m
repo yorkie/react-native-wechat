@@ -150,6 +150,12 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
     [self shareToWeixinWithData:data scene:WXSceneSession callback:callback];
 }
 
+RCT_EXPORT_METHOD(shareToFavorite:(NSDictionary *)data
+                  :(RCTResponseSenderBlock)callback)
+{
+    [self shareToWeixinWithData:data scene:WXSceneFavorite callback:callback];
+}
+
 RCT_EXPORT_METHOD(pay:(NSDictionary *)data
                   :(RCTResponseSenderBlock)callback)
 {
