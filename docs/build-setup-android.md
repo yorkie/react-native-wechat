@@ -74,11 +74,9 @@ Then add the following node to `AndroidManifest.xml`:
 </manifest>
 ```
 
-**Integrating the WeChat Payment**
+**Integrating WeChat Payment**
 
-If you are going to integrate payment functionality by using this library, then
-create a package named also `wxapi` in your application package and a class named
-`WXPayEntryActivity`, this is used to bypass the response to JS level:
+If you are going to integrate payment functionality through this library, you will need to create a package named `wxapi` in your application package and a class named `WXPayEntryActivity`, this is used to bypass the response to JS level:
 
 ```java
 package your.package.wxapi;
