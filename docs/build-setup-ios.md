@@ -8,9 +8,7 @@ Add the following libraries to your "Link Binary with Libraries":
 - [x] `libc++`
 - [x] `libz`
 
-Create a new "URL type" in Targets > info, then set the Identifier to `weixin` and add your `appid` to the "URL Scheme"
-
-Refer to the following screenshot on how it should be configured in XCode:
+Create a new "URL type" in Targets > info, then set the Identifier to `weixin` and add your `appid` to the "URL Scheme". Refer to the following screenshot on how it should be configured in XCode:
 
 ![Set URL Schema in XCode](https://res.wx.qq.com/open/zh_CN/htmledition/res/img/pic/app-access-guide/ios/image0042168b9.jpg)
 
