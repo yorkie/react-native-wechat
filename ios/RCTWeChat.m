@@ -55,6 +55,10 @@ RCT_EXPORT_MODULE()
     return dispatch_get_main_queue();
 }
 
++ (BOOL)requiresMainQueueSetup {
+    return YES;
+}
+
 RCT_EXPORT_METHOD(registerApp:(NSString *)appid
                   :(RCTResponseSenderBlock)callback)
 {
