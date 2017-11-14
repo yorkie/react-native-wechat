@@ -35,4 +35,7 @@
 
 @property NSString* appId;
 
++ (instancetype)shareInstance;
+- (BOOL)handleOpenURL:(NSURL *)url;
+
 @end

@@ -17,42 +17,41 @@
 #define NOT_REGISTERED (@"registerApp required.")
 #define INVOKE_FAILED (@"WeChat API invoke returns false.")
 
+
+static RCTWeChat * instance = nil; //放在@implementation RCTWeChat前
+
 @implementation RCTWeChat
 
 @synthesize bridge = _bridge;
 
 RCT_EXPORT_MODULE()
 
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleOpenURL:) name:@"RCTOpenURLNotification" object:nil];
+
+
++ (instancetype)shareInstance {
+    @synchronized(self) {
+        if(!instance){
+            instance = [[self alloc] init];
+        }
     }
+    return instance;
+}
++ (instancetype)allocWithZone:(NSZone *)zone {
+    @synchronized(self) {
+        if (!instance) {
+            instance = [super allocWithZone:zone];
+        }
+    }
+    return instance;
+}
+-(instancetype)copyWithZone:(NSZone *)zone {
     return self;
 }
 
-- (void)dealloc
+-(BOOL)handleOpenURL:(NSURL *)url
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (BOOL)handleOpenURL:(NSNotification *)aNotification
-{
-    NSString * aURLString =  [aNotification userInfo][@"url"];
-    NSURL * aURL = [NSURL URLWithString:aURLString];
-
-    if ([WXApi handleOpenURL:aURL delegate:self])
-    {
-        return YES;
-    } else {
-        return NO;
-    }
-}
-
-- (dispatch_queue_t)methodQueue
-{
-    return dispatch_get_main_queue();
+    NSLog(@"+++++++++++++++ handleOpenURL %@", url);
+    return [WXApi handleOpenURL:url delegate:self];
 }
 
 + (BOOL)requiresMainQueueSetup {
@@ -152,12 +151,6 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
                   :(RCTResponseSenderBlock)callback)
 {
     [self shareToWeixinWithData:data scene:WXSceneSession callback:callback];
-}
-
-RCT_EXPORT_METHOD(shareToFavorite:(NSDictionary *)data
-                  :(RCTResponseSenderBlock)callback)
-{
-    [self shareToWeixinWithData:data scene:WXSceneFavorite callback:callback];
 }
 
 RCT_EXPORT_METHOD(pay:(NSDictionary *)data
@@ -358,6 +351,8 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
 
 -(void) onResp:(BaseResp*)resp
 {
+    
+    NSLog(@"get resp");
 	if([resp isKindOfClass:[SendMessageToWXResp class]])
 	{
 	    SendMessageToWXResp *r = (SendMessageToWXResp *)resp;
@@ -386,6 +381,7 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
 	        [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
 	    }
 	} else if ([resp isKindOfClass:[PayResp class]]) {
+        NSLog(@"come on baby");
 	        PayResp *r = (PayResp *)resp;
 	        NSMutableDictionary *body = @{@"errCode":@(r.errCode)}.mutableCopy;
 	        body[@"errStr"] = r.errStr;
