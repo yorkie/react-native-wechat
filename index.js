@@ -195,13 +195,19 @@ export function shareToTimeline(data) {
  * @method shareToSession
  * @param {Object} data
  * @param {String} data.thumbImage - Thumb image of the message, which can be a uri or a resource id.
- * @param {String} data.type - Type of this message. Could be {news|text|imageUrl|imageFile|imageResource|video|audio|file}
+ * @param {String} data.type - Type of this message. Could be {news|text|imageUrl|imageFile|imageResource|video|audio|file|weapp}
  * @param {String} data.webpageUrl - Required if type equals news. The webpage link to share.
  * @param {String} data.imageUrl - Provide a remote image if type equals image.
  * @param {String} data.videoUrl - Provide a remote video if type equals video.
  * @param {String} data.musicUrl - Provide a remote music if type equals audio.
  * @param {String} data.filePath - Provide a local file if type equals file.
  * @param {String} data.fileExtension - Provide the file type if type equals file.
+ *
+ * @param {Object} data.mediaData - Provide the WXMiniProgramObject data.
+ * @param {String} data.mediaData.webpageUrl - 兼容低版本的网页链接
+ * @param {String} data.mediaData.userName - 小程序原始id
+ * @param {String} data.mediaData.path - 小程序页面的路径
+ * @param {DataURLString} data.mediaData.hdImageData - 小程序节点高清大图，小于128k
  */
 export function shareToSession(data) {
   return new Promise((resolve, reject) => {

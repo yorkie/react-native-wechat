@@ -23,6 +23,8 @@
 #define RCTWXShareTypeAudio @"audio"
 #define RCTWXShareTypeFile @"file"
 
+#define RCTWXShareTypeWeapp @"weapp"
+
 #define RCTWXShareType @"type"
 #define RCTWXShareTitle @"title"
 #define RCTWXShareDescription @"description"

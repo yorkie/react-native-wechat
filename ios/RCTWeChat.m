@@ -66,13 +66,6 @@ RCT_EXPORT_METHOD(registerApp:(NSString *)appid
     callback(@[[WXApi registerApp:appid] ? [NSNull null] : INVOKE_FAILED]);
 }
 
-RCT_EXPORT_METHOD(registerAppWithDescription:(NSString *)appid
-                  :(NSString *)appdesc
-                  :(RCTResponseSenderBlock)callback)
-{
-    callback(@[[WXApi registerApp:appid withDescription:appdesc] ? [NSNull null] : INVOKE_FAILED]);
-}
-
 RCT_EXPORT_METHOD(isWXAppInstalled:(RCTResponseSenderBlock)callback)
 {
     callback(@[[NSNull null], @([WXApi isWXAppInstalled])]);
@@ -285,7 +278,31 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
                                        MediaTag:mediaTagName
                                        callBack:callback];
 
-        } else {
+        } else if ([type isEqualToString:RCTWXShareTypeWeapp]) {
+
+          NSDictionary* mediaData = aData[@"mediaData"];
+
+          WXMiniProgramObject *wxMiniProgramObject = [WXMiniProgramObject object];
+          wxMiniProgramObject.webpageUrl = mediaData[@"webpageUrl"];
+          wxMiniProgramObject.userName = mediaData[@"userName"];
+          wxMiniProgramObject.path = mediaData[@"path"];
+          wxMiniProgramObject.hdImageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[mediaData objectForKey:@"hdImageData"]]];
+          wxMiniProgramObject.withShareTicket = [mediaData[@"withShareTicket"] boolValue];
+
+          WXMediaMessage *message = [WXMediaMessage message];
+          message.title = aData[@"title"];
+          message.description = aData[@"description"];
+          message.mediaObject = wxMiniProgramObject;
+          message.thumbData = nil;
+
+          SendMessageToWXReq *req = [[SendMessageToWXReq alloc] init];
+          req.message = message;
+          req.scene = aScene;
+
+          BOOL success = [WXApi sendReq:req];
+          callback(@[success ? [NSNull null] : INVOKE_FAILED]);
+
+        }else {
             callback(@[@"message type unsupported"]);
         }
     }
