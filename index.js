@@ -203,11 +203,10 @@ export function shareToTimeline(data) {
  * @param {String} data.filePath - Provide a local file if type equals file.
  * @param {String} data.fileExtension - Provide the file type if type equals file.
  *
- * @param {Object} data.mediaData - Provide the WXMiniProgramObject data.
- * @param {String} data.mediaData.webpageUrl - 兼容低版本的网页链接
- * @param {String} data.mediaData.userName - 小程序原始id
- * @param {String} data.mediaData.path - 小程序页面的路径
- * @param {DataURLString} data.mediaData.hdImageData - 小程序节点高清大图，小于128k
+ * @param {String} data.webpageUrl - 兼容低版本的网页链接
+ * @param {String} data.userName - 小程序原始id
+ * @param {String} data.path - 小程序页面的路径
+ * @param {DataURLString} data.hdImageData - 小程序节点高清大图，小于128k
  */
 export function shareToSession(data) {
   return new Promise((resolve, reject) => {

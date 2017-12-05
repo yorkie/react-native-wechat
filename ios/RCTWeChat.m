@@ -280,7 +280,7 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
 
         } else if ([type isEqualToString:RCTWXShareTypeWeapp]) {
 
-          NSDictionary* mediaData = aData[@"mediaData"];
+          NSDictionary* mediaData = aData;
 
           WXMiniProgramObject *wxMiniProgramObject = [WXMiniProgramObject object];
           wxMiniProgramObject.webpageUrl = mediaData[@"webpageUrl"];
