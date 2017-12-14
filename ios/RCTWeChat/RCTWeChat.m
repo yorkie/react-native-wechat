@@ -66,12 +66,14 @@ RCT_EXPORT_METHOD(registerApp:(NSString *)appid
     callback(@[[WXApi registerApp:appid] ? [NSNull null] : INVOKE_FAILED]);
 }
 
-//RCT_EXPORT_METHOD(registerAppWithDescription:(NSString *)appid
-//                  :(NSString *)appdesc
-//                  :(RCTResponseSenderBlock)callback)
-//{
+RCT_EXPORT_METHOD(registerAppWithDescription:(NSString *)appid
+                  :(NSString *)appdesc
+                  :(RCTResponseSenderBlock)callback)
+{
 //    callback(@[[WXApi registerApp:appid withDescription:appdesc] ? [NSNull null] : INVOKE_FAILED]);
-//}
+    self.appId = appid;
+    callback(@[[WXApi registerApp:appid] ? [NSNull null] : INVOKE_FAILED]);
+}
 
 RCT_EXPORT_METHOD(isWXAppInstalled:(RCTResponseSenderBlock)callback)
 {
