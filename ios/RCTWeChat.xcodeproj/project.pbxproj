@@ -547,6 +547,7 @@
 					"$(SRCROOT)/../react-native/React/**",
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 					"$(SRCROOT)/../node_modules/react-native/Libraries/Image/**",
+					"$(BUILT_PRODUCTS_DIR)",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -567,6 +568,7 @@
 					"$(SRCROOT)/../react-native/React/**",
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 					"$(SRCROOT)/../node_modules/react-native/Libraries/Image/**",
+					"$(BUILT_PRODUCTS_DIR)",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
