@@ -25,6 +25,10 @@
 
 #define RCTWXShareTypeWeapp @"weapp"
 
+#define RCTWXMiniProgramTypeRelease @"release"
+#define RCTWXMiniProgramTypePreview @"preview"
+#define RCTWXMiniProgramTypeDevelop @"develop"
+
 #define RCTWXShareType @"type"
 #define RCTWXShareTitle @"title"
 #define RCTWXShareDescription @"description"

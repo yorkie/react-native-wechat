@@ -207,6 +207,7 @@ export function shareToTimeline(data) {
  * @param {String} data.userName - 小程序原始id
  * @param {String} data.path - 小程序页面的路径
  * @param {DataURLString} data.hdImageData - 小程序节点高清大图，小于128k
+ * @param {String} data.miniProgramType - oneOf(['release', 'preview', 'develop']) - 小程序分享类型，主要用于开发测试，默认为 release. only for ios.
  */
 export function shareToSession(data) {
   return new Promise((resolve, reject) => {

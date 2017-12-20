@@ -289,6 +289,18 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
           wxMiniProgramObject.hdImageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[mediaData objectForKey:@"hdImageData"]]];
           wxMiniProgramObject.withShareTicket = [mediaData[@"withShareTicket"] boolValue];
 
+          // 设置 miniProgramType
+          NSString* miniProgramType = mediaData[@"miniProgramType"];
+          
+          if ([miniProgramType isEqualToString: RCTWXMiniProgramTypeRelease]) {
+            wxMiniProgramObject.miniProgramType = WXMiniProgramTypeRelease;
+          } else if ([miniProgramType isEqualToString: RCTWXMiniProgramTypePreview]) {
+            wxMiniProgramObject.miniProgramType = WXMiniProgramTypePreview;
+          } else if ([miniProgramType isEqualToString: RCTWXMiniProgramTypeDevelop]) {
+            wxMiniProgramObject.miniProgramType = WXMiniProgramTypeTest;
+          } 
+
+
           WXMediaMessage *message = [WXMediaMessage message];
           message.title = aData[@"title"];
           message.description = aData[@"description"];
