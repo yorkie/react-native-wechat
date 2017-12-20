@@ -228,7 +228,9 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         }
 
         if (uri != null) {
-            this._getImage(uri, new ResizeOptions(100, 100), new ImageCallback() {
+            String typeStr = data.getString("type");
+            ResizeOptions resizeOptions = typeStr.equals("weapp") ? new ResizeOptions(512, 512) : new ResizeOptions(128, 128);
+            this._getImage(uri, resizeOptions, new ImageCallback() {
                 @Override
                 public void invoke(@Nullable Bitmap bitmap) {
                     WeChatModule.this._share(scene, data, bitmap, callback);
