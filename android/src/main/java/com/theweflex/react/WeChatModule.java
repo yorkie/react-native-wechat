@@ -26,22 +26,40 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.tencent.mm.sdk.modelbase.BaseReq;
-import com.tencent.mm.sdk.modelbase.BaseResp;
-import com.tencent.mm.sdk.modelmsg.SendAuth;
-import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
-import com.tencent.mm.sdk.modelmsg.WXFileObject;
-import com.tencent.mm.sdk.modelmsg.WXImageObject;
-import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
-import com.tencent.mm.sdk.modelmsg.WXMusicObject;
-import com.tencent.mm.sdk.modelmsg.WXTextObject;
-import com.tencent.mm.sdk.modelmsg.WXVideoObject;
-import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
-import com.tencent.mm.sdk.modelpay.PayReq;
-import com.tencent.mm.sdk.modelpay.PayResp;
-import com.tencent.mm.sdk.openapi.IWXAPI;
-import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
-import com.tencent.mm.sdk.openapi.WXAPIFactory;
+import com.tencent.mm.opensdk.modelbase.BaseReq;
+import com.tencent.mm.opensdk.modelbase.BaseResp;
+import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelmsg.WXFileObject;
+import com.tencent.mm.opensdk.modelmsg.WXImageObject;
+import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
+import com.tencent.mm.opensdk.modelmsg.WXMusicObject;
+import com.tencent.mm.opensdk.modelmsg.WXTextObject;
+import com.tencent.mm.opensdk.modelmsg.WXVideoObject;
+import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.opensdk.modelpay.PayReq;
+import com.tencent.mm.opensdk.modelpay.PayResp;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+//import com.tencent.mm.sdk.modelbase.BaseReq;
+//import com.tencent.mm.sdk.modelbase.BaseResp;
+//import com.tencent.mm.sdk.modelmsg.SendAuth;
+//import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
+//import com.tencent.mm.sdk.modelmsg.WXFileObject;
+//import com.tencent.mm.sdk.modelmsg.WXImageObject;
+//import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
+//import com.tencent.mm.sdk.modelmsg.WXMusicObject;
+//import com.tencent.mm.sdk.modelmsg.WXTextObject;
+//import com.tencent.mm.sdk.modelmsg.WXVideoObject;
+//import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
+//import com.tencent.mm.sdk.modelpay.PayReq;
+//import com.tencent.mm.sdk.modelpay.PayResp;
+//import com.tencent.mm.sdk.openapi.IWXAPI;
+//import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
+//import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 import java.io.File;
 import java.net.URI;
@@ -132,6 +150,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             return;
         }
         callback.invoke(null, api.getWXAppSupportAPI());
+
     }
 
     @ReactMethod
@@ -291,7 +310,9 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         String type = data.getString("type");
 
         WXMediaMessage.IMediaObject mediaObject = null;
-        if (type.equals("news")) {
+        if(type.equals("miniProgram")){
+            mediaObject = _jsonToMiniProgram(data);
+        } else if (type.equals("news")) {
             mediaObject = _jsonToWebpageMedia(data);
         } else if (type.equals("text")) {
             mediaObject = _jsonToTextMedia(data);
@@ -358,12 +379,22 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         if (data.hasKey("messageExt")) {
             message.messageExt = data.getString("messageExt");
         }
-
         SendMessageToWX.Req req = new SendMessageToWX.Req();
         req.message = message;
         req.scene = scene;
         req.transaction = UUID.randomUUID().toString();
         callback.invoke(null, api.sendReq(req));
+    }
+
+    private WXMiniProgramObject _jsonToMiniProgram(ReadableMap data) {
+        if(!data.hasKey("webpageUrl") || !data.hasKey("userName") || !data.hasKey("path") ) {
+            return null;
+        }
+        WXMiniProgramObject ret = new WXMiniProgramObject();
+        ret.webpageUrl = data.getString("webpageUrl");
+        ret.userName =  data.getString("userName");
+        ret.path =  data.getString("path");
+        return ret;
     }
 
     private WXTextObject _jsonToTextMedia(ReadableMap data) {
