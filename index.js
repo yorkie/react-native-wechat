@@ -199,6 +199,7 @@ export function shareToTimeline(data) {
  * @param {String} data.webpageUrl - Required if type equals news. The webpage link to share.
  * @param {String} data.userName - Required if type equals miniProgram. The miniProgram userName to share.
  * @param {String} data.path - if type equals miniProgram. The miniProgram page to share. default for index.
+ * @param {Number} data.miniProgramType - if type equals miniProgram. The miniProgram type to share. 0 - release, 1 - development, 2 - experiment.
  * @param {String} data.imageUrl - Provide a remote image if type equals image.
  * @param {String} data.videoUrl - Provide a remote video if type equals video.
  * @param {String} data.musicUrl - Provide a remote music if type equals audio.

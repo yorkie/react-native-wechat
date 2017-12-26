@@ -221,7 +221,7 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
             // rn 未传参
 //            miniProgramObject.hdImageData = aData[@"hdImageData"];
 //            miniProgramObject.withShareTicket = [aData[@"withShareTicket"] boolValue];
-//            miniProgramObject.miniProgramType = [aData[@"miniProgramType"] integerValue];
+            miniProgramObject.miniProgramType = [aData[@"miniProgramType"] integerValue];
             
             [self shareToWeixinWithMediaMessage:aScene
                                           Title:title
