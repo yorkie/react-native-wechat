@@ -13,6 +13,7 @@
 #import "WXApi.h"
 
 // define share type constants
+#define RCTWXShareTypeMiniProgram @"miniProgram"
 #define RCTWXShareTypeNews @"news"
 #define RCTWXShareTypeThumbImageUrl @"thumbImage"
 #define RCTWXShareTypeImageUrl @"imageUrl"

@@ -213,6 +213,26 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
                                        MediaTag:mediaTagName
                                        callBack:callback];
 
+        } else if ([type isEqualToString:RCTWXShareTypeMiniProgram]) {
+            WXMiniProgramObject *miniProgramObject = [WXMiniProgramObject object];
+            miniProgramObject.webpageUrl = aData[@"webpageUrl"];
+            miniProgramObject.userName = aData[@"userName"];
+            miniProgramObject.path = aData[@"path"];
+            // rn 未传参
+//            miniProgramObject.hdImageData = aData[@"hdImageData"];
+//            miniProgramObject.withShareTicket = [aData[@"withShareTicket"] boolValue];
+            miniProgramObject.miniProgramType = [aData[@"miniProgramType"] integerValue];
+            
+            [self shareToWeixinWithMediaMessage:aScene
+                                          Title:title
+                                    Description:description
+                                         Object:miniProgramObject
+                                     MessageExt:messageExt
+                                  MessageAction:messageAction
+                                     ThumbImage:aThumbImage
+                                       MediaTag:mediaTagName
+                                       callBack:callback];
+            
         } else if ([type isEqualToString:RCTWXShareTypeAudio]) {
             WXMusicObject *musicObject = [WXMusicObject new];
             musicObject.musicUrl = aData[@"musicUrl"];
