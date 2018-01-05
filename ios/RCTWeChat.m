@@ -286,7 +286,11 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
           wxMiniProgramObject.webpageUrl = mediaData[@"webpageUrl"];
           wxMiniProgramObject.userName = mediaData[@"userName"];
           wxMiniProgramObject.path = mediaData[@"path"];
-          wxMiniProgramObject.hdImageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[mediaData objectForKey:@"hdImageData"]]];
+          NSData *imageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[mediaData objectForKey:@"hdImageData"]]];
+          while (imageData.length > 128 * 1024) {
+           imageData = UIImageJPEGRepresentation([UIImage imageWithData:imageData], 0.95);
+          }
+          wxMiniProgramObject.hdImageData = imageData;
           wxMiniProgramObject.withShareTicket = [mediaData[@"withShareTicket"] boolValue];
 
           // 设置 miniProgramType
