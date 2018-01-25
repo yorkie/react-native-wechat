@@ -30,7 +30,7 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   # s.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
-  s.dependency 'WechatOpenSDK'
+  s.dependency 'WechatOpenSDK', '~> 1.8.1'
   s.ios.frameworks = 'XCTest'
 
 end
