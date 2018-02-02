@@ -3,6 +3,7 @@
   "version": "1.9.9",
   "description": "react-native library for wechat app",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "test": "echo 1"
   },
