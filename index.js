@@ -152,8 +152,7 @@ const nativeSendAuthRequest = wrapApi(WeChat.sendAuthRequest);
  * @return {Promise}
  */
 export function sendAuthRequest(scopes, state) {
-  return new Promise((resolve, reject) => {
-    WeChat.sendAuthRequest(scopes, state, () => {});
+  return nativeSendAuthRequest(scopes, state).then(() => new Promise((resolve, reject) => {
     emitter.once('SendAuth.Resp', resp => {
       if (resp.errCode === 0) {
         resolve(resp);
@@ -161,7 +160,7 @@ export function sendAuthRequest(scopes, state) {
         reject(new WechatError(resp));
       }
     });
-  });
+  }));
 }
 
 /**
@@ -178,8 +177,7 @@ export function sendAuthRequest(scopes, state) {
  * @param {String} data.fileExtension - Provide the file type if type equals file.
  */
 export function shareToTimeline(data) {
-  return new Promise((resolve, reject) => {
-    nativeShareToTimeline(data);
+  return nativeShareToTimeline(data).then(() => new Promise((resolve, reject) => {
     emitter.once('SendMessageToWX.Resp', resp => {
       if (resp.errCode === 0) {
         resolve(resp);
@@ -187,7 +185,7 @@ export function shareToTimeline(data) {
         reject(new WechatError(resp));
       }
     });
-  });
+  }));
 }
 
 /**
@@ -204,8 +202,7 @@ export function shareToTimeline(data) {
  * @param {String} data.fileExtension - Provide the file type if type equals file.
  */
 export function shareToSession(data) {
-  return new Promise((resolve, reject) => {
-    nativeShareToSession(data);
+  return nativeShareToSession(data).then(() => new Promise((resolve, reject) => {
     emitter.once('SendMessageToWX.Resp', resp => {
       if (resp.errCode === 0) {
         resolve(resp);
@@ -213,7 +210,7 @@ export function shareToSession(data) {
         reject(new WechatError(resp));
       }
     });
-  });
+  }));
 }
 
 /**
@@ -230,8 +227,7 @@ export function shareToSession(data) {
  * @param {String} data.fileExtension - Provide the file type if type equals file.
  */
 export function shareToFavorite(data) {
-  return new Promise((resolve, reject) => {
-    nativeShareToFavorite(data);
+  return nativeShareToFavorite(data).then(() => new Promise((resolve, reject) => {
     emitter.once('SendMessageToWX.Resp', resp => {
       if (resp.errCode === 0) {
         resolve(resp);
@@ -239,7 +235,7 @@ export function shareToFavorite(data) {
         reject(new WechatError(resp));
       }
     });
-  });
+  }));
 }
 
 /**
