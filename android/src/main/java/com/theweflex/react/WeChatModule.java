@@ -588,23 +588,29 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             callback.invoke(temp);
             return;
         }
-        Request request = new Request.Builder().url(url).head().build();
-        OkHttpClient client = new OkHttpClient();
-        client.newCall(request).enqueue(new okhttp3.Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                callback.invoke(null);
-            }
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String contentType = response.body().contentType().toString();
-                String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(contentType);
-                if (extension != null) {
-                    extensionMap.put(url, extension);
+        if (url.startsWith("file:") || url.startsWith("/")) {
+            String extension = url.substring(url.lastIndexOf("."));
+            extensionMap.put(url, extension);
+            callback.invoke(extension);
+        } else {
+            Request request = new Request.Builder().url(url).head().build();
+            OkHttpClient client = new OkHttpClient();
+            client.newCall(request).enqueue(new okhttp3.Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    callback.invoke(null);
                 }
-                callback.invoke(extension);
-            }
-        });
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String contentType = response.body().contentType().toString();
+                    String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(contentType);
+                    if (extension != null) {
+                        extensionMap.put(url, extension);
+                    }
+                    callback.invoke(extension);
+                }
+            });
+        }
     }
 
     // TODO: 实现sendRequest、sendSuccessResponse、sendErrorCommonResponse、sendErrorUserCancelResponse
