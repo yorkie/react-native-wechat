@@ -273,7 +273,7 @@ export function pay(data) {
   correct('noncestr', 'nonceStr');
   correct('partnerid', 'partnerId');
   correct('timestamp', 'timeStamp');
-  
+
   // FIXME(94cstyles)
   // Android requires the type of the timeStamp field to be a string
   if (Platform.OS === 'android') data.timeStamp = String(data.timeStamp)

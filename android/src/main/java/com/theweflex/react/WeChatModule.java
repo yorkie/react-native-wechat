@@ -409,7 +409,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
                         }
                     });
                 } else {
-                    getImage(finalImageUri, new ResizeOptions(600, 600), new ImageCallback() {
+                    getImage(finalImageUri, new ResizeOptions(7000, 7000), new ImageCallback() {
                         @Override
                         public void invoke(@Nullable Bitmap bitmap) {
                             callback.invoke(bitmap == null ? null : new WXImageObject(bitmap));
