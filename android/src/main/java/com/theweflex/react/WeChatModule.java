@@ -496,38 +496,38 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
 
     private void getImageData(Uri uri, ResizeOptions resizeOptions, final ImageDataCallback imageCallback) {
         DataSubscriber<CloseableReference<PooledByteBuffer>> dataSubscriber =
-            new BaseDataSubscriber<CloseableReference<PooledByteBuffer>>() {
+                new BaseDataSubscriber<CloseableReference<PooledByteBuffer>>() {
 
-                @Override
-                protected void onNewResultImpl(DataSource<CloseableReference<PooledByteBuffer>> dataSource) {
-                    // isFinished must be obtained before image, otherwise we might set intermediate result
-                    // as final image.
-                    boolean isFinished = dataSource.isFinished();
-                    CloseableReference<PooledByteBuffer> image = dataSource.getResult();
-                    if (image != null) {
-                        Preconditions.checkState(CloseableReference.isValid(image));
-                        PooledByteBuffer result = image.get();
-                        InputStream inputStream = new PooledByteBufferInputStream(result);
-                        byte[] bytes = null;
-                        try {
-                            bytes = getBytes(inputStream);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } finally {
-                            imageCallback.invoke(bytes);
-                            Closeables.closeQuietly(inputStream);
+                    @Override
+                    protected void onNewResultImpl(DataSource<CloseableReference<PooledByteBuffer>> dataSource) {
+                        // isFinished must be obtained before image, otherwise we might set intermediate result
+                        // as final image.
+                        boolean isFinished = dataSource.isFinished();
+                        CloseableReference<PooledByteBuffer> image = dataSource.getResult();
+                        if (image != null) {
+                            Preconditions.checkState(CloseableReference.isValid(image));
+                            PooledByteBuffer result = image.get();
+                            InputStream inputStream = new PooledByteBufferInputStream(result);
+                            byte[] bytes = null;
+                            try {
+                                bytes = getBytes(inputStream);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } finally {
+                                imageCallback.invoke(bytes);
+                                Closeables.closeQuietly(inputStream);
+                            }
+                        } else if (isFinished) {
+                            imageCallback.invoke(null);
                         }
-                    } else if (isFinished) {
+                        dataSource.close();
+                    }
+
+                    @Override
+                    protected void onFailureImpl(DataSource<CloseableReference<PooledByteBuffer>> dataSource) {
                         imageCallback.invoke(null);
                     }
-                    dataSource.close();
-                }
-
-                @Override
-                protected void onFailureImpl(DataSource<CloseableReference<PooledByteBuffer>> dataSource) {
-                    imageCallback.invoke(null);
-                }
-            };
+                };
 
         ImageRequestBuilder builder = ImageRequestBuilder.newBuilderWithSource(uri);
         if (resizeOptions != null) {
@@ -558,17 +558,17 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         }
         name = name.toLowerCase().replace("-", "_");
         int resId = context.getResources().getIdentifier(
-            name,
-            "drawable",
-            context.getPackageName());
+                name,
+                "drawable",
+                context.getPackageName());
 
         if (resId == 0) {
             return null;
         } else {
             return new Uri.Builder()
-                .scheme(UriUtil.LOCAL_RESOURCE_SCHEME)
-                .path(String.valueOf(resId))
-                .build();
+                    .scheme(UriUtil.LOCAL_RESOURCE_SCHEME)
+                    .path(String.valueOf(resId))
+                    .build();
         }
     }
 
@@ -588,9 +588,20 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             callback.invoke(temp);
             return;
         }
-        if (url.startsWith("file:") || url.startsWith("/")) {
-            String extension = url.substring(url.lastIndexOf("."));
-            extensionMap.put(url, extension);
+        Uri uri = Uri.parse(url);
+        String scheme = uri.getScheme();
+        if (scheme == null || scheme.equals("file")) {
+            String path = uri.getPath();
+            int index = path.lastIndexOf(".");
+            String extension;
+            if (index > 0) {
+                extension = path.substring(index + 1);
+            } else {
+                extension = null;
+            }
+            if (extension != null) {
+                extensionMap.put(url, extension);
+            }
             callback.invoke(extension);
         } else {
             Request request = new Request.Builder().url(url).head().build();
@@ -600,6 +611,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
                 public void onFailure(Call call, IOException e) {
                     callback.invoke(null);
                 }
+
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     String contentType = response.body().contentType().toString();
@@ -611,6 +623,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
                 }
             });
         }
+
     }
 
     // TODO: 实现sendRequest、sendSuccessResponse、sendErrorCommonResponse、sendErrorUserCancelResponse
@@ -647,8 +660,8 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         }
 
         this.getReactApplicationContext()
-            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-            .emit("WeChat_Resp", map);
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit("WeChat_Resp", map);
     }
 
     private interface ImageCallback {
