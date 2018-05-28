@@ -33,4 +33,6 @@ Pod::Spec.new do |s|
   s.dependency 'WechatOpenSDK', '~> 1.8.1'
   s.ios.frameworks = 'XCTest'
 
+  s.dependency 'React'
+
 end
