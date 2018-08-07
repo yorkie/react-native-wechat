@@ -201,7 +201,7 @@ export function shareToTimeline(data) {
  */
 export function launchMini({userName, miniProgramType = 0, path = ''}) {
     return new Promise((resolve, reject) => {
-        if (miniProgramType !== 0 || miniProgramType !== 1 || miniProgramType !== 2) {
+        if (miniProgramType !== 0 && miniProgramType !== 1 && miniProgramType !== 2) {
             reject(new WechatError({errStr: '拉起小程序的类型不对，0-正式版 1-开发版 2-体验版', errCode: -1}))
             return
         }
