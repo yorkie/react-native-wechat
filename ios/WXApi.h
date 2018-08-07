@@ -39,7 +39,13 @@
 
 @end
 
+#pragma mark - WXApiLogDelegate
 
+@protocol WXApiLogDelegate <NSObject>
+
+-(void) onLog:(NSString*)log logLevel:(WXLogLevel)level;
+
+@end
 
 #pragma mark - WXApi
 
@@ -51,7 +57,7 @@
 
 /*! @brief WXApi的成员函数，向微信终端程序注册第三方应用。
  *
- * 需要在每次启动第三方应用程序时调用。第一次调用后，会在微信的可用应用列表中出现。
+ * 需要在每次启动第三方应用程序时调用。第一次调用后，会在微信的可用应用列表中出现，默认开启MTA数据上报。
  * iOS7及以上系统需要调起一次微信才会出现在微信的可用应用列表中。
  * @attention 请保证在主线程中调用此函数
  * @param appid 微信开发者ID
@@ -60,16 +66,16 @@
  */
 +(BOOL) registerApp:(NSString *)appid;
 
-
 /*! @brief WXApi的成员函数，向微信终端程序注册第三方应用。
  *
  * 需要在每次启动第三方应用程序时调用。第一次调用后，会在微信的可用应用列表中出现。
- * @see registerApp
+ * iOS7及以上系统需要调起一次微信才会出现在微信的可用应用列表中。
+ * @attention 请保证在主线程中调用此函数
  * @param appid 微信开发者ID
- * @param appdesc 应用附加信息，长度不超过1024字节
+ * @param isEnableMTA 是否支持MTA数据上报
  * @return 成功返回YES，失败返回NO。
  */
-+(BOOL) registerApp:(NSString *)appid withDescription:(NSString *)appdesc;
++(BOOL) registerApp:(NSString *)appid enableMTA:(BOOL)isEnableMTA;
 
 
 /*! @brief WXApi的成员函数，向微信终端程序注册应用支持打开的文件类型。
@@ -163,4 +169,25 @@
 +(BOOL) sendResp:(BaseResp*)resp;
 
 
+/*! @brief WXApi的成员函数，接受微信的log信息。byBlock
+    注意1:SDK会强引用这个block,注意不要导致内存泄漏,注意不要导致内存泄漏
+    注意2:调用过一次startLog by block之后，如果再调用一次任意方式的startLoad,会释放上一次logBlock，不再回调上一个logBlock
+ *
+ *  @param level 打印log的级别
+ *  @param logBlock 打印log的回调block
+ */
++(void) startLogByLevel:(WXLogLevel)level logBlock:(WXLogBolock)logBlock;
+
+/*! @brief WXApi的成员函数，接受微信的log信息。byDelegate 
+    注意1:sdk会弱引用这个delegate，这里可加任意对象为代理，不需要与WXApiDelegate同一个对象
+    注意2:调用过一次startLog by delegate之后，再调用一次任意方式的startLoad,不会再回调上一个logDelegate对象
+ *  @param level 打印log的级别
+ *  @param logDelegate 打印log的回调代理，
+ */
++ (void)startLogByLevel:(WXLogLevel)level logDelegate:(id<WXApiLogDelegate>)logDelegate;
+
+/*! @brief 停止打印log，会清理block或者delegate为空，释放block
+ *  @param 
+ */
++ (void)stopLog;
 @end

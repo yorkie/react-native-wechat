@@ -4,13 +4,13 @@
 
 [React Native] bridging library that integrates WeChat SDKs:
 
-- [x] iOS SDK 1.7.2
-- [x] Android SDK 221
+- [x]  iOS SDK 1.8.2
+- [x]  Android SDK ++
 
 And [react-native-wechat] has the following tracking data in open source world:
 
-| NPM | Dependency | Downloads | Build |
-|-----|------------|-----------|-------|
+| NPM                                  | Dependency                                     | Downloads                                      | Build                                       |
+| ------------------------------------ | ---------------------------------------------- | ---------------------------------------------- | ------------------------------------------- |
 | [![NPM version][npm-image]][npm-url] | [![Dependency Status][david-image]][david-url] | [![Downloads][downloads-image]][downloads-url] | [![Build Status][travis-image]][travis-url] |
 
 ## Table of Contents
@@ -53,7 +53,7 @@ WeChat.registerApp('appid');
 
 This method is only available on iOS.
 
-#### isWXAppInstalled() 
+#### isWXAppInstalled()
 
 - returns {Boolean} if WeChat is installed.
 
@@ -87,7 +87,7 @@ Send authentication request, and it returns an object with the
 following fields:
 
 | field   | type   | description                         |
-|---------|--------|-------------------------------------|
+| ------- | ------ | ----------------------------------- |
 | errCode | Number | Error Code                          |
 | errStr  | String | Error message if any error occurred |
 | openId  | String |                                     |
@@ -116,7 +116,7 @@ following fields:
 Share a `ShareMetadata` message to timeline(朋友圈) and returns:
 
 | name    | type   | description                         |
-|---------|--------|-------------------------------------|
+| ------- | ------ | ----------------------------------- |
 | errCode | Number | 0 if authorization successed        |
 | errStr  | String | Error message if any error occurred |
 
@@ -168,7 +168,7 @@ try {
   let rootPath = fs.DocumentDirectoryPath;
   let savePath = rootPath + '/email-signature-262x100.png';
   console.log(savePath);
-  
+
   /*
    * savePath on iOS may be:
    *  /var/mobile/Containers/Data/Application/B1308E13-35F1-41AB-A20D-3117BE8EE8FE/Documents/email-signature-262x100.png
@@ -287,6 +287,18 @@ catch (e) {
 
 Similar to `shareToTimeline` but send message to a friend or chat group.
 
+#### launchMini(params)
+
+- `params` {Object} 打开小程序的参数
+
+  - `userName` {String} 拉起的小程序的username
+
+  - `miniProgramType` {Integer} 拉起小程序的类型. 0-正式版 1-开发版 2-体验版
+
+  - `path` {String} 拉起小程序页面的可带参路径，不填默认拉起小程序首页
+
+    
+
 #### pay(payload)
 
 - `payload` {Object} the payment data
@@ -301,7 +313,7 @@ Similar to `shareToTimeline` but send message to a friend or chat group.
 Sends request for proceeding payment, then returns an object:
 
 | name    | type   | description                         |
-|---------|--------|-------------------------------------|
+| ------- | ------ | ----------------------------------- |
 | errCode | Number | 0 if authorization successed        |
 | errStr  | String | Error message if any error occurred |
 
@@ -330,30 +342,12 @@ $ npm install react-native-wechat --save
 
 ## Authors
 
-| GitHub        | Role       | Email                 |
-|---------------|------------|-----------------------|
-| [@yorkie]     | Author     | yorkiefixer@gmail.com |
-| [@xing-zheng] | Emeriti    |                       |
-| [@tdzl2003]   | Emeriti    | tdzl2003@gmail.com    |
-
-[@yorkie]: https://github.com/yorkie
-[@xing-zheng]: https://github.com/xing-zheng
-[@tdzl2003]: https://github.com/tdzl2003
+| GitHub        | Role    | Email                 |
+| ------------- | ------- | --------------------- |
+| [@yorkie]     | Author  | yorkiefixer@gmail.com |
+| [@xing-zheng] | Emeriti |                       |
+| [@tdzl2003]   | Emeriti | tdzl2003@gmail.com    |
 
 ## License
 
 MIT
-
-[react-native-wechat]: https://github.com/yorkie/react-native-wechat
-[npm-image]: https://img.shields.io/npm/v/react-native-wechat.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/react-native-wechat
-[travis-image]: https://img.shields.io/travis/yorkie/react-native-wechat.svg?style=flat-square
-[travis-url]: https://travis-ci.org/yorkie/react-native-wechat
-[david-image]: http://img.shields.io/david/yorkie/react-native-wechat.svg?style=flat-square
-[david-url]: https://david-dm.org/yorkie/react-native-wechat
-[downloads-image]: http://img.shields.io/npm/dm/react-native-wechat.svg?style=flat-square
-[downloads-url]: https://npmjs.org/package/react-native-wechat
-[React Native]: https://github.com/facebook/react-native
-[react-native-cn]: https://github.com/reactnativecn
-[WeChat SDK]: https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&t=resource/res_list&verify=1&id=1417674108&token=&lang=zh_CN
-[Linking Libraries iOS Guidance]: https://developer.apple.com/library/ios/recipes/xcode_help-project_editor/Articles/AddingaLibrarytoaTarget.html
