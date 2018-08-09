@@ -35,6 +35,7 @@ import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXFileObject;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
 import com.tencent.mm.opensdk.modelmsg.WXMusicObject;
 import com.tencent.mm.opensdk.modelmsg.WXTextObject;
 import com.tencent.mm.opensdk.modelmsg.WXVideoObject;
@@ -72,9 +73,10 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     /**
      * fix Native module WeChatModule tried to override WeChatModule for module name RCTWeChat.
      * If this was your intention, return true from WeChatModule#canOverrideExistingModule() bug
+     *
      * @return
      */
-    public boolean canOverrideExistingModule(){
+    public boolean canOverrideExistingModule() {
         return true;
     }
 
@@ -176,8 +178,8 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         req.path = data.getString("path");                  //拉起小程序页面的可带参路径，不填默认拉起小程序首页
         req.miniprogramType = data.getInt("miniProgramType");// 可选打开 开发版，体验版和正式版
 //        req.miniprogramType = WXLaunchMiniProgram.Req.MINIPTOGRAM_TYPE_RELEASE;// 可选打开 开发版，体验版和正式版
-        boolean success =  api.sendReq(req);
-        if(!success)callback.invoke(INVALID_ARGUMENT);
+        boolean success = api.sendReq(req);
+        if (!success) callback.invoke(INVALID_ARGUMENT);
     }
 
     @ReactMethod
@@ -190,7 +192,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     }
 
     @ReactMethod
-    public void pay(ReadableMap data, Callback callback){
+    public void pay(ReadableMap data, Callback callback) {
         PayReq payReq = new PayReq();
         if (data.hasKey("partnerId")) {
             payReq.partnerId = data.getString("partnerId");
@@ -219,8 +221,8 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
 
     private void _share(final int scene, final ReadableMap data, final Callback callback) {
         Uri uri = null;
-        if (data.hasKey("thumbImage")) {
-            String imageUrl = data.getString("thumbImage");
+        if (data.hasKey("thumbImage") || data.hasKey("hdImageData")) {
+            String imageUrl = data.hasKey("hdImageData") ? data.getString("hdImageData") : data.getString("thumbImage");
 
             try {
                 uri = Uri.parse(imageUrl);
@@ -332,6 +334,8 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             mediaObject = __jsonToMusicMedia(data);
         } else if (type.equals("file")) {
             mediaObject = __jsonToFileMedia(data);
+        } else if (type.equals("mini")) {
+            mediaObject = __jsonToMiniMedia(data);
         }
 
         if (mediaObject == null) {
@@ -349,7 +353,6 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         if (thumbImage != null) {
             message.setThumbImage(thumbImage);
         }
-
         if (data.hasKey("title")) {
             message.title = data.getString("title");
         }
@@ -470,6 +473,21 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         return new WXFileObject(data.getString("filePath"));
     }
 
+    private WXMiniProgramObject __jsonToMiniMedia(ReadableMap data) {
+        if (!data.hasKey("userName")) {
+            return null;
+        }
+        WXMiniProgramObject miniProgramObject = new WXMiniProgramObject();
+        miniProgramObject.userName = data.getString("userName");
+        if (!data.hasKey("miniProgramType"))
+            miniProgramObject.miniprogramType = data.getInt("miniProgramType");
+        if (!data.hasKey("webpageUrl")) miniProgramObject.webpageUrl = data.getString("webpageUrl");
+        if (!data.hasKey("path")) miniProgramObject.path = data.getString("path");
+        if (!data.hasKey("withShareTicket"))
+            miniProgramObject.withShareTicket = data.getBoolean("withShareTicket");
+        return miniProgramObject;
+    }
+
     // TODO: 实现sendRequest、sendSuccessResponse、sendErrorCommonResponse、sendErrorUserCancelResponse
 
     @Override
@@ -480,7 +498,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     @Override
     public void onResp(BaseResp baseResp) {
         WritableMap map = Arguments.createMap();
-        Log.e(TAG, "onResp: "+baseResp.toString());
+        Log.e(TAG, "onResp: " + baseResp.toString());
         map.putInt("errCode", baseResp.errCode);
         map.putString("errStr", baseResp.errStr);
         map.putString("openId", baseResp.openId);
@@ -504,7 +522,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             map.putString("returnKey", resp.returnKey);
         } else if (baseResp.getType() == ConstantsAPI.COMMAND_LAUNCH_WX_MINIPROGRAM) {
             WXLaunchMiniProgram.Resp resp = (WXLaunchMiniProgram.Resp) baseResp;
-            String extraData =resp.extMsg; // 对应JsApi navigateBackApplication中的extraData字段数据
+            String extraData = resp.extMsg; // 对应JsApi navigateBackApplication中的extraData字段数据
             map.putString("extraData", extraData);
         }
 

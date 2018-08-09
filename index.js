@@ -170,7 +170,14 @@ export function sendAuthRequest(scopes, state) {
  * @method shareToTimeline
  * @param {Object} data
  * @param {String} data.thumbImage - Thumb image of the message, which can be a uri or a resource id.
- * @param {String} data.type - Type of this message. Could be {news|text|imageUrl|imageFile|imageResource|video|audio|file}
+ * @param {String} data.type - Type of this message. Could be {news|text|imageUrl|imageFile|imageResource|video|audio|file|mini}
+ * @param {String} data.webpageUrl - Required if type equals news or mini. The webpage link to share.
+ * @param {String} data.userName - 小程序的原生id.
+ * @param {String} data.path - 小程序页面的路径.
+ * @param {String} data.hdImageData - 小程序节点高清大图，小于128k.
+ * @param {Boolean} data.withShareTicket - 是否使用带 shareTicket 的转发
+ * @param {Integer} data.miniProgramType - 分享小程序的版本（0-正式，1-开发，2-体验）
+ * @param {String} data.webpageUrl - Required if type equals news. The webpage link to share.
  * @param {String} data.webpageUrl - Required if type equals news. The webpage link to share.
  * @param {String} data.imageUrl - Provide a remote image if type equals image.
  * @param {String} data.videoUrl - Provide a remote video if type equals video.
@@ -223,6 +230,12 @@ export function launchMini({userName, miniProgramType = 0, path = ''}) {
  * @param {String} data.thumbImage - Thumb image of the message, which can be a uri or a resource id.
  * @param {String} data.type - Type of this message. Could be {news|text|imageUrl|imageFile|imageResource|video|audio|file}
  * @param {String} data.webpageUrl - Required if type equals news. The webpage link to share.
+ * @param {String} data.userName - 小程序的原生id.
+ * @param {String} data.path - 小程序页面的路径.
+ * @param {String} data.hdImageData - 小程序节点高清大图，小于128k.
+ * @param {Boolean} data.withShareTicket - 是否使用带 shareTicket 的转发
+ * @param {Integer} data.miniProgramType - 分享小程序的版本（0-正式，1-开发，2-体验）
+ * @param {String} data.hdImageData - 小程序节点高清大图，小于128k.
  * @param {String} data.imageUrl - Provide a remote image if type equals image.
  * @param {String} data.videoUrl - Provide a remote video if type equals video.
  * @param {String} data.musicUrl - Provide a remote music if type equals audio.
