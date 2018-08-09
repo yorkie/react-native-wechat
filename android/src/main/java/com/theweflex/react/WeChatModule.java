@@ -479,11 +479,11 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         }
         WXMiniProgramObject miniProgramObject = new WXMiniProgramObject();
         miniProgramObject.userName = data.getString("userName");
-        if (!data.hasKey("miniProgramType"))
+        if (data.hasKey("miniProgramType"))
             miniProgramObject.miniprogramType = data.getInt("miniProgramType");
-        if (!data.hasKey("webpageUrl")) miniProgramObject.webpageUrl = data.getString("webpageUrl");
-        if (!data.hasKey("path")) miniProgramObject.path = data.getString("path");
-        if (!data.hasKey("withShareTicket"))
+        if (data.hasKey("webpageUrl")) miniProgramObject.webpageUrl = data.getString("webpageUrl");
+        if (data.hasKey("path")) miniProgramObject.path = data.getString("path");
+        if (data.hasKey("withShareTicket"))
             miniProgramObject.withShareTicket = data.getBoolean("withShareTicket");
         return miniProgramObject;
     }
