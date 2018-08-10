@@ -60,7 +60,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * {描述信息}
+ * 处理微信具体事务的代理类
  *
  * @author chenqiang
  * @date 2018/8/9

@@ -5,7 +5,7 @@
 package com.theweflex.react.exception;
 
 /**
- * {描述信息}
+ * 非法参数的 Exception
  *
  * @author chenqiang
  * @date 2018/8/9

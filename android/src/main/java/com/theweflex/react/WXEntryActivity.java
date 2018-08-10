@@ -18,8 +18,6 @@ import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.theweflex.react.exception.NotRegisterException;
 
 /**
- * {描述信息}
- *
  * @author chenqiang
  * @date 2018/8/9
  */

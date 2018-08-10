@@ -5,7 +5,7 @@
 package com.theweflex.react.exception;
 
 /**
- * {描述信息}
+ * 方法加载失败的 Exception
  *
  * @author chenqiang
  * @date 2018/8/9
