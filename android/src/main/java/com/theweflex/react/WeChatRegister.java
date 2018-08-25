@@ -14,7 +14,7 @@ public class WeChatRegister extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Log.e(TAG, "onReceive: ");
-		final IWXAPI api = WXAPIFactory.createWXAPI(context, WeChatModule.appId);
-		api.registerApp(WeChatModule.appId);
+		// final IWXAPI api = WXAPIFactory.createWXAPI(context, WeChatModule.appId);
+		// api.registerApp(WeChatModule.appId);
 	}
 }

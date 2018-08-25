@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.facebook.common.executors.UiThreadImmediateExecutorService;
 import com.facebook.common.references.CloseableReference;
@@ -26,6 +25,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.tencent.mm.opensdk.constants.Build;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
@@ -53,9 +53,7 @@ import java.util.UUID;
  * Created by tdzl2_000 on 2015-10-10.
  */
 public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEventHandler {
-    public static String appId;
-
-    private static final String TAG = "WeChatModule";
+    private String appId;
     private IWXAPI api = null;
     private final static String NOT_REGISTERED = "registerApp required.";
     private final static String INVOKE_FAILED = "WeChat API invoke returns false.";
@@ -105,7 +103,6 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
 
     @ReactMethod
     public void registerApp(String appid, Callback callback) {
-        WeChatModule.appId = appid;
         api = WXAPIFactory.createWXAPI(this.getReactApplicationContext().getBaseContext(), appid, true);
         callback.invoke(null, api.registerApp(appid));
     }
@@ -125,7 +122,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             callback.invoke(NOT_REGISTERED);
             return;
         }
-        callback.invoke(null, api.isWXAppSupportAPI());
+        callback.invoke(null, api.getWXAppSupportAPI() >= Build.PAY_SUPPORTED_SDK_INT);
     }
 
     @ReactMethod
@@ -215,7 +212,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         if (data.hasKey("extData")) {
             payReq.extData = data.getString("extData");
         }
-        payReq.appId = WeChatModule.appId;
+        payReq.appId = this.appId;
         callback.invoke(api.sendReq(payReq) ? null : INVOKE_FAILED);
     }
 
@@ -498,7 +495,6 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     @Override
     public void onResp(BaseResp baseResp) {
         WritableMap map = Arguments.createMap();
-        Log.e(TAG, "onResp: " + baseResp.toString());
         map.putInt("errCode", baseResp.errCode);
         map.putString("errStr", baseResp.errStr);
         map.putString("openId", baseResp.openId);
