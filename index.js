@@ -1,6 +1,6 @@
 'use strict';
 
-import {DeviceEventEmitter, NativeModules} from 'react-native';
+import {DeviceEventEmitter, NativeModules, Platform} from 'react-native';
 import {EventEmitter} from 'events';
 
 let isAppRegistered = false;
