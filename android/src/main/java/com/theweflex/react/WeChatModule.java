@@ -135,15 +135,6 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     }
 
     @ReactMethod
-    public void isWXAppSupportApi(Callback callback) {
-        if (api == null) {
-            callback.invoke(NOT_REGISTERED);
-            return;
-        }
-        callback.invoke(null, api.isWXAppSupportAPI());
-    }
-
-    @ReactMethod
     public void getApiVersion(Callback callback) {
         if (api == null) {
             callback.invoke(NOT_REGISTERED);
