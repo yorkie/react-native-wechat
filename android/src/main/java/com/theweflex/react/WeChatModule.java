@@ -54,6 +54,7 @@ import java.util.UUID;
  */
 public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEventHandler {
     private String appId;
+
     private IWXAPI api = null;
     private final static String NOT_REGISTERED = "registerApp required.";
     private final static String INVOKE_FAILED = "WeChat API invoke returns false.";
@@ -74,7 +75,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
      *
      * @return
      */
-    public boolean canOverrideExistingModule() {
+    public boolean canOverrideExistingModule(){
         return true;
     }
 
@@ -103,6 +104,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
 
     @ReactMethod
     public void registerApp(String appid, Callback callback) {
+        this.appId = appid;
         api = WXAPIFactory.createWXAPI(this.getReactApplicationContext().getBaseContext(), appid, true);
         callback.invoke(null, api.registerApp(appid));
     }
@@ -285,7 +287,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         if (data.hasKey("extData")) {
             payReq.extData = data.getString("extData");
         }
-        payReq.appId = this.appId;
+        payReq.appId = appId;
         callback.invoke(api.sendReq(payReq) ? null : INVOKE_FAILED);
     }
 
