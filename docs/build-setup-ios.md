@@ -28,7 +28,7 @@ then add:
 Then copy the following in `AppDelegate.m`:
 
 ```objc
-#import "RCTLinkingManager.h"
+#import <React/RCTLinkingManager.h>
 
 // ios 8.x or older
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
