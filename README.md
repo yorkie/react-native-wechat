@@ -7,7 +7,7 @@
 - [x] iOS SDK 1.7.2
 - [x] Android SDK 221
 
-And [react-native-wechat] has the following tracking data in open source world:
+[react-native-wechat] has the following tracking data in the open source world:
 
 | NPM | Dependency | Downloads | Build |
 |-----|------------|-----------|-------|
@@ -15,21 +15,21 @@ And [react-native-wechat] has the following tracking data in open source world:
 
 ## Table of Contents
 
-- [Get Startted](#get-startted)
+- [Getting Started](#getting-started)
 - [API Documentation](#api-documentation)
 - [Installation](#installation)
 - [Community](#community)
 - [Authors](#authors)
 - [License](#license)
 
-## Get Startted
+## Getting Started
 
 - [Build setup on iOS](./docs/build-setup-ios.md)
 - [Build setup on Android](./docs/build-setup-android.md)
 
 ## API Documentation
 
-[react-native-wechat] exposes the promise-based, therefore you could use `Promise`
+[react-native-wechat] uses Promises, therefore you can use `Promise`
 or `async/await` to manage your dataflow.
 
 #### registerApp(appid)
@@ -57,19 +57,19 @@ This method is only available on iOS.
 
 - returns {Boolean} if WeChat is installed.
 
-Check if wechat installed in this app.
+Check if the WeChat app is installed on the device.
 
 #### isWXAppSupportApi()
 
-- returns {Boolean}  Contain the result.
+- returns {Boolean} Contains the result.
 
 Check if wechat support open url.
 
 #### getApiVersion()
 
-- returns {String}  Contain the result.
+- returns {String} Contains the result.
 
-Get api version of WeChat SDK.
+Get the WeChat SDK api version.
 
 #### openWXApp()
 
@@ -120,7 +120,7 @@ Share a `ShareMetadata` message to timeline(朋友圈) and returns:
 | errCode | Number | 0 if authorization successed        |
 | errStr  | String | Error message if any error occurred |
 
-These example code need 'react-native-chat' and 'react-native-fs' plugin.
+The following examples require the 'react-native-chat' and 'react-native-fs' packages.
 
 ```js
 import * as WeChat from 'react-native-wechat';
@@ -285,7 +285,7 @@ catch (e) {
 - `message` {ShareMetadata} This object saves the metadata for sharing
 - returns {Object}
 
-Similar to `shareToTimeline` but send message to a friend or chat group.
+Similar to `shareToTimeline` but sends the message to a friend or chat group.
 
 #### pay(payload)
 
@@ -323,7 +323,7 @@ $ npm install react-native-wechat --save
 - [超详细React Native实现微信好友/朋友圈分享功能-Android/iOS双平台通用](http://www.jianshu.com/p/ce5439dd1f52)
 - [柳轩涤俗 - 微信登录](http://www.cnblogs.com/zhangdw/p/6194345.html)
 
-#### Who use it
+#### Who's using it
 
 <a href="https://github.com/attentiveness/reading"><img height="80" width="80" src="https://raw.githubusercontent.com/attentiveness/reading/master/Reading_Logo.png"></a>
 <a href="https://github.com/lipeiwei-szu/ReactNativeOne"><img height="80" width="80" src="http://android-artworks.25pp.com/fs08/2017/05/22/3/110_ed42e5c8f701ae26be6b0c423cb51858_con_130x130.png"></a>
