@@ -1,5 +1,3 @@
-'use strict';
-
 import { DeviceEventEmitter, NativeModules, Platform } from 'react-native';
 import { EventEmitter } from 'events';
 
@@ -9,7 +7,7 @@ const { WeChat } = NativeModules;
 // Event emitter to dispatch request and response from WeChat.
 const emitter = new EventEmitter();
 
-DeviceEventEmitter.addListener('WeChat_Resp', resp => {
+DeviceEventEmitter.addListener('WeChat_Resp', (resp) => {
   emitter.emit(resp.type, resp);
 });
 
@@ -30,10 +28,12 @@ function wrapRegisterApp(nativeFunc) {
           if (!error) {
             return resolve(result);
           }
+
           if (typeof error === 'string') {
             return reject(new Error(error));
           }
-          reject(error);
+
+          return reject(error);
         },
       ]);
     });
@@ -55,10 +55,12 @@ function wrapApi(nativeFunc) {
           if (!error) {
             return resolve(result);
           }
+
           if (typeof error === 'string') {
             return reject(new Error(error));
           }
-          reject(error);
+
+          return reject(error);
         },
       ]);
     });
@@ -154,7 +156,7 @@ const nativeSendAuthRequest = wrapApi(WeChat.sendAuthRequest);
 export function sendAuthRequest(scopes, state) {
   return new Promise((resolve, reject) => {
     WeChat.sendAuthRequest(scopes, state, () => {});
-    emitter.once('SendAuth.Resp', resp => {
+    emitter.once('SendAuth.Resp', (resp) => {
       if (resp.errCode === 0) {
         resolve(resp);
       } else {
@@ -180,7 +182,7 @@ export function sendAuthRequest(scopes, state) {
 export function shareToTimeline(data) {
   return new Promise((resolve, reject) => {
     nativeShareToTimeline(data);
-    emitter.once('SendMessageToWX.Resp', resp => {
+    emitter.once('SendMessageToWX.Resp', (resp) => {
       if (resp.errCode === 0) {
         resolve(resp);
       } else {
@@ -206,7 +208,7 @@ export function shareToTimeline(data) {
 export function shareToSession(data) {
   return new Promise((resolve, reject) => {
     nativeShareToSession(data);
-    emitter.once('SendMessageToWX.Resp', resp => {
+    emitter.once('SendMessageToWX.Resp', (resp) => {
       if (resp.errCode === 0) {
         resolve(resp);
       } else {
@@ -232,7 +234,7 @@ export function shareToSession(data) {
 export function shareToFavorite(data) {
   return new Promise((resolve, reject) => {
     nativeShareToFavorite(data);
-    emitter.once('SendMessageToWX.Resp', resp => {
+    emitter.once('SendMessageToWX.Resp', (resp) => {
       if (resp.errCode === 0) {
         resolve(resp);
       } else {
@@ -267,16 +269,16 @@ export function pay(data) {
   correct('noncestr', 'nonceStr');
   correct('partnerid', 'partnerId');
   correct('timestamp', 'timeStamp');
-  
+
   // FIXME(94cstyles)
   // Android requires the type of the timeStamp field to be a string
-  if (Platform.OS === 'android') data.timeStamp = String(data.timeStamp)
+  if (Platform.OS === 'android') data.timeStamp = String(data.timeStamp);
 
   return new Promise((resolve, reject) => {
-    WeChat.pay(data, result => {
+    WeChat.pay(data, (result) => {
       if (result) reject(result);
     });
-    emitter.once('PayReq.Resp', resp => {
+    emitter.once('PayReq.Resp', (resp) => {
       if (resp.errCode === 0) {
         resolve(resp);
       } else {
@@ -305,4 +307,3 @@ export class WechatError extends Error {
     }
   }
 }
-

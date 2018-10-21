@@ -4,7 +4,8 @@
   "description": "react-native library for wechat app",
   "main": "index.js",
   "scripts": {
-    "test": "echo 1"
+    "test": "echo 1",
+    "lint": "node_modules/.bin/eslint ."
   },
   "repository": {
     "type": "git",
@@ -38,5 +39,13 @@
   "bugs": {
     "url": "https://github.com/weflex/react-native-wechat/issues"
   },
-  "homepage": "https://github.com/weflex/react-native-wechat#readme"
+  "homepage": "https://github.com/weflex/react-native-wechat#readme",
+  "devDependencies": {
+    "eslint": "^5.7.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-react-native": "^3.5.0"
+  }
 }

@@ -2,35 +2,26 @@
  * Sample React Native App
  * https://github.com/facebook/react-native
  */
-'use strict';
+import React from 'react';
+import {
+  AppRegistry, StyleSheet, Text, View,
+} from 'react-native';
 
-var React = require('react-native');
-var {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-} = React;
+const Example = () => (
+  <View style={styles.container}>
+    <Text style={styles.welcome}>
+      Welcome to React Native!
+    </Text>
+    <Text style={styles.instructions}>
+      To get started, edit index.android.js
+    </Text>
+    <Text style={styles.instructions}>
+      Shake or press menu button for dev menu
+    </Text>
+  </View>
+);
 
-var Example = React.createClass({
-  render: function() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Shake or press menu button for dev menu
-        </Text>
-      </View>
-    );
-  }
-});
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
