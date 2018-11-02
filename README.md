@@ -53,7 +53,7 @@ WeChat.registerApp('appid');
 
 This method is only available on iOS.
 
-#### isWXAppInstalled() 
+#### isWXAppInstalled()
 
 - returns {Boolean} if WeChat is installed.
 
@@ -73,7 +73,7 @@ Get api version of WeChat SDK.
 
 #### openWXApp()
 
-- returns {Boolean} 
+- returns {Boolean}
 
 Open the WeChat app from your application.
 
@@ -83,7 +83,7 @@ Open the WeChat app from your application.
 - `state` {String} the state of OAuth2
 - returns {Object}
 
-Send authentication request, and it returns an object with the 
+Send authentication request, and it returns an object with the
 following fields:
 
 | field   | type   | description                         |
@@ -130,7 +130,7 @@ let resolveAssetSource = require('resolveAssetSource');
 // Code example to share text message:
 try {
   let result = await WeChat.shareToTimeline({
-    type: 'text', 
+    type: 'text',
     description: 'hello, wechat'
   });
   console.log('share text message to time line successful:', result);
@@ -168,7 +168,7 @@ try {
   let rootPath = fs.DocumentDirectoryPath;
   let savePath = rootPath + '/email-signature-262x100.png';
   console.log(savePath);
-  
+
   /*
    * savePath on iOS may be:
    *  /var/mobile/Containers/Data/Application/B1308E13-35F1-41AB-A20D-3117BE8EE8FE/Documents/email-signature-262x100.png
@@ -226,7 +226,7 @@ try {
   /*
    * savePath on iOS may be:
    *  /var/mobile/Containers/Data/Application/B1308E13-35F1-41AB-A20D-3117BE8EE8FE/Documents/signature_method.doc
-   **/ 
+   **/
   let savePath = rootPath + '/' + fileName;
 
   await fs.downloadFile('https://open.weixin.qq.com/zh_CN/htmledition/res/assets/signature_method.doc', savePath);
@@ -307,7 +307,17 @@ Sends request for proceeding payment, then returns an object:
 
 ## Installation
 
+Add `pod 'WechatOpenSDK'` to Podfile, and run
+
 ```sh
+$ cd <project_dir>/ios
+$ pod install
+```
+
+then
+
+```sh
+$ cd <project_dir>
 $ npm install react-native-wechat --save
 ```
 
