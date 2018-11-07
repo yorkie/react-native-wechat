@@ -331,12 +331,14 @@
 					"$(SRCROOT)/../react-native/React/**",
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 					"$(SRCROOT)/../node_modules/react-native/Libraries/Image/**",
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/WechatOpenSDK",
 					"$(SRCROOT)/../../../ios/Pods/WechatOpenSDK/WeChatSDK1.8.3",
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/../../../ios/Pods/WechatOpenSDK/WeChatSDK1.8.3",
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(SRCROOT)/../../../ios/Pods/WechatOpenSDK/WeChatSDK",
+					"$(SRCROOT)/../../../ios/Pods/WechatOpenSDK/WeChatSDK1.8.3",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -353,12 +355,14 @@
 					"$(SRCROOT)/../react-native/React/**",
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 					"$(SRCROOT)/../node_modules/react-native/Libraries/Image/**",
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/WechatOpenSDK",
 					"$(SRCROOT)/../../../ios/Pods/WechatOpenSDK/WeChatSDK1.8.3",
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/../../../ios/Pods/WechatOpenSDK/WeChatSDK1.8.3",
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(SRCROOT)/../../../ios/Pods/WechatOpenSDK/WeChatSDK",
+					"$(SRCROOT)/../../../ios/Pods/WechatOpenSDK/WeChatSDK1.8.3",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
