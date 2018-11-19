@@ -6,9 +6,11 @@ package com.theweflex.react;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.facebook.common.executors.UiThreadImmediateExecutorService;
@@ -59,6 +61,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * 处理微信具体事务的代理类
  *
@@ -67,6 +71,8 @@ import okhttp3.Response;
  */
 public class WXPresenter {
 
+    private static final int IMAGE_SIZE = 32768;
+    private static final boolean DEBUG = false;
     ReactApplicationContext mReactApplicationContext;
     IWXAPI mWxapi;
     boolean mHasRegister;
@@ -206,8 +212,16 @@ public class WXPresenter {
                     });
                 }
             } else { // 分享非图片
-                shareWithThumb(scene, data, null, callback);
+//                shareWithThumb(scene, data, null, callback);
+                getImage(thumbUri, new ResizeOptions(100, 100), new ImageCallback() {
+                    @Override
+                    public void onBitmap(@Nullable Bitmap bitmap) throws InvalidArgumentException {
+
+                        shareWithThumb(scene, data, bitmap, callback);
+                    }
+                });
             }
+
         }
     }
 
@@ -344,7 +358,22 @@ public class WXPresenter {
         WXMediaMessage message = new WXMediaMessage();
         message.mediaObject = mediaObject;
         if (thumbImage != null) {
-            message.setThumbImage(thumbImage);
+            try {
+                ByteArrayOutputStream output = new ByteArrayOutputStream();
+                thumbImage.compress(Bitmap.CompressFormat.JPEG, 85, output);
+                int options = 85;
+                while (output.toByteArray().length > IMAGE_SIZE && options != 10) {
+                    output.reset(); //清空baos
+                    thumbImage.compress(Bitmap.CompressFormat.JPEG, options, output);//这里压缩options%，把压缩后的数据存放到baos中
+                    options -= 10;
+                }
+                thumbImage.recycle();
+                message.thumbData = output.toByteArray();
+            }catch (Throwable t){
+                if(DEBUG){
+                    Log.e("wechat", "shareWithMedia: ", t);
+                }
+            }
         }
 
         if (data.hasKey("title")) {
