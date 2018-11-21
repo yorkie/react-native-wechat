@@ -154,6 +154,12 @@ RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
     [self shareToWeixinWithData:data scene:WXSceneSession callback:callback];
 }
 
+RCT_EXPORT_METHOD(shareToMiniProgram:(NSDictionary *)data
+                  :(RCTResponseSenderBlock)callback)
+{
+    [self shareToMiniProgramWithData:data scene:WXSceneSession callback:callback];
+}
+
 RCT_EXPORT_METHOD(shareToFavorite:(NSDictionary *)data
                   :(RCTResponseSenderBlock)callback)
 {
@@ -180,7 +186,7 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
                      callBack:(RCTResponseSenderBlock)callback
 {
     NSString *type = aData[RCTWXShareType];
-
+    
     if ([type isEqualToString:RCTWXShareTypeText]) {
         NSString *text = aData[RCTWXShareDescription];
         [self shareToWeixinWithTextMessage:aScene Text:text callBack:callback];
@@ -190,17 +196,17 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
         NSString * mediaTagName = aData[@"mediaTagName"];
         NSString * messageAction = aData[@"messageAction"];
         NSString * messageExt = aData[@"messageExt"];
-
+        
         if (type.length <= 0 || [type isEqualToString:RCTWXShareTypeNews]) {
             NSString * webpageUrl = aData[RCTWXShareWebpageUrl];
             if (webpageUrl.length <= 0) {
                 callback(@[@"webpageUrl required"]);
                 return;
             }
-
+            
             WXWebpageObject* webpageObject = [WXWebpageObject object];
             webpageObject.webpageUrl = webpageUrl;
-
+            
             [self shareToWeixinWithMediaMessage:aScene
                                           Title:title
                                     Description:description
@@ -210,14 +216,14 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
                                      ThumbImage:aThumbImage
                                        MediaTag:mediaTagName
                                        callBack:callback];
-
+            
         } else if ([type isEqualToString:RCTWXShareTypeAudio]) {
             WXMusicObject *musicObject = [WXMusicObject new];
             musicObject.musicUrl = aData[@"musicUrl"];
             musicObject.musicLowBandUrl = aData[@"musicLowBandUrl"];
             musicObject.musicDataUrl = aData[@"musicDataUrl"];
             musicObject.musicLowBandDataUrl = aData[@"musicLowBandDataUrl"];
-
+            
             [self shareToWeixinWithMediaMessage:aScene
                                           Title:title
                                     Description:description
@@ -227,12 +233,12 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
                                      ThumbImage:aThumbImage
                                        MediaTag:mediaTagName
                                        callBack:callback];
-
+            
         } else if ([type isEqualToString:RCTWXShareTypeVideo]) {
             WXVideoObject *videoObject = [WXVideoObject new];
             videoObject.videoUrl = aData[@"videoUrl"];
             videoObject.videoLowBandUrl = aData[@"videoLowBandUrl"];
-
+            
             [self shareToWeixinWithMediaMessage:aScene
                                           Title:title
                                     Description:description
@@ -242,7 +248,7 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
                                      ThumbImage:aThumbImage
                                        MediaTag:mediaTagName
                                        callBack:callback];
-
+            
         } else if ([type isEqualToString:RCTWXShareTypeImageUrl] ||
                    [type isEqualToString:RCTWXShareTypeImageFile] ||
                    [type isEqualToString:RCTWXShareTypeImageResource]) {
@@ -270,11 +276,11 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
         } else if ([type isEqualToString:RCTWXShareTypeFile]) {
             NSString * filePath = aData[@"filePath"];
             NSString * fileExtension = aData[@"fileExtension"];
-
+            
             WXFileObject *fileObject = [WXFileObject object];
             fileObject.fileData = [NSData dataWithContentsOfFile:filePath];
             fileObject.fileExtension = fileExtension;
-
+            
             [self shareToWeixinWithMediaMessage:aScene
                                           Title:title
                                     Description:description
@@ -284,13 +290,47 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
                                      ThumbImage:aThumbImage
                                        MediaTag:mediaTagName
                                        callBack:callback];
-
+            
         } else {
             callback(@[@"message type unsupported"]);
         }
     }
 }
 
+- (void)shareToMiniProgramWithData:(NSDictionary *)aData
+                   thumbImage:(UIImage *)aThumbImage
+                           hdImage:(UIImage *)hdImage
+                        scene:(int)aScene
+                     callBack:(RCTResponseSenderBlock)callback {
+    NSString * title = aData[RCTWXShareTitle];
+    NSString * description = aData[RCTWXShareDescription];
+    NSString * mediaTagName = aData[@"mediaTagName"];
+    NSString * messageAction = aData[@"messageAction"];
+    NSString * messageExt = aData[@"messageExt"];
+    
+    NSString * webpageUrl = aData[RCTWXShareWebpageUrl];
+    if (webpageUrl.length <= 0) {
+        callback(@[@"webpageUrl required"]);
+        return;
+    }
+    
+    WXMiniProgramObject *miniObj = [WXMiniProgramObject object];
+    miniObj.webpageUrl = webpageUrl;
+    miniObj.userName = aData[RCTWXMiniProgramId];
+    miniObj.path = aData[RCTWXMiniProgramPath];
+    miniObj.miniProgramType = [aData[RCTWXMiniProgramType] integerValue];
+    miniObj.hdImageData = UIImageJPEGRepresentation(hdImage, 1.0);
+    
+    [self shareToWeixinWithMediaMessage:aScene
+                                  Title:title
+                            Description:description
+                                 Object:miniObj
+                             MessageExt:messageExt
+                          MessageAction:messageAction
+                             ThumbImage:aThumbImage
+                               MediaTag:mediaTagName
+                               callBack:callback];
+}
 
 - (void)shareToWeixinWithData:(NSDictionary *)aData scene:(int)aScene callback:(RCTResponseSenderBlock)aCallBack
 {
@@ -305,7 +345,33 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
     } else {
         [self shareToWeixinWithData:aData thumbImage:nil scene:aScene callBack:aCallBack];
     }
+}
 
+- (void)shareToMiniProgramWithData:(NSDictionary *)aData scene:(int)aScene callback:(RCTResponseSenderBlock)aCallBack {
+    NSString *hdImageUrl = aData[RCTWXShareTypeHdImageUrl];
+    if (hdImageUrl.length && _bridge.imageLoader) {
+        NSURL *url = [NSURL URLWithString:hdImageUrl];
+        NSURLRequest *imageRequest = [NSURLRequest requestWithURL:url];
+        [_bridge.imageLoader loadImageWithURLRequest:imageRequest size:CGSizeMake(400, 400) scale:1 clipped:FALSE resizeMode:RCTResizeModeStretch progressBlock:nil partialLoadBlock:nil
+                                     completionBlock:^(NSError *error, UIImage *image) {
+                                         UIImage *hdImage = image;
+                                         [_bridge.imageLoader decodeImageData:UIImagePNGRepresentation(hdImage) size:CGSizeMake(100, 100) scale:1 clipped:FALSE resizeMode:RCTResizeModeStretch completionBlock:^(NSError *error, UIImage *image) {
+                                             [self shareToMiniProgramWithData:aData thumbImage:image hdImage:hdImage scene:aScene callBack:aCallBack];
+                                         }];
+                                     }];
+    } else {
+        NSString *thumbImageUrl = aData[RCTWXShareTypeThumbImageUrl];
+        if (thumbImageUrl.length && _bridge.imageLoader) {
+            NSURL *url = [NSURL URLWithString:thumbImageUrl];
+            NSURLRequest *imageRequest = [NSURLRequest requestWithURL:url];
+            [_bridge.imageLoader loadImageWithURLRequest:imageRequest size:CGSizeMake(100, 100) scale:1 clipped:FALSE resizeMode:RCTResizeModeStretch progressBlock:nil partialLoadBlock:nil
+                                         completionBlock:^(NSError *error, UIImage *image) {
+                                             [self shareToMiniProgramWithData:aData thumbImage:image hdImage:nil scene:aScene callBack:aCallBack];
+                                         }];
+        } else {
+            [self shareToMiniProgramWithData:aData thumbImage:nil hdImage:nil scene:aScene callBack:aCallBack];
+        }
+    }
 }
 
 - (void)shareToWeixinWithTextMessage:(int)aScene

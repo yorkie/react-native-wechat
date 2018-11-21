@@ -14,7 +14,6 @@
 
 // define share type constants
 #define RCTWXShareTypeNews @"news"
-#define RCTWXShareTypeThumbImageUrl @"thumbImage"
 #define RCTWXShareTypeImageUrl @"imageUrl"
 #define RCTWXShareTypeImageFile @"imageFile"
 #define RCTWXShareTypeImageResource @"imageResource"
@@ -28,6 +27,11 @@
 #define RCTWXShareDescription @"description"
 #define RCTWXShareWebpageUrl @"webpageUrl"
 #define RCTWXShareImageUrl @"imageUrl"
+#define RCTWXMiniProgramType @"miniProgramType"
+#define RCTWXMiniProgramId @"miniProgramId"
+#define RCTWXMiniProgramPath @"path"
+#define RCTWXShareTypeThumbImageUrl @"thumbImage"
+#define RCTWXShareTypeHdImageUrl @"hdImage"
 
 #define RCTWXEventName @"WeChat_Resp"
 

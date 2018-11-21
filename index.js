@@ -143,6 +143,7 @@ export const openWXApp = wrapApi(WeChat.openWXApp);
 // wrap the APIs
 const nativeShareToTimeline = wrapApi(WeChat.shareToTimeline);
 const nativeShareToSession = wrapApi(WeChat.shareToSession);
+const nativeShareToMiniProgram = wrapApi(WeChat.shareToMiniProgram);
 const nativeShareToFavorite = wrapApi(WeChat.shareToFavorite);
 const nativeSendAuthRequest = wrapApi(WeChat.sendAuthRequest);
 
@@ -212,6 +213,32 @@ export function shareToTimeline(data) {
 export function shareToSession(data) {
   return new Promise((resolve, reject) => {
     nativeShareToSession(data);
+    emitter.once('SendMessageToWX.Resp', resp => {
+      if (resp.errCode === 0) {
+        resolve(resp);
+      } else {
+        reject(new WechatError(resp));
+      }
+    });
+  });
+}
+
+/**
+ * Share something to miniGroup
+ * @method shareToMiniProgram
+ * @param {Object} data
+ * @param {String} data.webpageUrl - Required if type equals news. The webpage link to share.
+ * @param {Number} data.miniProgramType - (0--正式版，1---开发版，2----体验版)
+ * @param {String} data.miniProgramId
+ * @param {String} data.path - 小程序内的页面路径
+ * @param {String} data.title
+ * @param {String} data.description
+ * @param {String} data.thumbImage - Thumb image of the message, which can be a uri or a resource id.
+ * @param {String} data.hdImage - Thumb image of the message, which can be a uri or a resource id.
+ */
+export function shareToMiniProgram(data) {
+  return new Promise((resolve, reject) => {
+    nativeShareToMiniProgram(data);
     emitter.once('SendMessageToWX.Resp', resp => {
       if (resp.errCode === 0) {
         resolve(resp);

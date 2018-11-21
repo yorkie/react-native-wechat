@@ -6,11 +6,9 @@ package com.theweflex.react;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.facebook.common.executors.UiThreadImmediateExecutorService;
@@ -33,19 +31,20 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.modules.network.OkHttpClientProvider;
-import com.tencent.mm.sdk.modelmsg.SendAuth;
-import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
-import com.tencent.mm.sdk.modelmsg.WXEmojiObject;
-import com.tencent.mm.sdk.modelmsg.WXFileObject;
-import com.tencent.mm.sdk.modelmsg.WXImageObject;
-import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
-import com.tencent.mm.sdk.modelmsg.WXMusicObject;
-import com.tencent.mm.sdk.modelmsg.WXTextObject;
-import com.tencent.mm.sdk.modelmsg.WXVideoObject;
-import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
-import com.tencent.mm.sdk.modelpay.PayReq;
-import com.tencent.mm.sdk.openapi.IWXAPI;
-import com.tencent.mm.sdk.openapi.WXAPIFactory;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelmsg.WXEmojiObject;
+import com.tencent.mm.opensdk.modelmsg.WXFileObject;
+import com.tencent.mm.opensdk.modelmsg.WXImageObject;
+import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
+import com.tencent.mm.opensdk.modelmsg.WXMusicObject;
+import com.tencent.mm.opensdk.modelmsg.WXTextObject;
+import com.tencent.mm.opensdk.modelmsg.WXVideoObject;
+import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.opensdk.modelpay.PayReq;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.theweflex.react.exception.InvalidArgumentException;
 import com.theweflex.react.exception.InvokeException;
 import com.theweflex.react.exception.NotRegisterException;
@@ -61,7 +60,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static android.content.ContentValues.TAG;
+import static com.tencent.mm.opensdk.modelmsg.SendMessageToWX.Req.WXSceneSession;
+import static com.theweflex.react.WeChatModule.WX_MIN;
 
 /**
  * 处理微信具体事务的代理类
@@ -71,8 +71,6 @@ import static android.content.ContentValues.TAG;
  */
 public class WXPresenter {
 
-    private static final int IMAGE_SIZE = 32768;
-    private static final boolean DEBUG = false;
     ReactApplicationContext mReactApplicationContext;
     IWXAPI mWxapi;
     boolean mHasRegister;
@@ -85,18 +83,22 @@ public class WXPresenter {
     }
 
     public static String getAppId() throws NotRegisterException {
-        if (TextUtils.isEmpty(mAppId)) throw new NotRegisterException();
+        if (TextUtils.isEmpty(mAppId)) {
+            throw new NotRegisterException();
+        }
         return mAppId;
     }
 
     public void checkRegister() throws NotRegisterException {
-        if (!mHasRegister || mWxapi == null) throw new NotRegisterException();
+        if (!mHasRegister || mWxapi == null) {
+            throw new NotRegisterException();
+        }
     }
 
     public boolean register(String appId) {
         WXPresenter.mAppId = appId;
         mWxapi = WXAPIFactory.createWXAPI(mReactApplicationContext.getApplicationContext()
-                , appId);
+            , appId);
         mHasRegister = true;
         return mWxapi.registerApp(appId);
     }
@@ -106,9 +108,9 @@ public class WXPresenter {
         return mWxapi.isWXAppInstalled();
     }
 
-    public boolean isWXAppSupportApi() throws NotRegisterException {
+    public int isWXAppSupportApi() throws NotRegisterException {
         checkRegister();
-        return mWxapi.isWXAppSupportAPI();
+        return mWxapi.getWXAppSupportAPI();
     }
 
     public int getApiVersion() throws NotRegisterException {
@@ -169,8 +171,8 @@ public class WXPresenter {
     }
 
     public void rnShare(final int scene, final ReadableMap data,
-                        final ShareCallback callback) throws
-            InvalidArgumentException, NotRegisterException {
+        final ShareCallback callback) throws
+        InvalidArgumentException, NotRegisterException {
         checkRegister();
         Uri thumbUri = null;
         if (data.hasKey("thumbImage")) {
@@ -212,16 +214,8 @@ public class WXPresenter {
                     });
                 }
             } else { // 分享非图片
-//                shareWithThumb(scene, data, null, callback);
-                getImage(thumbUri, new ResizeOptions(100, 100), new ImageCallback() {
-                    @Override
-                    public void onBitmap(@Nullable Bitmap bitmap) throws InvalidArgumentException {
-
-                        shareWithThumb(scene, data, bitmap, callback);
-                    }
-                });
+                shareWithThumb(scene, data, null, callback);
             }
-
         }
     }
 
@@ -231,17 +225,17 @@ public class WXPresenter {
         }
         name = name.toLowerCase().replace("-", "_");
         int resId = context.getResources().getIdentifier(
-                name,
-                "drawable",
-                context.getPackageName());
+            name,
+            "drawable",
+            context.getPackageName());
 
         if (resId == 0) {
             return null;
         } else {
             return new Uri.Builder()
-                    .scheme(UriUtil.LOCAL_RESOURCE_SCHEME)
-                    .path(String.valueOf(resId))
-                    .build();
+                .scheme(UriUtil.LOCAL_RESOURCE_SCHEME)
+                .path(String.valueOf(resId))
+                .build();
         }
     }
 
@@ -300,8 +294,8 @@ public class WXPresenter {
 
 
     private void shareWithThumb(final int scene, final ReadableMap data, final Bitmap
-            thumbImage, final
-                                ShareCallback callback) throws InvalidArgumentException {
+        thumbImage, final
+    ShareCallback callback) throws InvalidArgumentException {
         if (!data.hasKey("type")) {
             throw new InvalidArgumentException();
         }
@@ -352,43 +346,54 @@ public class WXPresenter {
     }
 
     private void shareWithMedia(int scene, ReadableMap data, Bitmap thumbImage, WXMediaMessage
-            .IMediaObject
-            mediaObject, ShareCallback shareCallback) {
+        .IMediaObject
+        mediaObject, ShareCallback shareCallback) {
 
-        WXMediaMessage message = new WXMediaMessage();
-        message.mediaObject = mediaObject;
-        if (thumbImage != null) {
-            try {
-                ByteArrayOutputStream output = new ByteArrayOutputStream();
-                thumbImage.compress(Bitmap.CompressFormat.JPEG, 85, output);
-                int options = 85;
-                while (output.toByteArray().length > IMAGE_SIZE && options != 10) {
-                    output.reset(); //清空baos
-                    thumbImage.compress(Bitmap.CompressFormat.JPEG, options, output);//这里压缩options%，把压缩后的数据存放到baos中
-                    options -= 10;
-                }
-                thumbImage.recycle();
-                message.thumbData = output.toByteArray();
-            }catch (Throwable t){
-                if(DEBUG){
-                    Log.e("wechat", "shareWithMedia: ", t);
-                }
-            }
+        WXMediaMessage message;
+        if (scene == WX_MIN) {
+            WXMiniProgramObject miniProgramObj = new WXMiniProgramObject();
+            miniProgramObj.webpageUrl = data.hasKey("webpageUrl") ? data.getString("webpageUrl") : "https://shimo.im";
+            miniProgramObj.miniprogramType = data.hasKey("miniProgramType") ? data.getInt(
+                "miniProgramType") : WXMiniProgramObject.MINIPTOGRAM_TYPE_RELEASE;
+            miniProgramObj.userName = data.hasKey("miniProgramId") ? data.getString("miniProgramId") : "";
+            ;
+            miniProgramObj.path = data.hasKey("path") ? data.getString("path") : "";
+            message = new WXMediaMessage(miniProgramObj);
+            scene = WXSceneSession;
+        } else {
+            message = new WXMediaMessage();
         }
 
-        if (data.hasKey("title")) {
+        message.mediaObject = mediaObject;
+        if (thumbImage != null)
+
+        {
+            message.setThumbImage(thumbImage);
+        }
+
+        if (data.hasKey("title"))
+
+        {
             message.title = data.getString("title");
         }
-        if (data.hasKey("description")) {
+        if (data.hasKey("description"))
+
+        {
             message.description = data.getString("description");
         }
-        if (data.hasKey("mediaTagName")) {
+        if (data.hasKey("mediaTagName"))
+
+        {
             message.mediaTagName = data.getString("mediaTagName");
         }
-        if (data.hasKey("messageAction")) {
+        if (data.hasKey("messageAction"))
+
+        {
             message.messageAction = data.getString("messageAction");
         }
-        if (data.hasKey("messageExt")) {
+        if (data.hasKey("messageExt"))
+
+        {
             message.messageExt = data.getString("messageExt");
         }
 
@@ -422,7 +427,8 @@ public class WXPresenter {
         return ret;
     }
 
-    private void __jsonToImageMedia(String imageUrl, final MediaObjectCallback callback) throws InvalidArgumentException {
+    private void __jsonToImageMedia(String imageUrl, final MediaObjectCallback callback)
+        throws InvalidArgumentException {
         Uri imageUri;
         try {
             imageUri = Uri.parse(imageUrl);
@@ -472,7 +478,8 @@ public class WXPresenter {
         __jsonToImageMedia(imageUrl, callback);
     }
 
-    private void __jsonToImageFileMedia(ReadableMap data, MediaObjectCallback callback) throws InvalidArgumentException {
+    private void __jsonToImageFileMedia(ReadableMap data, MediaObjectCallback callback)
+        throws InvalidArgumentException {
         if (!data.hasKey("imageUrl")) {
             callback.onMedia(null);
             return;
@@ -546,50 +553,50 @@ public class WXPresenter {
 
     private void getImageData(Uri uri, ResizeOptions resizeOptions, final ImageDataCallback imageCallback) {
         DataSubscriber<CloseableReference<PooledByteBuffer>> dataSubscriber =
-                new BaseDataSubscriber<CloseableReference<PooledByteBuffer>>() {
+            new BaseDataSubscriber<CloseableReference<PooledByteBuffer>>() {
 
-                    @Override
-                    protected void onNewResultImpl(DataSource<CloseableReference<PooledByteBuffer>> dataSource) {
-                        // isFinished must be obtained before image, otherwise we might set intermediate result
-                        // as final image.
-                        boolean isFinished = dataSource.isFinished();
-                        CloseableReference<PooledByteBuffer> image = dataSource.getResult();
-                        if (image != null) {
-                            Preconditions.checkState(CloseableReference.isValid(image));
-                            PooledByteBuffer result = image.get();
-                            InputStream inputStream = new PooledByteBufferInputStream(result);
-                            byte[] bytes = null;
+                @Override
+                protected void onNewResultImpl(DataSource<CloseableReference<PooledByteBuffer>> dataSource) {
+                    // isFinished must be obtained before image, otherwise we might set intermediate result
+                    // as final image.
+                    boolean isFinished = dataSource.isFinished();
+                    CloseableReference<PooledByteBuffer> image = dataSource.getResult();
+                    if (image != null) {
+                        Preconditions.checkState(CloseableReference.isValid(image));
+                        PooledByteBuffer result = image.get();
+                        InputStream inputStream = new PooledByteBufferInputStream(result);
+                        byte[] bytes = null;
+                        try {
+                            bytes = getBytes(inputStream);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
                             try {
-                                bytes = getBytes(inputStream);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } finally {
-                                try {
-                                    imageCallback.onData(bytes);
-                                } catch (InvalidArgumentException ignore) {
-
-                                }
-                                Closeables.closeQuietly(inputStream);
-                            }
-                        } else if (isFinished) {
-                            try {
-                                imageCallback.onData(null);
+                                imageCallback.onData(bytes);
                             } catch (InvalidArgumentException ignore) {
 
                             }
+                            Closeables.closeQuietly(inputStream);
                         }
-                        dataSource.close();
-                    }
-
-                    @Override
-                    protected void onFailureImpl(DataSource<CloseableReference<PooledByteBuffer>> dataSource) {
+                    } else if (isFinished) {
                         try {
                             imageCallback.onData(null);
                         } catch (InvalidArgumentException ignore) {
 
                         }
                     }
-                };
+                    dataSource.close();
+                }
+
+                @Override
+                protected void onFailureImpl(DataSource<CloseableReference<PooledByteBuffer>> dataSource) {
+                    try {
+                        imageCallback.onData(null);
+                    } catch (InvalidArgumentException ignore) {
+
+                    }
+                }
+            };
 
         ImageRequestBuilder builder = ImageRequestBuilder.newBuilderWithSource(uri);
         if (resizeOptions != null) {
@@ -599,7 +606,7 @@ public class WXPresenter {
 
         ImagePipeline imagePipeline = Fresco.getImagePipeline();
         DataSource<CloseableReference<PooledByteBuffer>> dataSource = imagePipeline
-                .fetchEncodedImage(imageRequest, mReactApplicationContext);
+            .fetchEncodedImage(imageRequest, mReactApplicationContext);
         dataSource.subscribe(dataSubscriber, UiThreadImmediateExecutorService.getInstance());
     }
 

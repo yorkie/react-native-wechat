@@ -9,10 +9,10 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.tencent.mm.sdk.modelbase.BaseResp;
-import com.tencent.mm.sdk.modelmsg.SendAuth;
-import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
-import com.tencent.mm.sdk.modelpay.PayResp;
+import com.tencent.mm.opensdk.modelbase.BaseResp;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelpay.PayResp;
 import com.theweflex.react.exception.InvalidArgumentException;
 import com.theweflex.react.exception.InvokeException;
 import com.theweflex.react.exception.NotRegisterException;
@@ -23,7 +23,7 @@ import com.theweflex.react.exception.NotRegisterException;
 public class WeChatModule extends ReactContextBaseJavaModule {
 
     public static final String KEY_WX_RESULT = "WX_RESULT";
-
+    public static final int WX_MIN = 999;
     private WXPresenter mWxPresenter;
 
     public WeChatModule(ReactApplicationContext context) {
@@ -133,6 +133,11 @@ public class WeChatModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void shareToSession(ReadableMap data, Callback callback) {
         share(SendMessageToWX.Req.WXSceneSession, data, callback);
+    }
+
+    @ReactMethod
+    public void shareToMiniProgram(ReadableMap data, Callback callback) {
+        share(WX_MIN, data, callback);
     }
 
     @ReactMethod
