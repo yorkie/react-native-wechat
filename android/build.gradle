@@ -22,9 +22,9 @@ allprojects {
 }
 
 dependencies {
-    compile 'com.facebook.react:react-native:+'
-    provided 'io.reactivex:rxjava:1.3.0'
-    provided 'io.reactivex:rxandroid:1.2.1'
-    compile 'me.comori.tools:databus:1.0.1'
-    compile 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
+    implementation 'com.facebook.react:react-native:+'
+    compileOnly 'io.reactivex:rxjava:1.3.0'
+    compileOnly 'io.reactivex:rxandroid:1.2.1'
+    implementation 'me.comori.tools:databus:1.0.1'
+    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
 }
