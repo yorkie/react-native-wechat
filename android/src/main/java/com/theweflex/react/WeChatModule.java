@@ -50,7 +50,7 @@ public class WeChatModule extends ReactContextBaseJavaModule {
     public void initialize() {
         super.initialize();
         DataBus.get().with(KEY_WX_RESULT, BaseResp.class)
-                .observe(onWxResultOB);
+            .observe(onWxResultOB);
     }
 
     @Override
@@ -114,12 +114,21 @@ public class WeChatModule extends ReactContextBaseJavaModule {
 
     public void share(int scene, ReadableMap data, final Callback callback) {
         try {
-            mWxPresenter.rnShare(scene, data, new WXPresenter.ShareCallback() {
-                @Override
-                public void onShareCompleted(boolean success) {
-                    callback.invoke(null, success);
-                }
-            });
+            if (scene == WX_MIN) {
+                mWxPresenter.rnMiniShare(data, new WXPresenter.ShareCallback() {
+                    @Override
+                    public void onShareCompleted(boolean success) {
+                        callback.invoke(null, success);
+                    }
+                });
+            } else {
+                mWxPresenter.rnShare(scene, data, new WXPresenter.ShareCallback() {
+                    @Override
+                    public void onShareCompleted(boolean success) {
+                        callback.invoke(null, success);
+                    }
+                });
+            }
         } catch (InvalidArgumentException | NotRegisterException e) {
             callback.invoke(e.getMessage());
         }
@@ -182,8 +191,8 @@ public class WeChatModule extends ReactContextBaseJavaModule {
             }
 
             getReactApplicationContext()
-                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit("WeChat_Resp", map);
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit("WeChat_Resp", map);
         }
     };
 

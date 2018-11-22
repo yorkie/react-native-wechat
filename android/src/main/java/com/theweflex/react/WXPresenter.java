@@ -170,6 +170,57 @@ public class WXPresenter {
         }
     }
 
+    /**
+     * 小程序分享
+     * @param scene
+     * @param data
+     * @param callback
+     * @throws InvalidArgumentException
+     * @throws NotRegisterException
+     */
+    public void rnMiniShare(final ReadableMap data,
+        final ShareCallback callback) throws NotRegisterException {
+        checkRegister();
+        Uri thumbUri = null;
+        String thumbImage = data.hasKey("thumbImage") ? data.getString("thumbImage") : "";
+        try {
+            thumbUri = Uri.parse(thumbImage);
+            if (thumbUri.getScheme() == null) {
+                thumbUri = getResourceDrawableUri(mReactApplicationContext, thumbImage);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        WXMiniProgramObject miniProgramObj = new WXMiniProgramObject();
+        miniProgramObj.webpageUrl = data.hasKey("webpageUrl") ? data.getString("webpageUrl") : "https://shimo.im";
+        miniProgramObj.miniprogramType = data.hasKey("miniProgramType") ? data.getInt(
+            "miniProgramType") : WXMiniProgramObject.MINIPTOGRAM_TYPE_RELEASE;
+        miniProgramObj.userName = data.hasKey("miniProgramId") ? data.getString("miniProgramId") : "";
+        miniProgramObj.path = data.hasKey("path") ? data.getString("path") : "";
+
+        final WXMediaMessage message = new WXMediaMessage(miniProgramObj);
+
+        message.title = data.hasKey("title") ? data.getString("title") : "";
+        message.description = data.hasKey("description") ? data.getString("description") : "";
+
+        getImage(thumbUri, new ResizeOptions(100, 100), new ImageCallback() {
+            @Override
+            public void onBitmap(@Nullable Bitmap bitmap) {
+                message.setThumbImage(bitmap);
+
+                SendMessageToWX.Req req = new SendMessageToWX.Req();
+                req.message = message;
+                req.scene = WXSceneSession;
+                req.transaction = UUID.randomUUID().toString();
+                callback.onShareCompleted(mWxapi.sendReq(req));
+            }
+        });
+
+
+    }
+
+
     public void rnShare(final int scene, final ReadableMap data,
         final ShareCallback callback) throws
         InvalidArgumentException, NotRegisterException {
