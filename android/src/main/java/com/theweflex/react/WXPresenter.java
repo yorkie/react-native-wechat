@@ -6,6 +6,7 @@ package com.theweflex.react;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -45,6 +46,7 @@ import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+import com.tencent.mm.opensdk.utils.Log;
 import com.theweflex.react.exception.InvalidArgumentException;
 import com.theweflex.react.exception.InvokeException;
 import com.theweflex.react.exception.NotRegisterException;
@@ -168,6 +170,69 @@ public class WXPresenter {
         } else {
             throw new InvokeException();
         }
+    }
+
+    /**
+     * 小程序分享
+     * @param data
+     * @param callback
+     * @throws InvalidArgumentException
+     * @throws NotRegisterException
+     */
+    public void rnMiniShare(final ReadableMap data,
+        final ShareCallback callback) throws NotRegisterException {
+        checkRegister();
+        Uri thumbUri = null;
+        String thumbImage = data.hasKey("thumbImage") ? data.getString("thumbImage") : "";
+        try {
+            thumbUri = Uri.parse(thumbImage);
+            if (thumbUri.getScheme() == null) {
+                thumbUri = getResourceDrawableUri(mReactApplicationContext, thumbImage);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        WXMiniProgramObject miniProgramObj = new WXMiniProgramObject();
+        miniProgramObj.webpageUrl = data.hasKey("webpageUrl") ? data.getString("webpageUrl") : "https://shimo.im";
+        miniProgramObj.miniprogramType = data.hasKey("miniProgramType") ? data.getInt(
+            "miniProgramType") : WXMiniProgramObject.MINIPTOGRAM_TYPE_RELEASE;
+        miniProgramObj.userName = data.hasKey("miniProgramId") ? data.getString("miniProgramId") : "";
+        miniProgramObj.path = data.hasKey("path") ? data.getString("path") : "";
+
+        final WXMediaMessage message = new WXMediaMessage(miniProgramObj);
+
+        message.title = data.hasKey("title") ? data.getString("title") : "";
+        message.description = data.hasKey("description") ? data.getString("description") : "";
+
+        getImage(thumbUri, new ResizeOptions(100, 100), new ImageCallback() {
+            @Override
+            public void onBitmap(@Nullable Bitmap bitmap) {
+                if (bitmap != null) {
+                    message.thumbData = compressBitmap(bitmap);
+
+                    SendMessageToWX.Req req = new SendMessageToWX.Req();
+                    req.message = message;
+                    req.scene = WXSceneSession;
+                    req.transaction = UUID.randomUUID().toString();
+                    callback.onShareCompleted(mWxapi.sendReq(req));
+                }
+            }
+        });
+
+    }
+
+    private byte[] compressBitmap(Bitmap bitmap) {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        int options = 100;
+        while (baos.toByteArray().length > 131072) {
+            baos.reset();
+            options -= 10;
+            bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos);
+        }
+        return baos.toByteArray();
     }
 
     public void rnShare(final int scene, final ReadableMap data,
