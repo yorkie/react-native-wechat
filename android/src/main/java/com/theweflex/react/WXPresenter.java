@@ -7,6 +7,7 @@ package com.theweflex.react;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -205,24 +206,39 @@ public class WXPresenter {
         message.title = data.hasKey("title") ? data.getString("title") : "";
         message.description = data.hasKey("description") ? data.getString("description") : "";
 
-        getImage(thumbUri, new ResizeOptions(100, 100), new ImageCallback() {
-            @Override
-            public void onBitmap(@Nullable Bitmap bitmap) {
-                if (bitmap != null) {
-                    message.thumbData = compressBitmap(bitmap,131072);
+        if (TextUtils.isEmpty(thumbImage)) {
+            message.setThumbImage(
+                BitmapFactory.decodeResource(mReactApplicationContext.getResources(), R.drawable.icon_default, null));
+            sendMiniMessage(message, callback);
 
-                    SendMessageToWX.Req req = new SendMessageToWX.Req();
-                    req.message = message;
-                    req.scene = WXSceneSession;
-                    req.transaction = UUID.randomUUID().toString();
-                    callback.onShareCompleted(mWxapi.sendReq(req));
+        } else {
+            getImage(thumbUri, new ResizeOptions(100, 100), new ImageCallback() {
+                @Override
+                public void onBitmap(@Nullable Bitmap bitmap) {
+                    if (bitmap != null) {
+                        message.thumbData = compressBitmap(bitmap, 131072);
+                        sendMiniMessage(message, callback);
+                    } else {
+                        message.setThumbImage(
+                            BitmapFactory.decodeResource(mReactApplicationContext.getResources(),
+                                R.drawable.icon_default, null));
+                        sendMiniMessage(message, callback);
+                    }
                 }
-            }
-        });
+            });
+        }
 
     }
 
-    private byte[] compressBitmap(Bitmap bitmap,long limitSize) {
+    private void sendMiniMessage(WXMediaMessage message, ShareCallback callback) {
+        SendMessageToWX.Req req = new SendMessageToWX.Req();
+        req.message = message;
+        req.scene = WXSceneSession;
+        req.transaction = UUID.randomUUID().toString();
+        callback.onShareCompleted(mWxapi.sendReq(req));
+    }
+
+    private byte[] compressBitmap(Bitmap bitmap, long limitSize) {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -438,7 +454,7 @@ public class WXPresenter {
         if (thumbImage != null)
 
         {
-            message.thumbData = compressBitmap(bitmap,32768);
+            message.thumbData = compressBitmap(thumbImage, 32768);
         }
 
         if (data.hasKey("title"))
