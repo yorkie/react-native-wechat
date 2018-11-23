@@ -209,7 +209,7 @@ public class WXPresenter {
             @Override
             public void onBitmap(@Nullable Bitmap bitmap) {
                 if (bitmap != null) {
-                    message.thumbData = compressBitmap(bitmap);
+                    message.thumbData = compressBitmap(bitmap,131072);
 
                     SendMessageToWX.Req req = new SendMessageToWX.Req();
                     req.message = message;
@@ -222,12 +222,12 @@ public class WXPresenter {
 
     }
 
-    private byte[] compressBitmap(Bitmap bitmap) {
+    private byte[] compressBitmap(Bitmap bitmap,long limitSize) {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         int options = 100;
-        while (baos.toByteArray().length > 131072) {
+        while (baos.toByteArray().length > limitSize) {
             baos.reset();
             options -= 10;
             bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos);
@@ -279,7 +279,12 @@ public class WXPresenter {
                     });
                 }
             } else { // 分享非图片
-                shareWithThumb(scene, data, null, callback);
+                getImage(thumbUri, new ResizeOptions(100, 100), new ImageCallback() {
+                    @Override
+                    public void onBitmap(@Nullable Bitmap bitmap) throws InvalidArgumentException {
+                        shareWithThumb(scene, data, bitmap, callback);
+                    }
+                });
             }
         }
     }
@@ -433,7 +438,7 @@ public class WXPresenter {
         if (thumbImage != null)
 
         {
-            message.setThumbImage(thumbImage);
+            message.thumbData = compressBitmap(bitmap,32768);
         }
 
         if (data.hasKey("title"))
