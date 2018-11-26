@@ -47,7 +47,6 @@ import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
-import com.tencent.mm.opensdk.utils.Log;
 import com.theweflex.react.exception.InvalidArgumentException;
 import com.theweflex.react.exception.InvokeException;
 import com.theweflex.react.exception.NotRegisterException;
@@ -212,7 +211,7 @@ public class WXPresenter {
             sendMiniMessage(message, callback);
 
         } else {
-            getImage(thumbUri, new ResizeOptions(100, 100), new ImageCallback() {
+            getImage(thumbUri, null, new ImageCallback() {
                 @Override
                 public void onBitmap(@Nullable Bitmap bitmap) {
                     if (bitmap != null) {
@@ -241,12 +240,12 @@ public class WXPresenter {
     private byte[] compressBitmap(Bitmap bitmap, long limitSize) {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bitmap.compress(CompressFormat.PNG, 100, baos);
         int options = 100;
         while (baos.toByteArray().length > limitSize) {
             baos.reset();
             options -= 10;
-            bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos);
+            bitmap.compress(Bitmap.CompressFormat.PNG, options, baos);
         }
         return baos.toByteArray();
     }
