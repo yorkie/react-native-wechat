@@ -12,6 +12,10 @@ android {
             abiFilters "armeabi-v7a", "x86"
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 allprojects {
@@ -27,4 +31,12 @@ dependencies {
     compileOnly 'io.reactivex:rxandroid:1.2.1'
     implementation 'me.comori.tools:databus:1.0.1'
     implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
+    implementation('com.github.bumptech.glide:annotations:4.8.0') {
+        exclude group: "com.android.support", module: "annotations"
+    }
+    annotationProcessor "com.github.bumptech.glide:compiler:4.8.0"
+    implementation('com.github.bumptech.glide:okhttp3-integration:4.8.0') {
+        exclude group: "com.android.support", module: "okhttp3-integration"
+        exclude group: "com.android.support", module: "glide-parent"
+    }
 }

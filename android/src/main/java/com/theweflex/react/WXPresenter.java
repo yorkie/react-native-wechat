@@ -8,11 +8,17 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.facebook.common.executors.UiThreadImmediateExecutorService;
 import com.facebook.common.internal.Closeables;
 import com.facebook.common.internal.Preconditions;
@@ -61,6 +67,8 @@ import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 import static com.tencent.mm.opensdk.modelmsg.SendMessageToWX.Req.WXSceneSession;
 import static com.theweflex.react.WeChatModule.WX_MIN;
@@ -211,20 +219,36 @@ public class WXPresenter {
             sendMiniMessage(message, callback);
 
         } else {
-            getImage(thumbUri, null, new ImageCallback() {
-                @Override
-                public void onBitmap(@Nullable Bitmap bitmap) {
-                    if (bitmap != null) {
-                        message.thumbData = compressBitmap(bitmap, 131072);
-                        sendMiniMessage(message, callback);
-                    } else {
-                        message.setThumbImage(
-                            BitmapFactory.decodeResource(mReactApplicationContext.getResources(),
-                                R.drawable.icon_default, null));
-                        sendMiniMessage(message, callback);
-                    }
-                }
-            });
+
+            Observable.just(true)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aBoolean -> {
+                        Glide.with(mReactApplicationContext)
+                            .load(thumbImage)
+                            .into(new SimpleTarget<Drawable>() {
+                                @Override
+                                public void onResourceReady(@NonNull Drawable resource,
+                                    @Nullable Transition<? super Drawable> transition) {
+
+                                    if (resource != null) {
+                                        BitmapDrawable bd = (BitmapDrawable) resource;
+                                        Bitmap bm = bd.getBitmap();
+
+                                        message.thumbData = compressBitmap(
+                                            bm, 131072);
+                                        sendMiniMessage(message, callback);
+                                    } else {
+                                        message.setThumbImage(
+                                            BitmapFactory.decodeResource(mReactApplicationContext.getResources(),
+                                                R.drawable.icon_default, null));
+                                        sendMiniMessage(message, callback);
+                                    }
+                                }
+                            });
+
+                    },
+                    Throwable::printStackTrace);
+
         }
 
     }
