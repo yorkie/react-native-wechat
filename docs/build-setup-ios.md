@@ -13,7 +13,7 @@ the following screenshot for the view on your XCode:
 
 ![Set URL Schema in XCode](https://res.wx.qq.com/open/zh_CN/htmledition/res/img/pic/app-access-guide/ios/image0042168b9.jpg)
 
-On iOS 9, add `wechat` and `weixin` into `LSApplicationQueriesSchemes` in 
+On iOS 9+, add `wechat` and `weixin` into `LSApplicationQueriesSchemes` in 
 `Targets` > `info` > `Custom iOS Target Properties`. Or edit `Info.plist` 
 then add:
 
@@ -28,7 +28,7 @@ then add:
 Then copy the following in `AppDelegate.m`:
 
 ```objc
-#import "RCTLinkingManager.h"
+#import <React/RCTLinkingManager.h>
 
 // ios 8.x or older
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
