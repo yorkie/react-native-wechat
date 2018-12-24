@@ -235,7 +235,6 @@ export function launchMini({userName, miniProgramType = 0, path = ''}) {
  * @param {String} data.hdImageData - 小程序节点高清大图，小于128k.
  * @param {Boolean} data.withShareTicket - 是否使用带 shareTicket 的转发
  * @param {Integer} data.miniProgramType - 分享小程序的版本（0-正式，1-开发，2-体验）
- * @param {String} data.hdImageData - 小程序节点高清大图，小于128k.
  * @param {String} data.imageUrl - Provide a remote image if type equals image.
  * @param {String} data.videoUrl - Provide a remote video if type equals video.
  * @param {String} data.musicUrl - Provide a remote music if type equals audio.
