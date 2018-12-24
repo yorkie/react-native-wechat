@@ -386,6 +386,7 @@ $ npm install react-native-wechat --save
 
 MIT
 
+
 [react-native-wechat]: https://github.com/yorkie/react-native-wechat
 [npm-image]: https://img.shields.io/npm/v/react-native-wechat.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/react-native-wechat
