@@ -379,8 +379,10 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
     
 	    if (resp.errCode == WXSuccess)
 	    {
-	        [body addEntriesFromDictionary:@{@"appid":self.appId, @"code" :r.code}];
-	        [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
+		    if(self.appId&&r){
+			[body addEntriesFromDictionary:@{@"appid":self.appId, @"code" :r.code}];
+			[self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
+		    }
 	    }
 	    else {
 	        [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
