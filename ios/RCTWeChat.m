@@ -377,10 +377,12 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
 	    body[@"country"] =r.country;
 	    body[@"type"] = @"SendAuth.Resp";
     
-	    if (resp.errCode == WXSuccess)
-	    {
-	        [body addEntriesFromDictionary:@{@"appid":self.appId, @"code" :r.code}];
-	        [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
+	    if (resp.errCode == WXSuccess) {
+	        if (self.appId && r) {
+		    // ios第一次获取不到appid会卡死，加个判断OK		
+		    [body addEntriesFromDictionary:@{@"appid":self.appId, @"code":r.code}];
+		    [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
+	        }
 	    }
 	    else {
 	        [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
