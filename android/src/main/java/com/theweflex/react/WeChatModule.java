@@ -242,8 +242,15 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         BaseBitmapDataSubscriber dataSubscriber = new BaseBitmapDataSubscriber() {
             @Override
             protected void onNewResultImpl(Bitmap bitmap) {
-                bitmap = bitmap.copy(bitmap.getConfig(), true);
-                imageCallback.invoke(bitmap);
+               if(bitmap != null) {
+                    if(bitmap.getConfig() != null) {
+                        bitmap = bitmap.copy(bitmap.getConfig(), true);
+                        imageCallback.invoke(bitmap);
+                    } else {
+                        bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                        imageCallback.invoke(bitmap);
+                    }
+                } 
             }
 
             @Override
