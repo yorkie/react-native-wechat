@@ -71,9 +71,10 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     /**
      * fix Native module WeChatModule tried to override WeChatModule for module name RCTWeChat.
      * If this was your intention, return true from WeChatModule#canOverrideExistingModule() bug
+     *
      * @return
      */
-    public boolean canOverrideExistingModule(){
+    public boolean canOverrideExistingModule() {
         return true;
     }
 
@@ -172,7 +173,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         }
         _share(SendMessageToWX.Req.WXSceneSession, data, callback);
     }
-    
+
     @ReactMethod
     public void shareToFavorite(ReadableMap data, Callback callback) {
         if (api == null) {
@@ -183,7 +184,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     }
 
     @ReactMethod
-    public void pay(ReadableMap data, Callback callback){
+    public void pay(ReadableMap data, Callback callback) {
         PayReq payReq = new PayReq();
         if (data.hasKey("partnerId")) {
             payReq.partnerId = data.getString("partnerId");
@@ -242,8 +243,17 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         BaseBitmapDataSubscriber dataSubscriber = new BaseBitmapDataSubscriber() {
             @Override
             protected void onNewResultImpl(Bitmap bitmap) {
-                bitmap = bitmap.copy(bitmap.getConfig(), true);
-                imageCallback.invoke(bitmap);
+                if (bitmap != null) {
+                    if (bitmap.getConfig() != null) {
+                        bitmap = bitmap.copy(bitmap.getConfig(), true);
+                        imageCallback.invoke(bitmap);
+                    } else {
+                        bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                        imageCallback.invoke(bitmap);
+                    }
+                } else {
+                    throw new Exception("Empty bitmap");
+                }
             }
 
             @Override
