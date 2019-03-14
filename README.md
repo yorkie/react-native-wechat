@@ -312,7 +312,7 @@ $ npm install react-native-wechat --save
 ```
 ## Partners
 
-[React Native Starter Kit]: https://reactnativestarter.com/ - React Native Starter is a mobile starter kit that allows your team to fully focus on development of the features that set your product apart from the competitors instead of building your app from scratch.
+[React Native Starter Kit](https://reactnativestarter.com/) - is a mobile starter kit that allows your team to fully focus on development of the features that set your product apart from the competitors instead of building your app from scratch.
 
 ## Community
 
