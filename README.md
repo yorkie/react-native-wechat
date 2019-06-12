@@ -98,6 +98,7 @@ following fields:
 
 #### class `ShareMetadata`
 
+- `title` {String}  title of this message. 
 - `type` {Number} type of this message. Can be {news|text|imageUrl|imageFile|imageResource|video|audio|file}
 - `thumbImage` {String} Thumb image of the message, which can be a uri or a resource id.
 - `description` {String} The description about the sharing.
