@@ -1,11 +1,15 @@
 apply plugin: 'com.android.library'
 
+def safeExtGet(prop, fallback) {
+  rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
 android {
   compileSdkVersion 23
-  buildToolsVersion "23.0.1"
+  // buildToolsVersion "23.0.1"
   defaultConfig {
     minSdkVersion 16
-    targetSdkVersion 22
+    targetSdkVersion safeExtGet('targetSdkVersion', 22)
     versionCode 1
     versionName "1.0"
     ndk {
@@ -22,6 +26,6 @@ allprojects {
 }
 
 dependencies {
-  compile 'com.facebook.react:react-native:+'
-  compile files('libs/libammsdk.jar')
+  api 'com.facebook.react:react-native:+'
+  api files('libs/libammsdk.jar')
 }
