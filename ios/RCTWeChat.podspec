@@ -31,8 +31,5 @@ Pod::Spec.new do |s|
 
   # s.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
   s.dependency "React"
-  s.vendored_libraries = "libWeChatSDK.a"
-  s.ios.frameworks = 'SystemConfiguration','CoreTelephony','XCTest'
-  s.ios.library = 'sqlite3','c++','z'
-
+  s.dependency "WechatOpenSDK"
 end
