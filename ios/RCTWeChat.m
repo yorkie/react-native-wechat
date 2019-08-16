@@ -8,6 +8,7 @@
 
 #import "RCTWeChat.h"
 #import "WXApiObject.h"
+#import "WXApi.h"
 #import <React/RCTEventDispatcher.h>
 #import <React/RCTBridge.h>
 #import <React/RCTLog.h>
@@ -70,7 +71,7 @@ RCT_EXPORT_METHOD(registerAppWithDescription:(NSString *)appid
                   :(NSString *)appdesc
                   :(RCTResponseSenderBlock)callback)
 {
-    callback(@[[WXApi registerApp:appid withDescription:appdesc] ? [NSNull null] : INVOKE_FAILED]);
+  callback(@[[WXApi registerApp:appid withDescription:appdesc] ? [NSNull null] : INVOKE_FAILED]);
 }
 
 RCT_EXPORT_METHOD(isWXAppInstalled:(RCTResponseSenderBlock)callback)
@@ -158,6 +159,18 @@ RCT_EXPORT_METHOD(shareToFavorite:(NSDictionary *)data
                   :(RCTResponseSenderBlock)callback)
 {
     [self shareToWeixinWithData:data scene:WXSceneFavorite callback:callback];
+}
+
+RCT_EXPORT_METHOD(launchMini:(NSDictionary *)data
+                  :(RCTResponseSenderBlock)callback)
+{
+    WXLaunchMiniProgramReq *launchMiniProgramReq = [WXLaunchMiniProgramReq object];
+    launchMiniProgramReq.userName = data[@"userName"];  //拉起的小程序的username
+    launchMiniProgramReq.path = data[@"path"];    //拉起小程序页面的可带参路径，不填默认拉起小程序首页
+    //拉起小程序的类型
+    launchMiniProgramReq.miniProgramType = [data[@"miniProgramType"] integerValue];
+    BOOL success = [WXApi sendReq:launchMiniProgramReq];
+    callback(@[success ? [NSNull null] : INVOKE_FAILED]);
 }
 
 RCT_EXPORT_METHOD(pay:(NSDictionary *)data
@@ -285,6 +298,25 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
                                        MediaTag:mediaTagName
                                        callBack:callback];
 
+        } else if ([type isEqualToString:RCTWXShareTypeMini]) {
+
+            WXMiniProgramObject *miniObject = [WXMiniProgramObject object];
+            miniObject.webpageUrl = aData[@"webpageUrl"];
+            miniObject.userName = aData[@"userName"];
+            miniObject.path = aData[@"path"];
+            miniObject.withShareTicket = [aData[@"withShareTicket"] boolValue];
+            miniObject.miniProgramType = [aData[@"miniProgramType"] integerValue];
+            miniObject.hdImageData = [NSData dataWithContentsOfURL:[NSURL URLWithString:aData[@"hdImageData"]]] ;
+
+             [self shareToWeixinWithMediaMessage:aScene
+                                          Title:title
+                                    Description:description
+                                         Object:miniObject
+                                     MessageExt:messageExt
+                                  MessageAction:messageAction
+                                     ThumbImage:aThumbImage
+                                       MediaTag:mediaTagName
+                                       callBack:callback];
         } else {
             callback(@[@"message type unsupported"]);
         }
@@ -395,7 +427,15 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
 	        body[@"returnKey"] =r.returnKey;
 	        body[@"type"] = @"PayReq.Resp";
 	        [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
-    	}
+    } else if ([resp isKindOfClass:[WXLaunchMiniProgramResp class]])
+    {
+        WXLaunchMiniProgramResp *r = (WXLaunchMiniProgramResp *)resp;
+        NSMutableDictionary *body = @{@"errCode":@(r.errCode)}.mutableCopy;
+         body[@"errStr"] = r.errStr;
+         body[@"extMsg"] = r.extMsg;
+         body[@"type"] = @"WXLaunchMiniProgramReq.Resp";
+         [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
+    }
 }
 
 @end

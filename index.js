@@ -144,6 +144,7 @@ export const openWXApp = wrapApi(WeChat.openWXApp);
 const nativeShareToTimeline = wrapApi(WeChat.shareToTimeline);
 const nativeShareToSession = wrapApi(WeChat.shareToSession);
 const nativeShareToFavorite = wrapApi(WeChat.shareToFavorite);
+const nativeLaunchMini = wrapApi(WeChat.launchMini);
 const nativeSendAuthRequest = wrapApi(WeChat.sendAuthRequest);
 
 /**
@@ -169,8 +170,12 @@ export function sendAuthRequest(scopes, state) {
  * @method shareToTimeline
  * @param {Object} data
  * @param {String} data.thumbImage - Thumb image of the message, which can be a uri or a resource id.
- * @param {String} data.type - Type of this message. Could be {news|text|imageUrl|imageFile|imageResource|video|audio|file}
- * @param {String} data.webpageUrl - Required if type equals news. The webpage link to share.
+ * @param {String} data.type - Type of this message. Could be {news|text|imageUrl|imageFile|imageResource|video|audio|file|mini}
+ * @param {String} data.userName - 小程序的原生id.
+ * @param {String} data.path - 小程序页面的路径.
+ * @param {Boolean} data.withShareTicket - 是否使用带 shareTicket 的转发
+ * @param {Integer} data.miniProgramType - 分享小程序的版本（0-正式，1-开发，2-体验）
+ * @param {String} data.webpageUrl - Required if type equals news or mini. The webpage link to share.
  * @param {String} data.imageUrl - Provide a remote image if type equals image.
  * @param {String} data.videoUrl - Provide a remote video if type equals video.
  * @param {String} data.musicUrl - Provide a remote music if type equals audio.
@@ -191,12 +196,44 @@ export function shareToTimeline(data) {
 }
 
 /**
+ * Share something to a friend or group	 * 打开小程序
+ * @method shareToSession	 * @method launchMini
+ * @param {Object} data	 * @param
+ * @param {String} userName - 拉起的小程序的username
+ * @param {Integer} miniProgramType - 拉起小程序的类型. 0-正式版 1-开发版 2-体验版
+ * @param {String} path - 拉起小程序页面的可带参路径，不填默认拉起小程序首页
+ */
+
+export function launchMini({userName, miniProgramType = 0, path = ''}) {
+  return new Promise((resolve, reject) => {
+    if (miniProgramType !== 0 && miniProgramType !== 1 && miniProgramType !== 2) {
+      reject(new WechatError({errStr: '拉起小程序的类型不对，0-正式版 1-开发版 2-体验版', errCode: -1}))
+      return;
+    }
+    nativeLaunchMini({userName, miniProgramType, path});
+    emitter.once('WXLaunchMiniProgramReq.Resp', resp => {
+      if (resp.errCode === 0) {
+        resolve(resp);
+      } else {
+        reject(new WechatError(resp));
+      }
+    });
+  });
+}
+
+/**
  * Share something to a friend or group
  * @method shareToSession
  * @param {Object} data
  * @param {String} data.thumbImage - Thumb image of the message, which can be a uri or a resource id.
  * @param {String} data.type - Type of this message. Could be {news|text|imageUrl|imageFile|imageResource|video|audio|file}
  * @param {String} data.webpageUrl - Required if type equals news. The webpage link to share.
+ * @param {String} data.userName - 小程序的原生id.
+ * @param {String} data.path - 小程序页面的路径.
+ * @param {String} data.hdImageData - 小程序节点高清大图，小于128k.
+ * @param {Boolean} data.withShareTicket - 是否使用带 shareTicket 的转发
+ * @param {Integer} data.miniProgramType - 分享小程序的版本（0-正式，1-开发，2-体验）
+ * @param {String} data.hdImageData - 小程序节点高清大图，小于128k.
  * @param {String} data.imageUrl - Provide a remote image if type equals image.
  * @param {String} data.videoUrl - Provide a remote video if type equals video.
  * @param {String} data.musicUrl - Provide a remote music if type equals audio.

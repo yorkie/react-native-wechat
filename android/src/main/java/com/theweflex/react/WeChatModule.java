@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 
 import com.facebook.common.executors.UiThreadImmediateExecutorService;
-import com.facebook.common.internal.Files;
 import com.facebook.common.references.CloseableReference;
 import com.facebook.common.util.UriUtil;
 import com.facebook.datasource.DataSource;
@@ -26,25 +25,27 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.tencent.mm.sdk.modelbase.BaseReq;
-import com.tencent.mm.sdk.modelbase.BaseResp;
-import com.tencent.mm.sdk.modelmsg.SendAuth;
-import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
-import com.tencent.mm.sdk.modelmsg.WXFileObject;
-import com.tencent.mm.sdk.modelmsg.WXImageObject;
-import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
-import com.tencent.mm.sdk.modelmsg.WXMusicObject;
-import com.tencent.mm.sdk.modelmsg.WXTextObject;
-import com.tencent.mm.sdk.modelmsg.WXVideoObject;
-import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
-import com.tencent.mm.sdk.modelpay.PayReq;
-import com.tencent.mm.sdk.modelpay.PayResp;
-import com.tencent.mm.sdk.openapi.IWXAPI;
-import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
-import com.tencent.mm.sdk.openapi.WXAPIFactory;
+import com.tencent.mm.opensdk.constants.Build;
+import com.tencent.mm.opensdk.constants.ConstantsAPI;
+import com.tencent.mm.opensdk.modelbase.BaseReq;
+import com.tencent.mm.opensdk.modelbase.BaseResp;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram;
+import com.tencent.mm.opensdk.modelmsg.WXFileObject;
+import com.tencent.mm.opensdk.modelmsg.WXImageObject;
+import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXMusicObject;
+import com.tencent.mm.opensdk.modelmsg.WXTextObject;
+import com.tencent.mm.opensdk.modelmsg.WXVideoObject;
+import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.opensdk.modelmsg.WXMiniProgramObject;
+import com.tencent.mm.opensdk.modelpay.PayReq;
+import com.tencent.mm.opensdk.modelpay.PayResp;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
-import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -123,7 +124,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             callback.invoke(NOT_REGISTERED);
             return;
         }
-        callback.invoke(null, api.isWXAppSupportAPI());
+        callback.invoke(null, api.getWXAppSupportAPI() >= Build.PAY_SUPPORTED_SDK_INT);
     }
 
     @ReactMethod
@@ -184,6 +185,21 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     }
 
     @ReactMethod
+    public void launchMini(ReadableMap data, Callback callback) {
+        if (api == null) {
+            callback.invoke(NOT_REGISTERED);
+            return;
+        }
+        WXLaunchMiniProgram.Req req = new WXLaunchMiniProgram.Req();
+        req.userName = data.getString("userName"); // 填小程序原始id
+        req.path = data.getString("path");                  //拉起小程序页面的可带参路径，不填默认拉起小程序首页
+        req.miniprogramType = data.getInt("miniProgramType");// 可选打开 开发版，体验版和正式版
+        // req.miniprogramType = WXLaunchMiniProgram.Req.MINIPTOGRAM_TYPE_RELEASE;// 可选打开 开发版，体验版和正式版
+        boolean success =  api.sendReq(req);
+        if(!success)callback.invoke(INVALID_ARGUMENT);
+    }
+
+    @ReactMethod
     public void pay(ReadableMap data, Callback callback) {
         PayReq payReq = new PayReq();
         if (data.hasKey("partnerId")) {
@@ -207,14 +223,14 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         if (data.hasKey("extData")) {
             payReq.extData = data.getString("extData");
         }
-        payReq.appId = appId;
+        payReq.appId = this.appId;
         callback.invoke(api.sendReq(payReq) ? null : INVOKE_FAILED);
     }
 
     private void _share(final int scene, final ReadableMap data, final Callback callback) {
         Uri uri = null;
-        if (data.hasKey("thumbImage")) {
-            String imageUrl = data.getString("thumbImage");
+        if (data.hasKey("thumbImage") || data.hasKey("hdImageData")) {
+            String imageUrl = data.hasKey("hdImageData") ? data.getString("hdImageData") : data.getString("thumbImage");
 
             try {
                 uri = Uri.parse(imageUrl);
@@ -243,16 +259,20 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         BaseBitmapDataSubscriber dataSubscriber = new BaseBitmapDataSubscriber() {
             @Override
             protected void onNewResultImpl(Bitmap bitmap) {
-                if (bitmap != null) {
-                    if (bitmap.getConfig() != null) {
-                        bitmap = bitmap.copy(bitmap.getConfig(), true);
-                        imageCallback.invoke(bitmap);
+                try {
+                    if (bitmap != null) {
+                        if (bitmap.getConfig() != null) {
+                            bitmap = bitmap.copy(bitmap.getConfig(), true);
+                            imageCallback.invoke(bitmap);
+                        } else {
+                            bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                            imageCallback.invoke(bitmap);
+                        }
                     } else {
-                        bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-                        imageCallback.invoke(bitmap);
+                        new Exception("Empty bitmap");
                     }
-                } else {
-                    throw new Exception("Empty bitmap");
+                } catch (Exception error) {
+                    throw error;
                 }
             }
 
@@ -335,6 +355,8 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             mediaObject = __jsonToMusicMedia(data);
         } else if (type.equals("file")) {
             mediaObject = __jsonToFileMedia(data);
+        } else if (type.equals("mini")) {
+            mediaObject = __jsonToMiniMedia(data);
         }
 
         if (mediaObject == null) {
@@ -473,6 +495,21 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         return new WXFileObject(data.getString("filePath"));
     }
 
+    private WXMiniProgramObject __jsonToMiniMedia(ReadableMap data) {
+        if (!data.hasKey("userName")) {
+            return null;
+        }
+        WXMiniProgramObject miniProgramObject = new WXMiniProgramObject();
+        miniProgramObject.userName = data.getString("userName");
+        if (data.hasKey("miniProgramType"))
+            miniProgramObject.miniprogramType = data.getInt("miniProgramType");
+        if (data.hasKey("webpageUrl")) miniProgramObject.webpageUrl = data.getString("webpageUrl");
+        if (data.hasKey("path")) miniProgramObject.path = data.getString("path");
+        if (data.hasKey("withShareTicket"))
+            miniProgramObject.withShareTicket = data.getBoolean("withShareTicket");
+        return miniProgramObject;
+    }
+
     // TODO: 实现sendRequest、sendSuccessResponse、sendErrorCommonResponse、sendErrorUserCancelResponse
 
     @Override
@@ -504,6 +541,10 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             PayResp resp = (PayResp) (baseResp);
             map.putString("type", "PayReq.Resp");
             map.putString("returnKey", resp.returnKey);
+        }else if (baseResp.getType() == ConstantsAPI.COMMAND_LAUNCH_WX_MINIPROGRAM) {
+            WXLaunchMiniProgram.Resp resp = (WXLaunchMiniProgram.Resp) baseResp;
+            String extraData =resp.extMsg; // 对应JsApi navigateBackApplication中的extraData字段数据
+            map.putString("extraData", extraData);
         }
 
         this.getReactApplicationContext()
