@@ -4,7 +4,7 @@ labels: bug
 assignees: octocat
 ---
 
-Please follow above issue templates:
+Please read and follow the issue templates:
 
 1. Bug Report or Documentation Issue or Questions and Help?
 
