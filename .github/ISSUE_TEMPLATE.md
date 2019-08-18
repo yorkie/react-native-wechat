@@ -6,7 +6,7 @@ assignees: octocat
 
 Please follow above issue templates:
 
-1. Bug Report or Documentation Issue or Questions and Help ?
+1. Bug Report or Documentation Issue or Questions and Help?
 
 2. Which `react-native-wechat` version are you using?
 
