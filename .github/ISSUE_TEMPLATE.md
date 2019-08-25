@@ -6,13 +6,13 @@ assignees: octocat
 
 Please follow above issue templates:
 
-1. Bug Report or Documentation Issue or Questions and Help ?
+1. Bug Report or Documentation Issue or Questions and Help?
 
 2. Which `react-native-wechat` version are you using?
 
 3. What platform does your issue occur on? (Android/iOS/Both)
 
-4. Please provide a clear and concise description of what the bug is as precisely as possible，you can  : 
+4. Please provide a clear and concise description of what the bug is as precisely as possible，you can : 
 
   1) post a screenshot to explain in which case you get the issue?  
   2) related `logs`？  
