@@ -543,7 +543,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             map.putString("returnKey", resp.returnKey);
         } else if (baseResp.getType() == ConstantsAPI.COMMAND_LAUNCH_WX_MINIPROGRAM) {
             WXLaunchMiniProgram.Resp resp = (WXLaunchMiniProgram.Resp) baseResp;
-            String extraData =resp.extMsg; // 对应JsApi navigateBackApplication中的extraData字段数据
+            String extraData = resp.extMsg; // 对应JsApi navigateBackApplication中的extraData字段数据
             map.putString("extraData", extraData);
         }
 
