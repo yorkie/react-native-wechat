@@ -196,7 +196,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         req.miniprogramType = data.getInt("miniProgramType");// 可选打开 开发版，体验版和正式版
         // req.miniprogramType = WXLaunchMiniProgram.Req.MINIPTOGRAM_TYPE_RELEASE;// 可选打开 开发版，体验版和正式版
         boolean success =  api.sendReq(req);
-        if(!success)callback.invoke(INVALID_ARGUMENT);
+        if (!success) callback.invoke(INVALID_ARGUMENT);
     }
 
     @ReactMethod
