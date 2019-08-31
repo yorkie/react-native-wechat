@@ -1,6 +1,6 @@
 # Build Setup for iOS
 
-Add the following libraries to your "Link Binary with Libraries":
+Add the following libraries to your "Link Binary with Libraries" in Targets > Build Phases :
 
 - [x] `SystemConfiguration.framework`
 - [x] `CoreTelephony.framework`
@@ -11,7 +11,7 @@ Add the following libraries to your "Link Binary with Libraries":
 Add "URL Schema" as your app id for "URL type" in Targets > info, See 
 the following screenshot for the view on your XCode:
 
-![Set URL Schema in XCode](https://res.wx.qq.com/open/zh_CN/htmledition/res/img/pic/app-access-guide/ios/image0042168b9.jpg)
+![Set URL Schema in XCode](https://i.loli.net/2019/08/31/yUD2F5MrPKjngo3.jpg)
 
 On iOS 9+, add `wechat` and `weixin` into `LSApplicationQueriesSchemes` in 
 `Targets` > `info` > `Custom iOS Target Properties`. Or edit `Info.plist` 
@@ -44,6 +44,4 @@ sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
   return [RCTLinkingManager application:application openURL:url options:options];
 }
-
-
 ```
