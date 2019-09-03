@@ -11,7 +11,7 @@ Copy lines to `android/app/build.gradle`
 
 ```gradle
 dependencies {
-  compile project(':RCTWeChat')
+  implementation project(':RCTWeChat') // Add this line
 }
 ```
 
@@ -26,15 +26,17 @@ Copy lines to `proguard-rules.pro`:
 Then update `MainActivity.java` or `MainApplication.java`:
 
 ```java
-import com.theweflex.react.WeChatPackage;
+import com.theweflex.react.WeChatPackage; // Add this line
 
-@Override
-protected List<ReactPackage> getPackages() {
-  return Arrays.<ReactPackage>asList(
-    new MainReactPackage(), 
-    new WeChatPackage()  // Add this line
-  );
-}
+  @Override
+  protected List<ReactPackage> getPackages() {
+    @SuppressWarnings("UnnecessaryLocalVariable")
+    List<ReactPackage> packages = new PackageList(this).getPackages();
+    // Packages that cannot be autolinked yet can be added manually here, for example:
+    // packages.add(new MyReactNativePackage());
+    packages.add(new WeChatPackage()); // Add this line
+    return packages;
+  }
 ```
 
 **Integrating with login and share**
