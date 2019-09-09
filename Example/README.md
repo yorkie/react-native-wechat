@@ -6,7 +6,7 @@ Make sure you have the development environment set up with this [tutorial](https
 
 ## How to run
 
-```
+```sh
 $ git clone this repo
 $ cd example
 $ yarn install or npm install
@@ -16,13 +16,13 @@ Ensure emulator is ready or a mobile device is connected from your host:
 
 运行前先开启模拟器或连接真机调试。
 
-```
+```sh
 $ npm run start or react-native start --reset-cache
 ```
 
 iOS:
 
-```
+```sh
 $ cd ios && pod install
 ```
 Add the following libraries to your "Link Binary with Libraries" in Targets > Build Phases in Xcode:
@@ -42,6 +42,6 @@ $ react-native run-ios
 
 Android:
 
-```
+```sh
 $ react-native run-android
 ```
