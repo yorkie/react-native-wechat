@@ -36,7 +36,7 @@ Add the following libraries to your "Link Binary with Libraries" in Targets > Bu
 - [x] `libc++`
 - [x] `libz`
 
-```
+```sh
 $ react-native run-ios
 ```
 
