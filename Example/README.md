@@ -1,6 +1,6 @@
 # Example for react-native-wechat
 
-Make sure you have the development environment set up with this [Tutorial](https://facebook.github.io/react-native/docs/getting-started) at first.
+Make sure you have the development environment set up with this [tutorial](https://facebook.github.io/react-native/docs/getting-started) at first.
 
 首先确保已经按[教程](https://facebook.github.io/react-native/docs/getting-started)配置好 React Native 本地开发环境。
 
