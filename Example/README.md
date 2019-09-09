@@ -12,7 +12,7 @@ $ cd example
 $ yarn install or npm install
 ```
 
-Ensure emulator is ready or mobile device is connected to your machine:
+Ensure emulator is ready or a mobile device is connected from your host:
 
 运行前先开启模拟器或连接真机调试。
 
