@@ -25,7 +25,7 @@ iOS:
 ```
 $ cd ios && pod install
 ```
-Add the following libraries to your "Link Binary with Libraries" in Targets > Build Phases in Xcode :
+Add the following libraries to your "Link Binary with Libraries" in Targets > Build Phases in Xcode:
 
 点击 Xcode 左侧 Targets > Build Phases 中的 Link Binary with Libraries 选项添加以下库：
 
