@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "RCTWeChat"
-  s.version      = "1.9.10"
+  s.version      = "1.9.11"
   s.summary      = "React-Native(iOS/Android) functionalities include WeChat Login, Share, Favorite and Payment {QQ: 336021910}"
   s.description  = <<-DESC
   React-Native(iOS/Android) functionalities include WeChat Login, Share, Favorite and Payment {QQ: 336021910}
