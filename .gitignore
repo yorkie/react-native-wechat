@@ -6,3 +6,13 @@ node_modules
 
 # ios
 ios/build
+
+# Xcode
+build/
+DerivedData/
+xcuserdata
+Pods/
+*.xcuserstate
+*.ipa
+*.dSYM.zip
+*.dSYM
