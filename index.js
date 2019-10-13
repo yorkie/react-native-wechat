@@ -95,15 +95,15 @@ export const removeAllListeners = emitter.removeAllListeners.bind(emitter);
  */
 export const registerApp = wrapRegisterApp(WeChat.registerApp);
 
-/**
- * @method registerAppWithDescription
- * @param {String} appid - the app id
- * @param {String} appdesc - the app description
- * @return {Promise}
- */
-export const registerAppWithDescription = wrapRegisterApp(
-  WeChat.registerAppWithDescription,
-);
+// /**
+//  * @method registerAppWithDescription
+//  * @param {String} appid - the app id
+//  * @param {String} appdesc - the app description
+//  * @return {Promise}
+//  */
+// export const registerAppWithDescription = wrapRegisterApp(
+//   WeChat.registerAppWithDescription,
+// );
 
 /**
  * Return if the wechat app is installed in the device.
@@ -141,10 +141,16 @@ export const getApiVersion = wrapApi(WeChat.getApiVersion);
 export const openWXApp = wrapApi(WeChat.openWXApp);
 
 // wrap the APIs
-const nativeShareToTimeline = wrapApi(WeChat.shareToTimeline);
+const nativeLaunchMiniProgram = wrapApi(WeChat.launchMiniProgram);
 const nativeShareToSession = wrapApi(WeChat.shareToSession);
 const nativeShareToFavorite = wrapApi(WeChat.shareToFavorite);
 const nativeSendAuthRequest = wrapApi(WeChat.sendAuthRequest);
+const nativeShareText = wrapApi(WeChat.shareText);
+const nativeShareImage = wrapApi(WeChat.shareImage);
+const nativeShareMusic = wrapApi(WeChat.shareMusic);
+const nativeShareVideo = wrapApi(WeChat.shareVideo);
+const nativeShareWebpage = wrapApi(WeChat.shareWebpage);
+const nativeShareMiniProgram = wrapApi(WeChat.shareMiniProgram);
 
 /**
  * @method sendAuthRequest
@@ -152,6 +158,7 @@ const nativeSendAuthRequest = wrapApi(WeChat.sendAuthRequest);
  * @return {Promise}
  */
 export function sendAuthRequest(scopes, state) {
+  console.warn('sendAuthRequest')
   return new Promise((resolve, reject) => {
     WeChat.sendAuthRequest(scopes, state, () => {});
     emitter.once('SendAuth.Resp', resp => {
@@ -165,21 +172,13 @@ export function sendAuthRequest(scopes, state) {
 }
 
 /**
- * Share something to timeline/moments/朋友圈
- * @method shareToTimeline
+ * Share text
+ * @method shareText
  * @param {Object} data
- * @param {String} data.thumbImage - Thumb image of the message, which can be a uri or a resource id.
- * @param {String} data.type - Type of this message. Could be {news|text|imageUrl|imageFile|imageResource|video|audio|file}
- * @param {String} data.webpageUrl - Required if type equals news. The webpage link to share.
- * @param {String} data.imageUrl - Provide a remote image if type equals image.
- * @param {String} data.videoUrl - Provide a remote video if type equals video.
- * @param {String} data.musicUrl - Provide a remote music if type equals audio.
- * @param {String} data.filePath - Provide a local file if type equals file.
- * @param {String} data.fileExtension - Provide the file type if type equals file.
  */
-export function shareToTimeline(data) {
+export function shareText(data) {
   return new Promise((resolve, reject) => {
-    nativeShareToTimeline(data);
+    nativeShareText(data);
     emitter.once('SendMessageToWX.Resp', resp => {
       if (resp.errCode === 0) {
         resolve(resp);
@@ -187,6 +186,120 @@ export function shareToTimeline(data) {
         reject(new WechatError(resp));
       }
     });
+  });
+}
+
+/**
+ * Share image
+ * @method shareImage
+ * @param {Object} data
+ */
+export function shareImage(data) {
+  return new Promise((resolve, reject) => {
+    nativeShareImage(data);
+    emitter.once('SendMessageToWX.Resp', resp => {
+      if (resp.errCode === 0) {
+        resolve(resp);
+      } else {
+        reject(new WechatError(resp));
+      }
+    });
+  });
+}
+
+/**
+ * Share music
+ * @method shareMusic
+ * @param {Object} data
+ */
+export function shareMusic(data) {
+  return new Promise((resolve, reject) => {
+    nativeShareMusic(data);
+    emitter.once('SendMessageToWX.Resp', resp => {
+      if (resp.errCode === 0) {
+        resolve(resp);
+      } else {
+        reject(new WechatError(resp));
+      }
+    });
+  });
+}
+
+/**
+ * Share video
+ * @method shareVideo
+ * @param {Object} data
+ */
+export function shareVideo(data) {
+  return new Promise((resolve, reject) => {
+    nativeShareVideo(data);
+    emitter.once('SendMessageToWX.Resp', resp => {
+      if (resp.errCode === 0) {
+        resolve(resp);
+      } else {
+        reject(new WechatError(resp));
+      }
+    });
+  });
+}
+
+/**
+ * Share webpage
+ * @method shareWebpage
+ * @param {Object} data
+ */
+export function shareWebpage(data) {
+  return new Promise((resolve, reject) => {
+    nativeShareWebpage(data);
+    emitter.once('SendMessageToWX.Resp', resp => {
+      if (resp.errCode === 0) {
+        resolve(resp);
+      } else {
+        reject(new WechatError(resp));
+      }
+    });
+  });
+}
+/**
+ * Share miniProgram
+ * @method shareMiniProgram
+ * @param {Object} data
+ */
+export function shareMiniProgram(data) {
+  return new Promise((resolve, reject) => {
+    nativeShareMiniProgram(data);
+    emitter.once('SendMessageToWX.Resp', resp => {
+      if (resp.errCode === 0) {
+        resolve(resp);
+      } else {
+        reject(new WechatError(resp));
+      }
+    });
+  });
+}
+
+/**
+ * 打开小程序
+ * @method launchMini
+ * @param
+ * @param {String} userName - 拉起的小程序的username
+ * @param {Integer} miniProgramType - 拉起小程序的类型. 0-正式版 1-开发版 2-体验版
+ * @param {String} path - 拉起小程序页面的可带参路径，不填默认拉起小程序首页
+ */
+export function launchMiniProgram({userName, miniProgramType = 0, path = ''}) {
+  return new Promise((resolve, reject) => {
+      if (miniProgramType !== 0 && miniProgramType !== 1 && miniProgramType !== 2) {
+          reject(new WechatError({errStr: '拉起小程序的类型不对，0-正式版 1-开发版 2-体验版', errCode: -1}))
+          return
+      }
+      nativeLaunchMiniProgram({userName, miniProgramType, path});
+      emitter.once('WXLaunchMiniProgramReq.Resp', resp => {
+          if (resp.errCode === 0) {
+              resolve(resp);
+          } else {
+              reject(new WechatError(resp));
+          }
+      });
   });
 }
 
