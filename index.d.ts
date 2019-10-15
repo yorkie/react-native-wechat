@@ -32,7 +32,7 @@ declare module "react-native-wechat" {
       | "audio"
       | "file";
     thumbImage?: string;
-    title?: string,
+    title?: string;
     description?: string;
     webpageUrl?: string;
     imageUrl?: string;
