@@ -28,8 +28,5 @@ allprojects {
 
 dependencies {
   api 'com.facebook.react:react-native:+'
-  // wechat-sdk-android-without-mta-5.5.3.jar little-snow-fox 19.10.9
   api files('libs/libammsdk.jar')
-  // 可以使用 Gradle 自动下载，但不建议，如果腾讯修改接口就全体宏机了 little-snow-fox 19.10.9
-  // compile 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
 }

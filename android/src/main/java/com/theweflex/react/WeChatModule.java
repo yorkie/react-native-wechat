@@ -54,18 +54,13 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.UUID;
 
-/**
-* @Author: little-snow-fox
-* @Date: 2019-10-10
-*/
 public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEventHandler {
     private String appId;
     private IWXAPI api = null;
     private final static String NOT_REGISTERED = "registerApp required.";
     private final static String INVOKE_FAILED = "WeChat API invoke returns false.";
     private final static String INVALID_ARGUMENT = "invalid argument.";
-    // 缩略图大小 kb
-    private final static int THUMB_SIZE = 32;
+    private final static int THUMB_SIZE = 32; // The size of thumb image in KB.
 
     private static byte[] bitmapTopBytes(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -74,9 +69,11 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         return baos.toByteArray();
     }
 
-    // 图片压缩算法
-    // little-snow-fox: 该算法存在效率问题，希望有义士可以进行优化
+    /**
+     * Compress the bitmap image
+     */
     private static byte[] bitmapResizeGetBytes(Bitmap image, int size) {
+        // FIXME(little-snow-fox): 该算法存在效率问题，希望有"义士"可以进行优化
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         // 质量压缩方法，这里100表示第一次不压缩，把压缩后的数据缓存到 baos
         image.compress(Bitmap.CompressFormat.JPEG, 10, baos);
@@ -179,6 +176,25 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     }
 
     @ReactMethod
+    public void openMiniProgram(ReadableMap data, Callback callback) {
+        if (api == null) {
+            callback.invoke(NOT_REGISTERED);
+            return;
+        }
+        WXLaunchMiniProgram.Req req = new WXLaunchMiniProgram.Req();
+        // 填小程序原始ID
+        req.userName = data.getString("userName");
+        //拉起小程序页面的可带参路径，不填默认拉起小程序首页
+        req.path = data.getString("path");
+        // 可选打开开发版，体验版和正式版
+        req.miniprogramType = data.getInt("miniProgramType");
+        boolean success = api.sendReq(req);
+        if (!success) {
+            callback.invoke(INVALID_ARGUMENT);
+        }
+    }
+
+    @ReactMethod
     public void sendAuthRequest(String scope, String state, Callback callback) {
         if (api == null) {
             callback.invoke(NOT_REGISTERED);
@@ -190,27 +206,58 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         callback.invoke(null, api.sendReq(req));
     }
 
+    private void sendShareRequest(WXMediaMessage.IMediaObject media, ReadableMap data, Callback callback) {
+        if (data.hasKey("thumbImageUrl")) {
+            createImageRequest(Uri.parse(data.getString("thumbImageUrl")), new ImageCallback() {
+                @Override
+                public void invoke(@Nullable Bitmap thumb) {
+                    this.sendShareRequest(media, thumb, data, callback);
+                }
+            });
+        } else {
+            this.sendShareRequest(media, null, data, callback);
+        }
+    }
+
+    private void sendShareRequest(WXMediaMessage.IMediaObject media, Bitmap thumb, ReadableMap data, Callback callback) {
+        WXMediaMessage message = new WXMediaMessage();
+        message.mediaObject = media;
+        if (data.hasKey("title")) {
+            message.title = data.getString("title");
+        }
+        if (data.hasKey("description")) {
+            message.description = data.getString("description");
+        }
+        if (data.hasKey("mediaTagName")) {
+            message.mediaTagName = data.getString("mediaTagName");
+        }
+        if (data.hasKey("messageAction")) {
+            message.messageAction = data.getString("messageAction");
+        }
+        if (data.hasKey("messageExt")) {
+            message.messageExt = data.getString("messageExt");
+        }
+        if (thumb != null) {
+            message.thumbData = bitmapResizeGetBytes(thumb, THUMB_SIZE);
+        }
+
+        SendMessageToWX.Req req = new SendMessageToWX.Req();
+        req.scene = data.hasKey("scene") ? data.getInt("scene") : SendMessageToWX.Req.WXSceneSession;
+        req.transaction = UUID.randomUUID().toString();
+        req.message = message;
+        callback.invoke(null, api.sendReq(req));
+    }
+
     /**
-     * 分享文本
+     * Share the plain text
      * @param data
      * @param callback
      */
     @ReactMethod
     public void shareText(ReadableMap data, Callback callback) {
-        //初始化一个 WXTextObject 对象，填写分享的文本内容
-        WXTextObject textObj = new WXTextObject();
-        textObj.text = data.getString("text");
-
-        //用 WXTextObject 对象初始化一个 WXMediaMessage 对象
-        WXMediaMessage msg = new WXMediaMessage();
-        msg.mediaObject = textObj;
-         msg.description = data.getString("text");
-
-        SendMessageToWX.Req req = new SendMessageToWX.Req();
-        req.transaction = "text";
-        req.message = msg;
-        req.scene = data.hasKey("scene") ? data.getInt("scene") : SendMessageToWX.Req.WXSceneSession;
-        callback.invoke(null, api.sendReq(req));
+        WXTextObject media = new WXTextObject();
+        media.text = data.getString("text");
+        this.sendShareRequest(media, null, data, callback);
     }
 
     /**
@@ -220,27 +267,28 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
      */
     @ReactMethod
     public void shareImage(final ReadableMap data, final Callback callback) {
-        this._getImage(Uri.parse(data.getString("imageUrl")), null, new ImageCallback() {
+        Uri imgUrl;
+        try {
+            imgUrl = Uri.parse(data.getString("imageUrl"));
+            if (imgUrl.getScheme() == null) {
+                // handle static resource if no schema is provided.
+                imgUrl = getResourceDrawableURI(getReactApplicationContext(), imgUrl);
+            }
+        } catch (Exception ex) {
+            imgUrl = null;
+        }
+
+        if (imgUrl == null) {
+            callback.invoke(null);
+            return;
+        }
+        createImageRequest(imgUrl, new ImageCallback() {
             @Override
-            public void invoke(@Nullable Bitmap bmp) {
-                // 初始化 WXImageObject 和 WXMediaMessage 对象
-                WXImageObject imgObj = new WXImageObject(bmp);
-                WXMediaMessage msg = new WXMediaMessage();
-                msg.mediaObject = imgObj;
-
-                // 设置缩略图
-                msg.thumbData = bitmapResizeGetBytes(bmp, THUMB_SIZE);
-
-                // 构造一个Req
-                SendMessageToWX.Req req = new SendMessageToWX.Req();
-                req.transaction = "img";
-                req.message = msg;
-                // req.userOpenId = getOpenId();
-                req.scene = data.hasKey("scene") ? data.getInt("scene") : SendMessageToWX.Req.WXSceneSession;
-                callback.invoke(null, api.sendReq(req));
+            public void invoke(@Nullable Bitmap image) {
+                WXImageObject media = new WXImageObject(image);
+                this.sendShareRequest(media, image/* as thumb */, data, callback);
             }
         });
-
     }
 
     /**
@@ -250,42 +298,13 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
      */
     @ReactMethod
     public void shareMusic(final ReadableMap data, final Callback callback) {
-        // 初始化一个WXMusicObject，填写url
-        WXMusicObject music = new WXMusicObject();
-        music.musicUrl = data.hasKey("musicUrl") ? data.getString("musicUrl") : null;
-        music.musicLowBandUrl = data.hasKey("musicLowBandUrl") ? data.getString("musicLowBandUrl") : null;
-        music.musicDataUrl = data.hasKey("musicDataUrl") ? data.getString("musicDataUrl") : null;
-        music.musicUrl = data.hasKey("musicUrl") ? data.getString("musicUrl") : null;
-        music.musicLowBandDataUrl = data.hasKey("musicLowBandDataUrl") ? data.getString("musicLowBandDataUrl") : null;
-        // 用 WXMusicObject 对象初始化一个 WXMediaMessage 对象
-        final WXMediaMessage msg = new WXMediaMessage();
-        msg.mediaObject = music;
-        msg.title = data.hasKey("title") ? data.getString("title") : null;
-        msg.description = data.hasKey("description") ? data.getString("description") : null;
-
-        if (data.hasKey("thumbImageUrl")) {
-            this._getImage(Uri.parse(data.getString("thumbImageUrl")), null, new ImageCallback() {
-                @Override
-                public void invoke(@Nullable Bitmap bmp) {
-                    // 设置缩略图
-                    msg.thumbData = bitmapResizeGetBytes(bmp, THUMB_SIZE);
-                    // 构造一个Req
-                    SendMessageToWX.Req req = new SendMessageToWX.Req();
-                    req.transaction = "music";
-                    req.message = msg;
-                    req.scene = data.hasKey("scene") ? data.getInt("scene") : SendMessageToWX.Req.WXSceneSession;
-                    callback.invoke(null, api.sendReq(req));
-                }
-            });
-        } else {
-            // 构造一个Req
-            SendMessageToWX.Req req = new SendMessageToWX.Req();
-            req.transaction = "music";
-            req.message = msg;
-            req.scene = data.hasKey("scene") ? data.getInt("scene") : SendMessageToWX.Req.WXSceneSession;
-            callback.invoke(null, api.sendReq(req));
-        }
-
+        WXMusicObject media = new WXMusicObject();
+        media.musicUrl = data.hasKey("musicUrl") ? data.getString("musicUrl") : null;
+        media.musicLowBandUrl = data.hasKey("musicLowBandUrl") ? data.getString("musicLowBandUrl") : null;
+        media.musicDataUrl = data.hasKey("musicDataUrl") ? data.getString("musicDataUrl") : null;
+        media.musicUrl = data.hasKey("musicUrl") ? data.getString("musicUrl") : null;
+        media.musicLowBandDataUrl = data.hasKey("musicLowBandDataUrl") ? data.getString("musicLowBandDataUrl") : null;
+        this.sendShareRequest(media, data, callback);
     }
 
     /**
@@ -295,37 +314,10 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
      */
     @ReactMethod
     public void shareVideo(final ReadableMap data, final Callback callback) {
-        // 初始化一个WXVideoObject，填写url
-        WXVideoObject video = new WXVideoObject();
-        video.videoUrl = data.hasKey("videoUrl") ? data.getString("videoUrl") : null;
-        video.videoLowBandUrl = data.hasKey("videoLowBandUrl") ? data.getString("videoLowBandUrl") : null;
-        //用 WXVideoObject 对象初始化一个 WXMediaMessage 对象
-        final WXMediaMessage msg = new WXMediaMessage(video);
-        msg.title = data.hasKey("title") ? data.getString("title") : null;
-        msg.description = data.hasKey("description") ? data.getString("description") : null;
-
-        if (data.hasKey("thumbImageUrl")) {
-            this._getImage(Uri.parse(data.getString("thumbImageUrl")), null, new ImageCallback() {
-                @Override
-                public void invoke(@Nullable Bitmap bmp) {
-                    // 设置缩略图
-                    msg.thumbData = bitmapResizeGetBytes(bmp, THUMB_SIZE);
-                    // 构造一个Req
-                    SendMessageToWX.Req req = new SendMessageToWX.Req();
-                    req.transaction = "video";
-                    req.message = msg;
-                    req.scene = data.hasKey("scene") ? data.getInt("scene") : SendMessageToWX.Req.WXSceneSession;
-                    callback.invoke(null, api.sendReq(req));
-                }
-            });
-        } else {
-            // 构造一个Req
-            SendMessageToWX.Req req = new SendMessageToWX.Req();
-            req.transaction = "video";
-            req.message = msg;
-            req.scene = data.hasKey("scene") ? data.getInt("scene") : SendMessageToWX.Req.WXSceneSession;
-            callback.invoke(null, api.sendReq(req));
-        }
+        WXVideoObject media = new WXVideoObject();
+        media.videoUrl = data.hasKey("videoUrl") ? data.getString("videoUrl") : null;
+        media.videoLowBandUrl = data.hasKey("videoLowBandUrl") ? data.getString("videoLowBandUrl") : null;
+        this.sendShareRequest(media, data, callback);
     }
 
     /**
@@ -335,37 +327,20 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
      */
     @ReactMethod
     public void shareWebpage(final ReadableMap data, final Callback callback) {
-        // 初始化一个WXWebpageObject，填写url
-        WXWebpageObject webpage = new WXWebpageObject();
-        webpage.webpageUrl = data.hasKey("webpageUrl") ? data.getString("webpageUrl") : null;
+        WXWebpageObject media = new WXWebpageObject();
+        media.webpageUrl = data.hasKey("webpageUrl") ? data.getString("webpageUrl") : null;
+        this.sendShareRequest(media, data, callback);
+    }
 
-        //用 WXWebpageObject 对象初始化一个 WXMediaMessage 对象
-        final WXMediaMessage msg = new WXMediaMessage(webpage);
-        msg.title = data.hasKey("title") ? data.getString("title") : null;
-        msg.description = data.hasKey("description") ? data.getString("description") : null;
-
-        if (data.hasKey("thumbImageUrl")) {
-            this._getImage(Uri.parse(data.getString("thumbImageUrl")), null, new ImageCallback() {
-                @Override
-                public void invoke(@Nullable Bitmap bmp) {
-                    // 设置缩略图
-                    msg.thumbData = bitmapResizeGetBytes(bmp, THUMB_SIZE);
-                    // 构造一个Req
-                    SendMessageToWX.Req req = new SendMessageToWX.Req();
-                    req.transaction = "webpage";
-                    req.message = msg;
-                    req.scene = data.hasKey("scene") ? data.getInt("scene") : SendMessageToWX.Req.WXSceneSession;
-                    callback.invoke(null, api.sendReq(req));
-                }
-            });
-        } else {
-            // 构造一个Req
-            SendMessageToWX.Req req = new SendMessageToWX.Req();
-            req.transaction = "webpage";
-            req.message = msg;
-            req.scene = data.hasKey("scene") ? data.getInt("scene") : SendMessageToWX.Req.WXSceneSession;
-            callback.invoke(null, api.sendReq(req));
-        }
+    /**
+     * 分享网页
+     * @param data
+     * @param callback
+     */
+    @ReactMethod
+    public void shareFile(final ReadableMap data, final Callback callback) {
+        WXFileObject media = new WXFileObject(data.getString("filePath"));
+        this.sendShareRequest(media, data, callback);
     }
 
     /**
@@ -375,62 +350,13 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
      */
     @ReactMethod
     public void shareMiniProgram(final ReadableMap data, final Callback callback) {
-        WXMiniProgramObject miniProgramObj = new WXMiniProgramObject();
-        // 兼容低版本的网页链接
-        miniProgramObj.webpageUrl = data.hasKey("webpageUrl") ? data.getString("webpageUrl") : null;
-        // 正式版:0，测试版:1，体验版:2
-        miniProgramObj.miniprogramType = data.hasKey("miniprogramType") ? data.getInt("miniprogramType") : WXMiniProgramObject.MINIPTOGRAM_TYPE_RELEASE;
-        // 小程序原始id
-        miniProgramObj.userName = data.hasKey("userName") ? data.getString("userName") : null;
-        // 小程序页面路径；对于小游戏，可以只传入 query 部分，来实现传参效果，如：传入 "?foo=bar"
-        miniProgramObj.path = data.hasKey("path") ? data.getString("path") : null;
-        final WXMediaMessage msg = new WXMediaMessage(miniProgramObj);
-        // 小程序消息 title
-        msg.title = data.hasKey("title") ? data.getString("title") : null;
-        // 小程序消息 desc
-        msg.description = data.hasKey("description") ? data.getString("description") : null;
+        WXMiniProgramObject media = new WXMiniProgramObject();
+        media.webpageUrl = data.hasKey("webpageUrl") ? data.getString("webpageUrl") : null;
+        media.miniprogramType = data.hasKey("miniProgramType") ? data.getInt("miniProgramType") : WXMiniProgramObject.MINIPTOGRAM_TYPE_RELEASE;
+        media.userName = data.hasKey("miniProgramId") ? data.getString("miniProgramId") : null;
+        media.path = data.hasKey("miniProgramPath") ? data.getString("miniProgramPath") : null;
+        this.sendShareRequest(media, data, callback);
 
-        String thumbImageUrl = data.hasKey("hdImageUrl") ? data.getString("hdImageUrl") : data.hasKey("thumbImageUrl") ? data.getString("thumbImageUrl") : null;
-
-        if (thumbImageUrl != null && !thumbImageUrl.equals("")) {
-            this._getImage(Uri.parse(thumbImageUrl), null, new ImageCallback() {
-                @Override
-                public void invoke(@Nullable Bitmap bmp) {
-                    // 小程序消息封面图片，小于128k
-                    msg.thumbData = bitmapResizeGetBytes(bmp, 128);
-                    // 构造一个Req
-                    SendMessageToWX.Req req = new SendMessageToWX.Req();
-                    req.transaction = "miniProgram";
-                    req.message = msg;
-                    req.scene = data.hasKey("scene") ? data.getInt("scene") : SendMessageToWX.Req.WXSceneSession;
-                    callback.invoke(null, api.sendReq(req));
-                }
-            });
-        } else {
-            // 构造一个Req
-            SendMessageToWX.Req req = new SendMessageToWX.Req();
-            req.transaction = "miniProgram";
-            req.message = msg;
-            req.scene = data.hasKey("scene") ? data.getInt("scene") : SendMessageToWX.Req.WXSceneSession;
-            callback.invoke(null, api.sendReq(req));
-        }
-    }
-
-    @ReactMethod
-    public void launchMiniProgram(ReadableMap data, Callback callback) {
-        if (api == null) {
-            callback.invoke(NOT_REGISTERED);
-            return;
-        }
-        WXLaunchMiniProgram.Req req = new WXLaunchMiniProgram.Req();
-        // 填小程序原始id
-        req.userName = data.getString("userName");
-        //拉起小程序页面的可带参路径，不填默认拉起小程序首页
-        req.path = data.getString("path");
-        // 可选打开 开发版，体验版和正式版
-        req.miniprogramType = data.getInt("miniProgramType");
-        boolean success = api.sendReq(req);
-        if (!success) callback.invoke(INVALID_ARGUMENT);
     }
 
     @ReactMethod
@@ -461,7 +387,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         callback.invoke(api.sendReq(payReq) ? null : INVOKE_FAILED);
     }
 
-    private void _getImage(Uri uri, ResizeOptions resizeOptions, final ImageCallback imageCallback) {
+    private static void createImageRequest(Uri uri, final ImageCallback imageCallback) {
         BaseBitmapDataSubscriber dataSubscriber = new BaseBitmapDataSubscriber() {
             @Override
             protected void onNewResultImpl(Bitmap bitmap) {
@@ -485,21 +411,38 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         };
 
         ImageRequestBuilder builder = ImageRequestBuilder.newBuilderWithSource(uri);
-        if (resizeOptions != null) {
-            builder = builder.setResizeOptions(resizeOptions);
-        }
+        // if (resizeOptions != null) {
+        //     builder = builder.setResizeOptions(resizeOptions);
+        // }
         ImageRequest imageRequest = builder.build();
-
         ImagePipeline imagePipeline = Fresco.getImagePipeline();
         DataSource<CloseableReference<CloseableImage>> dataSource = imagePipeline.fetchDecodedImage(imageRequest, null);
         dataSource.subscribe(dataSubscriber, UiThreadImmediateExecutorService.getInstance());
     }
 
-    // TODO: 实现sendRequest、sendSuccessResponse、sendErrorCommonResponse、sendErrorUserCancelResponse
+    private static Uri getResourceDrawableURI(Context ctx, String name) {
+        if (name == null || name.isEmpty()) {
+            return null;
+        }
+
+        // FIXME(Yorkie): what's this for?
+        name = name.toLowerCase().replace("-", "_");
+        int id = ctx.getResources().getIdentifier(name, "drawable", ctx.getPackageName());
+        if (id == 0) {
+            return null;
+        } else {
+            return new Uri.Builder()
+                .scheme(UriUtil.LOCAL_RESOURCE_SCHEME)
+                .path(String.valueOf(id))
+                .build();
+        }
+    }
+
+    // TODO: implement sendRequest、sendSuccessResponse、sendErrorCommonResponse、sendErrorUserCancelResponse.
 
     @Override
     public void onReq(BaseReq baseReq) {
-
+        // TODO
     }
 
     @Override
@@ -512,7 +455,6 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
 
         if (baseResp instanceof SendAuth.Resp) {
             SendAuth.Resp resp = (SendAuth.Resp) (baseResp);
-
             map.putString("type", "SendAuth.Resp");
             map.putString("code", resp.code);
             map.putString("state", resp.state);
@@ -522,20 +464,18 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         } else if (baseResp instanceof SendMessageToWX.Resp) {
             SendMessageToWX.Resp resp = (SendMessageToWX.Resp) (baseResp);
             map.putString("type", "SendMessageToWX.Resp");
+        } else if (baseResp.getType() == ConstantsAPI.COMMAND_LAUNCH_WX_MINIPROGRAM) {
+            WXLaunchMiniProgram.Resp resp = (WXLaunchMiniProgram.Resp) (baseResp);
+            map.putString("type", "LaunchMiniProgram.Resp");
+            map.putString("data", resp.extMsg);
         } else if (baseResp instanceof PayResp) {
             PayResp resp = (PayResp) (baseResp);
             map.putString("type", "PayReq.Resp");
             map.putString("returnKey", resp.returnKey);
-        } else if (baseResp.getType() == ConstantsAPI.COMMAND_LAUNCH_WX_MINIPROGRAM) {
-            WXLaunchMiniProgram.Resp resp = (WXLaunchMiniProgram.Resp) baseResp;
-            // 对应JsApi navigateBackApplication中的extraData字段数据
-            String extraData = resp.extMsg;
-            map.putString("extraData", extraData);
         }
-
         this.getReactApplicationContext()
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit("WeChat_Resp", map);
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+            .emit("WeChat_Resp", map);
     }
 
     private interface ImageCallback {
