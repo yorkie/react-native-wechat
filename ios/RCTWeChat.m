@@ -113,7 +113,9 @@ RCT_EXPORT_METHOD(sendAuthRequest:(NSString *)scope
     SendAuthReq* req = [[SendAuthReq alloc] init];
     req.scope = scope;
     req.state = state;
-    BOOL success = [WXApi sendReq:req];
+    // BOOL success = [WXApi sendReq:req];
+    UIViewController *rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    BOOL success = [WXApi sendAuthReq:req viewController:rootViewController delegate:self];
     callback(@[success ? [NSNull null] : INVOKE_FAILED]);
 }
 
