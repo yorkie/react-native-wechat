@@ -238,7 +238,11 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             message.messageExt = data.getString("messageExt");
         }
         if (thumb != null) {
-            message.thumbData = bitmapResizeGetBytes(thumb, THUMB_SIZE);
+            if (thumb.length() / 1024 > THUMB_SIZE) {
+                message.thumbData = bitmapResizeGetBytes(thumb, THUMB_SIZE);
+            } else {
+                message.thumbData = thumb;
+            }
         }
 
         SendMessageToWX.Req req = new SendMessageToWX.Req();
