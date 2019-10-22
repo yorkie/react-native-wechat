@@ -327,6 +327,11 @@ $ npm install react-native-wechat --save
 - [超详细React Native实现微信好友/朋友圈分享功能-Android/iOS双平台通用](http://www.jianshu.com/p/ce5439dd1f52)
 - [柳轩涤俗 - 微信登录](http://www.cnblogs.com/zhangdw/p/6194345.html)
 
+#### wehcatError -1坑
+由于微信本身的一些设置，大家在调用pay的时候经常出现-1报错，这下面的两篇文章是我debug的时候见到的，比较系统的总结了-1错误的问题
+https://blog.csdn.net/nnmmbb/article/details/50533138
+https://blog.csdn.net/wxx729418277/article/details/81190779
+
 #### Who's using it
 
 <a href="https://github.com/attentiveness/reading"><img height="80" width="80" src="https://raw.githubusercontent.com/attentiveness/reading/master/Reading_Logo.png"></a>
