@@ -396,7 +396,8 @@ RCT_EXPORT_METHOD(shareFile:(NSDictionary *)data
                   :(RCTResponseSenderBlock)callback)
 {
     WXFileObject *media = [WXFileObject object];
-    // TODO
+    media.fileData = [NSData dataWithContentsOfFile:data[@"filePath"]];
+    media.fileExtension = data[@"fileExtension"];
     [self sendShareRequestWithMedia:media data:data callback:callback];
 }
 
