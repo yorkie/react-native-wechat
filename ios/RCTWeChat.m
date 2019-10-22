@@ -66,12 +66,22 @@ RCT_EXPORT_MODULE()
     return YES;
 }
 
-- (UIImage *)getImageFromUrl:(NSString *)url {
-    NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
-    return [UIImage imageWithData:data];
+- (BOOL)createImageRequest:(NSString *url) (RCTImageLoaderCompletionBlock)callback
+{
+    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+    [_bridge.imageLoader loadImageWithURLRequest:imageRequest 
+                                            size:CGSizeMake(100, 100)
+                                           scale:1
+                                         clipped:FALSE
+                                      resizeMode:RCTResizeModeStretch
+                                   progressBlock:NULL
+                                partialLoadBlock:NULL
+                                 completionBlock:callback];
+    return YES;
 }
 
-- (NSData *)compressImage:(UIImage *)image toByte:(NSUInteger)maxLength {
+- (NSData *)compressImage:(UIImage *)image toByte:(NSUInteger)maxLength
+{
     CGFloat compression = 1;
     NSData *data = UIImageJPEGRepresentation(image, compression);
     if (data.length < maxLength)
@@ -250,17 +260,28 @@ RCT_EXPORT_METHOD(sendErrorUserCancelResponse:(NSString *)message
 - (BOOL)sendShareRequestWithMedia:(NSObject *)media (NSDictionary *)data (RCTResponseSenderBlock)callback
 {
     NSString *thumbURL = data[@"thumbImageUrl"];
-    NSData *thumb = NULL;
-    if (thumbURL != NULL)
+    if (thumbURL != NULL && _bridge.imageLoader)
     {
-        thumb = [self compressImage:thumb toByte:32678];
+        [self createImageRequest:thumbURL callback:^(NSError *err, UIImage *image) {
+            // FIXME(Yorkie): handle the error?
+            NSData *thumb = [self compressImage:image toByte:32678];
+            return [self sendShareRequestInternal:NO
+                                             text:NULL
+                                            media:media
+                                            thumb:thumb
+                                             data:data
+                                         callback:callback];
+        }];
     }
-    return [self sendShareRequestInternal:NO
-                                     text:NULL
-                                    media:media
-                                    thumb:thumb
-                                     data:data
-                                 callback:callback];
+    else
+    {
+        return [self sendShareRequestInternal:NO
+                                         text:NULL
+                                        media:media
+                                        thumb:NULL
+                                         data:data
+                                     callback:callback];
+    }
 }
 
 - (BOOL)sendShareRequestWithText:(NSString *)text (RCTResponseSenderBlock)callback
@@ -326,9 +347,10 @@ RCT_EXPORT_METHOD(sendErrorUserCancelResponse:(NSString *)message
     completion = ^( BOOL success )
     {
         callback(@[success ? [NSNull null] : INVOKE_FAILED]);
-        return;
+        return NO;
     };
     [WXApi sendReq:req completion:completion];
+    return YES;
 }
 
 RCT_EXPORT_METHOD(shareText:(NSDictionary *)data
@@ -351,17 +373,20 @@ RCT_EXPORT_METHOD(shareImage:(NSDictionary *)data
         callback([NSArray arrayWithObject:@"shareImage: ImageUrl value, Could not find file suffix."]);
         return;
     }
-    WXImageObject *media = [WXImageObject object];
-    UIImage *image = [self getImageFromUrl:imageUrl];
-    media.imageData = UIImageJPEGRepresentation(image, 1);
 
-    NSData *thumb = [self compressImage:image toByte:32678];
-    [self sendShareRequestInternal:NO
-                              text:NULL
-                             media:media
-                             thumb:thumb
-                              data:data
-                          callback:callback];
+    [self createImageRequest:url callback:^(NSError *err, UIImage *image) {
+            // FIXME(Yorkie): handle the error?
+            WXImageObject *media = [WXImageObject object];
+            media.imageData = UIImageJPEGRepresentation(image, 1);
+
+            NSData *thumb = [self compressImage:image toByte:32678];
+            [self sendShareRequestInternal:NO
+                                      text:NULL
+                                     media:media
+                                     thumb:thumb
+                                      data:data
+                                  callback:callback];
+        }];
 }
 
 RCT_EXPORT_METHOD(shareMusic:(NSDictionary *)data
