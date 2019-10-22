@@ -9,7 +9,7 @@ ios/build
 # Xcode
 build/
 DerivedData/
-xcuserdata
+ios/RCTWeChat.xcodeproj/project.xcworkspace/xcuserdata
 Pods/
 *.xcuserstate
 *.ipa
