@@ -347,7 +347,7 @@ RCT_EXPORT_METHOD(sendErrorUserCancelResponse:(NSString *)message
     completion = ^( BOOL success )
     {
         callback(@[success ? [NSNull null] : INVOKE_FAILED]);
-        return NO;
+        return;
     };
     [WXApi sendReq:req completion:completion];
     return YES;
