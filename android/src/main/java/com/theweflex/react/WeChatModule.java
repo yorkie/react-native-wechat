@@ -3,6 +3,7 @@ package com.theweflex.react;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
@@ -231,7 +232,8 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             this._getImage(uri, new ResizeOptions(100, 100), new ImageCallback() {
                 @Override
                 public void invoke(@Nullable Bitmap bitmap) {
-                    WeChatModule.this._share(scene, data, bitmap, callback);
+                    Bitmap bitmapThumbnail = createBitmapThumbnail(bitmap);
+                    WeChatModule.this._share(scene, data, bitmapThumbnail, callback);
                 }
             });
         } else {
@@ -519,4 +521,22 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         void invoke(@Nullable WXMediaMessage.IMediaObject mediaObject);
     }
 
+    //图片压缩
+    public Bitmap createBitmapThumbnail(Bitmap bitMap) {
+        int width = bitMap.getWidth();
+        int height = bitMap.getHeight();
+        // 设置想要的大小
+        int newWidth = 99;
+        int newHeight = 99;
+        // 计算缩放比例
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // 取得想要缩放的matrix参数
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        // 得到新的图片
+        Bitmap newBitMap = Bitmap.createBitmap(bitMap, 0, 0, width, height,
+                matrix, true);
+        return newBitMap;
+    }
 }
