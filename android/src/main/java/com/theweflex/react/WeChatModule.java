@@ -69,10 +69,10 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             bitmap.recycle();
         }
         try {
-			baos.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+            baos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return baos.toByteArray();
     }
 
