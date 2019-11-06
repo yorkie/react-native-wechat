@@ -66,7 +66,7 @@ RCT_EXPORT_MODULE()
     return YES;
 }
 
-- (BOOL)createImageRequest:(NSString *url) (RCTImageLoaderCompletionBlock)callback
+- (BOOL)createImageRequest:(NSString *)url :(RCTImageLoaderCompletionBlock)callback
 {
     NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
     [_bridge.imageLoader loadImageWithURLRequest:imageRequest 
@@ -257,21 +257,22 @@ RCT_EXPORT_METHOD(sendErrorUserCancelResponse:(NSString *)message
     [WXApi sendResp:resp completion:completion];
 }
 
-- (BOOL)sendShareRequestWithMedia:(NSObject *)media (NSDictionary *)data (RCTResponseSenderBlock)callback
+- (BOOL)sendShareRequestWithMedia:(NSObject *)media :(NSDictionary *)data :(RCTResponseSenderBlock)callback
 {
     NSString *thumbURL = data[@"thumbImageUrl"];
     if (thumbURL != NULL && _bridge.imageLoader)
     {
-        [self createImageRequest:thumbURL callback:^(NSError *err, UIImage *image) {
+        [self createImageRequest:thumbURL :^(NSError *error, UIImage *image) {
             // FIXME(Yorkie): handle the error?
             NSData *thumb = [self compressImage:image toByte:32678];
-            return [self sendShareRequestInternal:NO
-                                             text:NULL
-                                            media:media
-                                            thumb:thumb
-                                             data:data
-                                         callback:callback];
+            [self sendShareRequestInternal:NO
+                                      text:NULL
+                                     media:media
+                                     thumb:thumb
+                                      data:data
+                                  callback:callback];
         }];
+        return TRUE;
     }
     else
     {
@@ -284,22 +285,22 @@ RCT_EXPORT_METHOD(sendErrorUserCancelResponse:(NSString *)message
     }
 }
 
-- (BOOL)sendShareRequestWithText:(NSString *)text (RCTResponseSenderBlock)callback
+- (BOOL)sendShareRequestWithText:(NSString *)text :(RCTResponseSenderBlock)callback
 {
     return [self sendShareRequestInternal:YES
                                      text:text
                                     media:NULL
                                     thumb:NULL
-                                     data:data
+                                     data:NULL
                                  callback:callback];
 }
 
 - (BOOL)sendShareRequestInternal:(BOOL)bText
-                                :(NSString *)text
-                                :(NSObject *)media
-                                :(NSData *)thumb
-                                :(NSDictionary *)data
-                                :(RCTResponseSenderBlock)callback
+                            text:(NSString *)text
+                           media:(NSObject *)media
+                           thumb:(NSData *)thumb
+                            data:(NSDictionary *)data
+                        callback:(RCTResponseSenderBlock)callback
 {
     SendMessageToWXReq *req = [[SendMessageToWXReq alloc] init];
     req.bText = bText;
@@ -307,7 +308,14 @@ RCT_EXPORT_METHOD(sendErrorUserCancelResponse:(NSString *)message
 
     if (req.bText == YES)
     {
-        req.text = text || @"";
+        if (text == NULL)
+        {
+            req.text = @"";
+        }
+        else
+        {
+            req.text = text;
+        }
     }
     else
     {
@@ -356,7 +364,7 @@ RCT_EXPORT_METHOD(sendErrorUserCancelResponse:(NSString *)message
 RCT_EXPORT_METHOD(shareText:(NSDictionary *)data
                   :(RCTResponseSenderBlock)callback)
 {
-    [self sendShareRequestWithText:data[@"text"] callback:callback];
+    [self sendShareRequestWithText:data[@"text"] :callback];
 }
 
 RCT_EXPORT_METHOD(shareImage:(NSDictionary *)data
@@ -374,7 +382,7 @@ RCT_EXPORT_METHOD(shareImage:(NSDictionary *)data
         return;
     }
 
-    [self createImageRequest:url callback:^(NSError *err, UIImage *image) {
+    [self createImageRequest:imageUrl :^(NSError *err, UIImage *image) {
             // FIXME(Yorkie): handle the error?
             WXImageObject *media = [WXImageObject object];
             media.imageData = UIImageJPEGRepresentation(image, 1);
@@ -397,7 +405,7 @@ RCT_EXPORT_METHOD(shareMusic:(NSDictionary *)data
     media.musicLowBandUrl = data[@"musicLowBandUrl"];
     media.musicDataUrl = data[@"musicDataUrl"];
     media.musicLowBandDataUrl = data[@"musicLowBandDataUrl"];
-    [self sendShareRequestWithMedia:media data:data callback:callback];
+    [self sendShareRequestWithMedia:media :data :callback];
 }
 
 RCT_EXPORT_METHOD(shareVideo:(NSDictionary *)data
@@ -406,7 +414,7 @@ RCT_EXPORT_METHOD(shareVideo:(NSDictionary *)data
     WXVideoObject *media = [WXVideoObject object];
     media.videoUrl = data[@"videoUrl"];
     media.videoLowBandUrl = data[@"videoLowBandUrl"];
-    [self sendShareRequestWithMedia:media data:data callback:callback];
+    [self sendShareRequestWithMedia:media :data :callback];
 }
 
 RCT_EXPORT_METHOD(shareWebpage:(NSDictionary *)data
@@ -414,7 +422,7 @@ RCT_EXPORT_METHOD(shareWebpage:(NSDictionary *)data
 {
     WXWebpageObject *media = [WXWebpageObject object];
     media.webpageUrl = data[@"webpageUrl"];
-    [self sendShareRequestWithMedia:media data:data callback:callback];
+    [self sendShareRequestWithMedia:media :data :callback];
 }
 
 RCT_EXPORT_METHOD(shareFile:(NSDictionary *)data
@@ -423,7 +431,7 @@ RCT_EXPORT_METHOD(shareFile:(NSDictionary *)data
     WXFileObject *media = [WXFileObject object];
     media.fileData = [NSData dataWithContentsOfFile:data[@"filePath"]];
     media.fileExtension = data[@"fileExtension"];
-    [self sendShareRequestWithMedia:media data:data callback:callback];
+    [self sendShareRequestWithMedia:media :data :callback];
 }
 
 RCT_EXPORT_METHOD(shareMiniProgram:(NSDictionary *)data
@@ -435,7 +443,7 @@ RCT_EXPORT_METHOD(shareMiniProgram:(NSDictionary *)data
     media.userName = data[@"userName"];
     media.path = data[@"path"];
     media.withShareTicket = data[@"withShareTicket"];
-    [self sendShareRequestWithMedia:media data:data callback:callback];
+    [self sendShareRequestWithMedia:media :data :callback];
 }
 
 RCT_EXPORT_METHOD(pay:(NSDictionary *)data
