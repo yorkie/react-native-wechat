@@ -586,7 +586,7 @@ typedef void(^WXLogBolock)(NSString *log);
 #pragma mark - WXSubscriptionReq
 @interface WXSubscribeMiniProgramMsgResp : BaseResp
 
-@property(nonatomic, copy) NSString *openId;   // 小程序openid
+@property(nonatomic, copy) NSString *openId;   // 小程序openId
 @property(nonatomic, copy) NSString *unionId;  // unionId
 @property(nonatomic, copy) NSString *nickName; // 用户昵称
 
@@ -868,8 +868,8 @@ typedef void(^WXLogBolock)(NSString *log);
 /** 地理位置信息
  * @note 经纬度
  */
-@property (nonatomic, assign) double lng; //经度
-@property (nonatomic, assign) double lat; //纬度
+@property (nonatomic, assign) double lng; // 经度
+@property (nonatomic, assign) double lat; // 纬度
 
 @end
 
@@ -971,9 +971,9 @@ typedef void(^WXLogBolock)(NSString *log);
 @end
 
 #pragma mark - WXLaunchMiniProgramResp
-/*! @brief 微信终端向第三方程序返回的WXLaunchMiniProgramReq处理结果。
+/*! @brief 微信终端向第三方程序返回的WXLaunchMiniProgramReq处理结果
  *
- * 第三方程序向微信终端发送WXLaunchMiniProgramReq后，微信发送回来的处理结果，该结果用WXLaunchMiniProgramResp表示。
+ * 第三方程序向微信终端发送WXLaunchMiniProgramReq后，微信发送回来的处理结果，该结果用WXLaunchMiniProgramResp表示
  */
 @interface WXLaunchMiniProgramResp : BaseResp
 
