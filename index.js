@@ -4,10 +4,16 @@ import { DeviceEventEmitter, NativeModules, Platform } from 'react-native';
 import { EventEmitter } from 'events';
 
 let isAppRegistered = false;
-const { WeChat } = NativeModules;
+const native = NativeModules.WeChat;
 
 // Event emitter to dispatch request and response from WeChat.
 const emitter = new EventEmitter();
+const WXScene = {
+  Session           : 0,  /** 聊天界面 */
+  Timeline          : 1,  /** 朋友圈 */
+  Favorite          : 2,  /** 收藏 */
+  SpecifiedSession  : 3,  /** 指定联系人(Not Supported) */
+};
 
 DeviceEventEmitter.addListener('WeChat_Resp', resp => {
   emitter.emit(resp.type, resp);
@@ -40,7 +46,7 @@ function wrapRegisterApp(nativeFunc) {
   };
 }
 
-function wrapApi(nativeFunc) {
+function wrap(nativeFunc) {
   if (!nativeFunc) {
     return undefined;
   }
@@ -63,6 +69,26 @@ function wrapApi(nativeFunc) {
       ]);
     });
   };
+}
+
+function sendRequestAndWaitResp(fn, respType) {
+  return new Promise((resolve, reject) => {
+    try {
+      let r = fn();
+      if (r instanceof Promise) {
+        r.catch(reject);
+      }
+    } catch (err) {
+      reject(err);
+    }
+    emitter.once(respType, resp => {
+      if (resp.errCode === 0) {
+        resolve(resp);
+      } else {
+        reject(new WechatError(resp));
+      }
+    });
+  });
 }
 
 /**
@@ -93,58 +119,64 @@ export const removeAllListeners = emitter.removeAllListeners.bind(emitter);
  * @param {String} appid - the app id
  * @return {Promise}
  */
-export const registerApp = wrapRegisterApp(WeChat.registerApp);
+export const registerApp = wrapRegisterApp(native.registerApp);
 
 /**
  * @method registerAppWithDescription
+ * @deprecated
  * @param {String} appid - the app id
  * @param {String} appdesc - the app description
  * @return {Promise}
  */
-export const registerAppWithDescription = wrapRegisterApp(
-  WeChat.registerAppWithDescription,
-);
+export const registerAppWithDescription = function() {
+  console.warn('this function is deprecated.');
+};
 
 /**
  * Return if the wechat app is installed in the device.
  * @method isWXAppInstalled
  * @return {Promise}
  */
-export const isWXAppInstalled = wrapApi(WeChat.isWXAppInstalled);
+export const isWXAppInstalled = wrap(native.isWXAppInstalled);
 
 /**
  * Return if the wechat application supports the api
  * @method isWXAppSupportApi
  * @return {Promise}
  */
-export const isWXAppSupportApi = wrapApi(WeChat.isWXAppSupportApi);
+export const isWXAppSupportApi = wrap(native.isWXAppSupportApi);
 
 /**
  * Get the wechat app installed url
  * @method getWXAppInstallUrl
  * @return {String} the wechat app installed url
  */
-export const getWXAppInstallUrl = wrapApi(WeChat.getWXAppInstallUrl);
+export const getWXAppInstallUrl = wrap(native.getWXAppInstallUrl);
 
 /**
  * Get the wechat api version
  * @method getApiVersion
  * @return {String} the api version string
  */
-export const getApiVersion = wrapApi(WeChat.getApiVersion);
+export const getApiVersion = wrap(native.getApiVersion);
 
 /**
  * Open wechat app
  * @method openWXApp
  * @return {Promise}
  */
-export const openWXApp = wrapApi(WeChat.openWXApp);
+export const openWXApp = wrap(native.openWXApp);
 
-// wrap the APIs
-const nativeShareToTimeline = wrapApi(WeChat.shareToTimeline);
-const nativeShareToSession = wrapApi(WeChat.shareToSession);
-const nativeShareToFavorite = wrapApi(WeChat.shareToFavorite);
-const nativeSendAuthRequest = wrapApi(WeChat.sendAuthRequest);
+/**
+ * Open a mini program
+ * @method openMiniProgram
+ * @return {Promise}
+ */
+export function openMiniProgram(id, type, path) {
+  return _sendRequestAndWaitResp(() => {
+    wrap(native.openMiniProgram)({ id, type, path });
+  }, 'LaunchMiniProgram.Resp');
+}
 
 /**
  * @method sendAuthRequest
@@ -152,16 +184,79 @@ const nativeSendAuthRequest = wrapApi(WeChat.sendAuthRequest);
  * @return {Promise}
  */
 export function sendAuthRequest(scopes, state) {
-  return new Promise((resolve, reject) => {
-    WeChat.sendAuthRequest(scopes, state, () => {});
-    emitter.once('SendAuth.Resp', resp => {
-      if (resp.errCode === 0) {
-        resolve(resp);
-      } else {
-        reject(new WechatError(resp));
-      }
+  return _sendRequestAndWaitResp(() => {
+    wrap(native.sendAuthRequest)(scopes, state);
+  }, 'SendAuth.Resp');
+}
+
+// the internal share implmentation
+function shareTo(scene, data) {
+  if (data.type === 'text') {
+    return wrap(native.shareText)({
+      text: data.text,
+      scene,
     });
-  });
+  } else if (data.type === 'news') {
+    return wrap(native.shareWebpage)({
+      title: data.title,
+      description: data.description,
+      thumbImageUrl: data.thumbImageUrl,
+      webpageUrl: data.webpageUrl,
+      scene,
+    });
+  } else if (data.type === 'imageUrl' ||
+    data.type === 'imageResource' ||
+    data.type === 'imageFile') {
+    return wrap(native.shareImage)({
+      title: data.title,
+      description: data.description,
+      // use image as the thumb
+      imageUrl: data.imageUrl,
+      scene,
+    });
+  } else if (data.type === 'audio') {
+    return wrap(native.shareMusic)({
+      title: data.title,
+      description: data.description,
+      thumbImageUrl: data.thumbImageUrl,
+      musicUrl: data.musicUrl,
+      musicDataUrl: data.musicDataUrl,
+      musicLowBandUrl: data.musicLowBandUrl,
+      musicLowBandDataUrl: data.musicLowBandDataUrl,
+      scene,
+    });
+  } else if (data.type === 'video') {
+    return wrap(native.shareVideo)({
+      title: data.title,
+      description: data.description,
+      thumbImageUrl: data.thumbImageUrl,
+      videoUrl: data.videoUrl,
+      videoLowBandUrl: data.videoLowBandUrl,
+      scene,
+    });
+  } else if (data.type === 'file') {
+    return wrap(native.shareFile)({
+      // the file path to share
+      filePath: data.filePath,
+      scene,
+    });
+  } else if (data.type === 'miniprogram') {
+    const miniProgram = data.miniProgram;
+    return wrap(native.shareMiniProgram)({
+      title: data.title,
+      description: data.description,
+      thumbImageUrl: data.thumbImageUrl,
+      // backwards to the old version in web page.
+      webpageUrl: data.webpageUrl,
+      // the mini program id
+      miniProgramId: miniProgram.id,
+      // 0:release, 1:test, 2:debug/experimental
+      miniProgramType: miniProgram.type,
+      // the page path, for example: `?foo=bar`
+      miniProgramPath: miniProgram.path,
+      scene,
+    });
+  }
 }
 
 /**
@@ -178,16 +273,7 @@ export function sendAuthRequest(scopes, state) {
  * @param {String} data.fileExtension - Provide the file type if type equals file.
  */
 export function shareToTimeline(data) {
-  return new Promise((resolve, reject) => {
-    nativeShareToTimeline(data);
-    emitter.once('SendMessageToWX.Resp', resp => {
-      if (resp.errCode === 0) {
-        resolve(resp);
-      } else {
-        reject(new WechatError(resp));
-      }
-    });
-  });
+  return sendRequestAndWaitResp(() => shareTo(WXScene.Timeline, data), 'SendMessageToWX.Resp');
 }
 
 /**
@@ -204,16 +290,7 @@ export function shareToTimeline(data) {
  * @param {String} data.fileExtension - Provide the file type if type equals file.
  */
 export function shareToSession(data) {
-  return new Promise((resolve, reject) => {
-    nativeShareToSession(data);
-    emitter.once('SendMessageToWX.Resp', resp => {
-      if (resp.errCode === 0) {
-        resolve(resp);
-      } else {
-        reject(new WechatError(resp));
-      }
-    });
-  });
+  return sendRequestAndWaitResp(() => shareTo(WXScene.Session, data), 'SendMessageToWX.Resp');
 }
 
 /**
@@ -230,16 +307,7 @@ export function shareToSession(data) {
  * @param {String} data.fileExtension - Provide the file type if type equals file.
  */
 export function shareToFavorite(data) {
-  return new Promise((resolve, reject) => {
-    nativeShareToFavorite(data);
-    emitter.once('SendMessageToWX.Resp', resp => {
-      if (resp.errCode === 0) {
-        resolve(resp);
-      } else {
-        reject(new WechatError(resp));
-      }
-    });
-  });
+  return sendRequestAndWaitResp(() => shareTo(WXScene.Favorite, data), 'SendMessageToWX.Resp');
 }
 
 /**
@@ -270,20 +338,16 @@ export function pay(data) {
   
   // FIXME(94cstyles)
   // Android requires the type of the timeStamp field to be a string
-  if (Platform.OS === 'android') data.timeStamp = String(data.timeStamp)
+  if (Platform.OS === 'android')
+    data.timeStamp = String(data.timeStamp);
 
-  return new Promise((resolve, reject) => {
-    WeChat.pay(data, result => {
-      if (result) reject(result);
-    });
-    emitter.once('PayReq.Resp', resp => {
-      if (resp.errCode === 0) {
-        resolve(resp);
-      } else {
-        reject(new WechatError(resp));
-      }
-    });
-  });
+  return _sendRequestAndWaitResp(() => {
+    return new Promise((resolve, reject) => {
+      native.pay(data, res => {
+        if (res) reject(res);
+      });
+    })
+  }, 'PayReq.Resp');
 }
 
 /**

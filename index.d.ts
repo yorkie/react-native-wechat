@@ -1,26 +1,15 @@
 declare module "react-native-wechat" {
-  export function registerApp(appId: string): Promise<boolean>;
-  export function registerAppWithDescription(
-    appId: string,
-    desc: string
-  ): Promise<boolean>;
-  export function isWXAppInstalled(): Promise<boolean>;
-  export function isWXAppSupportApi(): Promise<boolean>;
-  export function getApiVersion(): Promise<string>;
-  export function openWXApp(): Promise<boolean>;
-  export interface AuthResponse {
+  export interface Response {
     errCode?: number;
     errStr?: string;
+  }
+  export interface AuthResponse extends Response {
     openId?: string;
     code?: string;
     url?: string;
     lang?: string;
     country?: string;
   }
-  export function sendAuthRequest(
-    scope: string | string[],
-    state?: string
-  ): Promise<AuthResponse>;
   export interface ShareMetadata {
     type:
       | "news"
@@ -30,7 +19,8 @@ declare module "react-native-wechat" {
       | "imageResource"
       | "video"
       | "audio"
-      | "file";
+      | "file"
+      | "miniprogram";
     thumbImage?: string;
     title?: string;
     description?: string;
@@ -41,12 +31,6 @@ declare module "react-native-wechat" {
     filePath?: string;
     fileExtension?: string;
   }
-  export function shareToTimeline(
-    message: ShareMetadata
-  ): Promise<{ errCode?: number; errStr?: string }>;
-  export function shareToSession(
-    message: ShareMetadata
-  ): Promise<{ errCode?: number; errStr?: string }>;
   export interface PaymentLoad {
     partnerId: string;
     prepayId: string;
@@ -55,7 +39,21 @@ declare module "react-native-wechat" {
     package: string;
     sign: string;
   }
-  export function pay(
-    payload: PaymentLoad
-  ): Promise<{ errCode?: number; errStr?: string }>;
+  export function registerApp(appId: string, universalLink?: string): Promise<boolean>;
+  export function registerAppWithDescription(
+    appId: string,
+    desc: string
+  ): Promise<boolean>;
+  export function isWXAppInstalled(): Promise<boolean>;
+  export function isWXAppSupportApi(): Promise<boolean>;
+  export function getApiVersion(): Promise<string>;
+  export function openWXApp(): Promise<boolean>;
+  export function openMiniProgram(id: string, type?: number, path?: string): Promise<Response>;
+  export function sendAuthRequest(scope: string | string[], state?: string): Promise<AuthResponse>;
+
+  export function shareToTimeline(msg: ShareMetadata): Promise<Response>;
+  export function shareToSession(msg: ShareMetadata): Promise<Response>;
+  export function shareToMiniProgram(msg: ShareMetadata): Promise<Response>;
+  
+  export function pay(payload: PaymentLoad): Promise<Response>;
 }

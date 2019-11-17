@@ -26,8 +26,12 @@ RCT_EXPORT_MODULE()
 - (instancetype)init
 {
     self = [super init];
-    if (self) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleOpenURL:) name:@"RCTOpenURLNotification" object:nil];
+    if (self)
+    {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleOpenURL:)
+                                                     name:@"RCTOpenURLNotification"
+                                                   object:nil];
     }
     return self;
 }
@@ -45,7 +49,9 @@ RCT_EXPORT_MODULE()
     if ([WXApi handleOpenURL:aURL delegate:self])
     {
         return YES;
-    } else {
+    }
+    else
+    {
         return NO;
     }
 }
@@ -55,22 +61,85 @@ RCT_EXPORT_MODULE()
     return dispatch_get_main_queue();
 }
 
-+ (BOOL)requiresMainQueueSetup {
++ (BOOL)requiresMainQueueSetup
+{
     return YES;
 }
 
+- (BOOL)createImageRequest:(NSString *)url :(RCTImageLoaderCompletionBlock)callback
+{
+    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+    [_bridge.imageLoader loadImageWithURLRequest:imageRequest 
+                                            size:CGSizeMake(100, 100)
+                                           scale:1
+                                         clipped:FALSE
+                                      resizeMode:RCTResizeModeStretch
+                                   progressBlock:NULL
+                                partialLoadBlock:NULL
+                                 completionBlock:callback];
+    return YES;
+}
+
+- (NSData *)compressImage:(UIImage *)image toByte:(NSUInteger)maxLength
+{
+    CGFloat compression = 1;
+    NSData *data = UIImageJPEGRepresentation(image, compression);
+    if (data.length < maxLength)
+    {
+        return data;
+    }
+
+    CGFloat max = 1;
+    CGFloat min = 0;
+    for (int i = 0; i < 6; ++i)
+    {
+        compression = (max + min) / 2;
+        data = UIImageJPEGRepresentation(image, compression);
+        if (data.length < maxLength * 0.9)
+        {
+            min = compression;
+        }
+        else if (data.length > maxLength)
+        {
+            max = compression;
+        }
+        else
+        {
+            break;
+        }
+    }
+    UIImage *resultImage = [UIImage imageWithData:data];
+    if (data.length < maxLength) return data;
+
+    // Compress by size
+    NSUInteger lastDataLength = 0;
+    while (data.length > maxLength && data.length != lastDataLength)
+    {
+        lastDataLength = data.length;
+        CGFloat ratio = (CGFloat)maxLength / data.length;
+        CGSize size = CGSizeMake((NSUInteger)(resultImage.size.width * sqrtf(ratio)),
+                                 (NSUInteger)(resultImage.size.height * sqrtf(ratio)));
+        UIGraphicsBeginImageContext(size);
+        [resultImage drawInRect:CGRectMake(0, 0, size.width, size.height)];
+        resultImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        data = UIImageJPEGRepresentation(resultImage, compression);
+    }
+
+    if (data.length > maxLength)
+    {
+        return [self compressImage:resultImage toByte:maxLength];
+    }
+    
+    return data;
+}
+
 RCT_EXPORT_METHOD(registerApp:(NSString *)appid
+                  :(NSString *)universalLink
                   :(RCTResponseSenderBlock)callback)
 {
     self.appId = appid;
-    callback(@[[WXApi registerApp:appid] ? [NSNull null] : INVOKE_FAILED]);
-}
-
-RCT_EXPORT_METHOD(registerAppWithDescription:(NSString *)appid
-                  :(NSString *)appdesc
-                  :(RCTResponseSenderBlock)callback)
-{
-    callback(@[[WXApi registerApp:appid withDescription:appdesc] ? [NSNull null] : INVOKE_FAILED]);
+    callback(@[[WXApi registerApp:appid universalLink:universalLink] ? [NSNull null] : INVOKE_FAILED]);
 }
 
 RCT_EXPORT_METHOD(isWXAppInstalled:(RCTResponseSenderBlock)callback)
@@ -98,12 +167,35 @@ RCT_EXPORT_METHOD(openWXApp:(RCTResponseSenderBlock)callback)
     callback(@[([WXApi openWXApp] ? [NSNull null] : INVOKE_FAILED)]);
 }
 
+RCT_EXPORT_METHOD(openMiniProgram:(NSDictionary *)data
+                  :(RCTResponseSenderBlock)callback)
+{
+    WXLaunchMiniProgramReq *launchMiniProgramReq = [WXLaunchMiniProgramReq object];
+    launchMiniProgramReq.userName = data[@"userName"];
+    launchMiniProgramReq.path = data[@"path"];
+    launchMiniProgramReq.miniProgramType = [data[@"miniProgramType"] integerValue];
+    void ( ^ completion )( BOOL );
+    completion = ^( BOOL success )
+    {
+        callback(@[success ? [NSNull null] : INVOKE_FAILED]);
+        return;
+    };
+    [WXApi sendReq:launchMiniProgramReq completion:completion];
+}
+
 RCT_EXPORT_METHOD(sendRequest:(NSString *)openid
                   :(RCTResponseSenderBlock)callback)
 {
     BaseReq* req = [[BaseReq alloc] init];
     req.openID = openid;
-    callback(@[[WXApi sendReq:req] ? [NSNull null] : INVOKE_FAILED]);
+    // callback(@[[WXApi sendReq:req] ? [NSNull null] : INVOKE_FAILED]);
+    void ( ^ completion )( BOOL );
+    completion = ^( BOOL success )
+    {
+        callback(@[success ? [NSNull null] : INVOKE_FAILED]);
+        return;
+    };
+    [WXApi sendReq:req completion:completion];
 }
 
 RCT_EXPORT_METHOD(sendAuthRequest:(NSString *)scope
@@ -113,15 +205,26 @@ RCT_EXPORT_METHOD(sendAuthRequest:(NSString *)scope
     SendAuthReq* req = [[SendAuthReq alloc] init];
     req.scope = scope;
     req.state = state;
-    BOOL success = [WXApi sendReq:req];
-    callback(@[success ? [NSNull null] : INVOKE_FAILED]);
+    void ( ^ completion )( BOOL );
+    completion = ^( BOOL success )
+    {
+        callback(@[success ? [NSNull null] : INVOKE_FAILED]);
+        return;
+    };
+    [WXApi sendReq:req completion:completion];
 }
 
 RCT_EXPORT_METHOD(sendSuccessResponse:(RCTResponseSenderBlock)callback)
 {
     BaseResp* resp = [[BaseResp alloc] init];
     resp.errCode = WXSuccess;
-    callback(@[[WXApi sendResp:resp] ? [NSNull null] : INVOKE_FAILED]);
+    void ( ^ completion )( BOOL );
+    completion = ^( BOOL success )
+    {
+        callback(@[success ? [NSNull null] : INVOKE_FAILED]);
+        return;
+    };
+    [WXApi sendResp:resp completion:completion];
 }
 
 RCT_EXPORT_METHOD(sendErrorCommonResponse:(NSString *)message
@@ -130,7 +233,13 @@ RCT_EXPORT_METHOD(sendErrorCommonResponse:(NSString *)message
     BaseResp* resp = [[BaseResp alloc] init];
     resp.errCode = WXErrCodeCommon;
     resp.errStr = message;
-    callback(@[[WXApi sendResp:resp] ? [NSNull null] : INVOKE_FAILED]);
+    void ( ^ completion )( BOOL );
+    completion = ^( BOOL success )
+    {
+        callback(@[success ? [NSNull null] : INVOKE_FAILED]);
+        return;
+    };
+    [WXApi sendResp:resp completion:completion];
 }
 
 RCT_EXPORT_METHOD(sendErrorUserCancelResponse:(NSString *)message
@@ -139,25 +248,202 @@ RCT_EXPORT_METHOD(sendErrorUserCancelResponse:(NSString *)message
     BaseResp* resp = [[BaseResp alloc] init];
     resp.errCode = WXErrCodeUserCancel;
     resp.errStr = message;
-    callback(@[[WXApi sendResp:resp] ? [NSNull null] : INVOKE_FAILED]);
+    void ( ^ completion )( BOOL );
+    completion = ^( BOOL success )
+    {
+        callback(@[success ? [NSNull null] : INVOKE_FAILED]);
+        return;
+    };
+    [WXApi sendResp:resp completion:completion];
 }
 
-RCT_EXPORT_METHOD(shareToTimeline:(NSDictionary *)data
-                  :(RCTResponseSenderBlock)callback)
+- (BOOL)sendShareRequestWithMedia:(NSObject *)media :(NSDictionary *)data :(RCTResponseSenderBlock)callback
 {
-    [self shareToWeixinWithData:data scene:WXSceneTimeline callback:callback];
+    NSString *thumbURL = data[@"thumbImageUrl"];
+    if (thumbURL != NULL && _bridge.imageLoader)
+    {
+        [self createImageRequest:thumbURL :^(NSError *error, UIImage *image) {
+            // FIXME(Yorkie): handle the error?
+            NSData *thumb = [self compressImage:image toByte:32678];
+            [self sendShareRequestInternal:NO
+                                      text:NULL
+                                     media:media
+                                     thumb:thumb
+                                      data:data
+                                  callback:callback];
+        }];
+        return TRUE;
+    }
+    else
+    {
+        return [self sendShareRequestInternal:NO
+                                         text:NULL
+                                        media:media
+                                        thumb:NULL
+                                         data:data
+                                     callback:callback];
+    }
 }
 
-RCT_EXPORT_METHOD(shareToSession:(NSDictionary *)data
-                  :(RCTResponseSenderBlock)callback)
+- (BOOL)sendShareRequestWithText:(NSString *)text :(RCTResponseSenderBlock)callback
 {
-    [self shareToWeixinWithData:data scene:WXSceneSession callback:callback];
+    return [self sendShareRequestInternal:YES
+                                     text:text
+                                    media:NULL
+                                    thumb:NULL
+                                     data:NULL
+                                 callback:callback];
 }
 
-RCT_EXPORT_METHOD(shareToFavorite:(NSDictionary *)data
+- (BOOL)sendShareRequestInternal:(BOOL)bText
+                            text:(NSString *)text
+                           media:(NSObject *)media
+                           thumb:(NSData *)thumb
+                            data:(NSDictionary *)data
+                        callback:(RCTResponseSenderBlock)callback
+{
+    SendMessageToWXReq *req = [[SendMessageToWXReq alloc] init];
+    req.bText = bText;
+    req.scene = data[@"scene"] || WXSceneSession;
+
+    if (req.bText == YES)
+    {
+        if (text == NULL)
+        {
+            req.text = @"";
+        }
+        else
+        {
+            req.text = text;
+        }
+    }
+    else
+    {
+        WXMediaMessage *message = [WXMediaMessage message];
+        if (media != NULL)
+        {
+            message.mediaObject = media;
+        }
+        if (thumb != NULL)
+        {
+            message.thumbData = thumb;
+        }
+        if (data[@"title"] != NULL)
+        {
+            message.title = data[@"title"];
+        }
+        if (data[@"description"] != NULL)
+        {
+            message.description = data[@"description"];
+        }
+        if (data[@"mediaTagName"] != NULL)
+        {
+            message.mediaTagName = data[@"mediaTagName"];
+        }
+        if (data[@"messageAction"] != NULL)
+        {
+            message.messageAction = data[@"messageAction"];
+        }
+        if (data[@"messageExt"] != NULL)
+        {
+            message.messageExt = data[@"messageExt"];
+        }
+        req.message = message;
+    }
+
+    void ( ^ completion )( BOOL );
+    completion = ^( BOOL success )
+    {
+        callback(@[success ? [NSNull null] : INVOKE_FAILED]);
+        return;
+    };
+    [WXApi sendReq:req completion:completion];
+    return YES;
+}
+
+RCT_EXPORT_METHOD(shareText:(NSDictionary *)data
                   :(RCTResponseSenderBlock)callback)
 {
-    [self shareToWeixinWithData:data scene:WXSceneFavorite callback:callback];
+    [self sendShareRequestWithText:data[@"text"] :callback];
+}
+
+RCT_EXPORT_METHOD(shareImage:(NSDictionary *)data
+                  :(RCTResponseSenderBlock)callback)
+{
+    NSString *imageUrl = data[@"imageUrl"];
+    if (imageUrl == NULL  || [imageUrl isEqual:@""]) {
+        callback([NSArray arrayWithObject:@"shareImage: The value of ImageUrl cannot be empty."]);
+        return;
+    }
+    NSRange range = [imageUrl rangeOfString:@"."];
+    if (range.length == 0)
+    {
+        callback([NSArray arrayWithObject:@"shareImage: ImageUrl value, Could not find file suffix."]);
+        return;
+    }
+
+    [self createImageRequest:imageUrl :^(NSError *err, UIImage *image) {
+            // FIXME(Yorkie): handle the error?
+            WXImageObject *media = [WXImageObject object];
+            media.imageData = UIImageJPEGRepresentation(image, 1);
+
+            NSData *thumb = [self compressImage:image toByte:32678];
+            [self sendShareRequestInternal:NO
+                                      text:NULL
+                                     media:media
+                                     thumb:thumb
+                                      data:data
+                                  callback:callback];
+        }];
+}
+
+RCT_EXPORT_METHOD(shareMusic:(NSDictionary *)data
+                  :(RCTResponseSenderBlock)callback)
+{
+    WXMusicObject *media = [WXMusicObject object];
+    media.musicUrl = data[@"musicUrl"];
+    media.musicLowBandUrl = data[@"musicLowBandUrl"];
+    media.musicDataUrl = data[@"musicDataUrl"];
+    media.musicLowBandDataUrl = data[@"musicLowBandDataUrl"];
+    [self sendShareRequestWithMedia:media :data :callback];
+}
+
+RCT_EXPORT_METHOD(shareVideo:(NSDictionary *)data
+                  :(RCTResponseSenderBlock)callback)
+{
+    WXVideoObject *media = [WXVideoObject object];
+    media.videoUrl = data[@"videoUrl"];
+    media.videoLowBandUrl = data[@"videoLowBandUrl"];
+    [self sendShareRequestWithMedia:media :data :callback];
+}
+
+RCT_EXPORT_METHOD(shareWebpage:(NSDictionary *)data
+                  :(RCTResponseSenderBlock)callback)
+{
+    WXWebpageObject *media = [WXWebpageObject object];
+    media.webpageUrl = data[@"webpageUrl"];
+    [self sendShareRequestWithMedia:media :data :callback];
+}
+
+RCT_EXPORT_METHOD(shareFile:(NSDictionary *)data
+                  :(RCTResponseSenderBlock)callback)
+{
+    WXFileObject *media = [WXFileObject object];
+    media.fileData = [NSData dataWithContentsOfFile:data[@"filePath"]];
+    media.fileExtension = data[@"fileExtension"];
+    [self sendShareRequestWithMedia:media :data :callback];
+}
+
+RCT_EXPORT_METHOD(shareMiniProgram:(NSDictionary *)data
+                  :(RCTResponseSenderBlock)callback)
+{
+    WXMiniProgramObject *media = [WXMiniProgramObject object];
+    media.webpageUrl = data[@"webpageUrl"];
+    media.miniProgramType = data[@"miniProgramType"] || WXMiniProgramTypeRelease;
+    media.userName = data[@"userName"];
+    media.path = data[@"path"];
+    media.withShareTicket = data[@"withShareTicket"];
+    [self sendShareRequestWithMedia:media :data :callback];
 }
 
 RCT_EXPORT_METHOD(pay:(NSDictionary *)data
@@ -170,232 +456,76 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
     req.timeStamp           = [data[@"timeStamp"] unsignedIntValue];
     req.package             = data[@"package"];
     req.sign                = data[@"sign"];
-    BOOL success = [WXApi sendReq:req];
-    callback(@[success ? [NSNull null] : INVOKE_FAILED]);
-}
-
-- (void)shareToWeixinWithData:(NSDictionary *)aData
-                   thumbImage:(UIImage *)aThumbImage
-                        scene:(int)aScene
-                     callBack:(RCTResponseSenderBlock)callback
-{
-    NSString *type = aData[RCTWXShareType];
-
-    if ([type isEqualToString:RCTWXShareTypeText]) {
-        NSString *text = aData[RCTWXShareDescription];
-        [self shareToWeixinWithTextMessage:aScene Text:text callBack:callback];
-    } else {
-        NSString * title = aData[RCTWXShareTitle];
-        NSString * description = aData[RCTWXShareDescription];
-        NSString * mediaTagName = aData[@"mediaTagName"];
-        NSString * messageAction = aData[@"messageAction"];
-        NSString * messageExt = aData[@"messageExt"];
-
-        if (type.length <= 0 || [type isEqualToString:RCTWXShareTypeNews]) {
-            NSString * webpageUrl = aData[RCTWXShareWebpageUrl];
-            if (webpageUrl.length <= 0) {
-                callback(@[@"webpageUrl required"]);
-                return;
-            }
-
-            WXWebpageObject* webpageObject = [WXWebpageObject object];
-            webpageObject.webpageUrl = webpageUrl;
-
-            [self shareToWeixinWithMediaMessage:aScene
-                                          Title:title
-                                    Description:description
-                                         Object:webpageObject
-                                     MessageExt:messageExt
-                                  MessageAction:messageAction
-                                     ThumbImage:aThumbImage
-                                       MediaTag:mediaTagName
-                                       callBack:callback];
-
-        } else if ([type isEqualToString:RCTWXShareTypeAudio]) {
-            WXMusicObject *musicObject = [WXMusicObject new];
-            musicObject.musicUrl = aData[@"musicUrl"];
-            musicObject.musicLowBandUrl = aData[@"musicLowBandUrl"];
-            musicObject.musicDataUrl = aData[@"musicDataUrl"];
-            musicObject.musicLowBandDataUrl = aData[@"musicLowBandDataUrl"];
-
-            [self shareToWeixinWithMediaMessage:aScene
-                                          Title:title
-                                    Description:description
-                                         Object:musicObject
-                                     MessageExt:messageExt
-                                  MessageAction:messageAction
-                                     ThumbImage:aThumbImage
-                                       MediaTag:mediaTagName
-                                       callBack:callback];
-
-        } else if ([type isEqualToString:RCTWXShareTypeVideo]) {
-            WXVideoObject *videoObject = [WXVideoObject new];
-            videoObject.videoUrl = aData[@"videoUrl"];
-            videoObject.videoLowBandUrl = aData[@"videoLowBandUrl"];
-
-            [self shareToWeixinWithMediaMessage:aScene
-                                          Title:title
-                                    Description:description
-                                         Object:videoObject
-                                     MessageExt:messageExt
-                                  MessageAction:messageAction
-                                     ThumbImage:aThumbImage
-                                       MediaTag:mediaTagName
-                                       callBack:callback];
-
-        } else if ([type isEqualToString:RCTWXShareTypeImageUrl] ||
-                   [type isEqualToString:RCTWXShareTypeImageFile] ||
-                   [type isEqualToString:RCTWXShareTypeImageResource]) {
-            NSURL *url = [NSURL URLWithString:aData[RCTWXShareImageUrl]];
-            NSURLRequest *imageRequest = [NSURLRequest requestWithURL:url];
-            [self.bridge.imageLoader loadImageWithURLRequest:imageRequest callback:^(NSError *error, UIImage *image) {
-                if (image == nil){
-                    callback(@[@"fail to load image resource"]);
-                } else {
-                    WXImageObject *imageObject = [WXImageObject object];
-                    imageObject.imageData = UIImagePNGRepresentation(image);
-                    
-                    [self shareToWeixinWithMediaMessage:aScene
-                                                  Title:title
-                                            Description:description
-                                                 Object:imageObject
-                                             MessageExt:messageExt
-                                          MessageAction:messageAction
-                                             ThumbImage:aThumbImage
-                                               MediaTag:mediaTagName
-                                               callBack:callback];
-                    
-                }
-            }];
-        } else if ([type isEqualToString:RCTWXShareTypeFile]) {
-            NSString * filePath = aData[@"filePath"];
-            NSString * fileExtension = aData[@"fileExtension"];
-
-            WXFileObject *fileObject = [WXFileObject object];
-            fileObject.fileData = [NSData dataWithContentsOfFile:filePath];
-            fileObject.fileExtension = fileExtension;
-
-            [self shareToWeixinWithMediaMessage:aScene
-                                          Title:title
-                                    Description:description
-                                         Object:fileObject
-                                     MessageExt:messageExt
-                                  MessageAction:messageAction
-                                     ThumbImage:aThumbImage
-                                       MediaTag:mediaTagName
-                                       callBack:callback];
-
-        } else {
-            callback(@[@"message type unsupported"]);
-        }
-    }
-}
-
-
-- (void)shareToWeixinWithData:(NSDictionary *)aData scene:(int)aScene callback:(RCTResponseSenderBlock)aCallBack
-{
-    NSString *imageUrl = aData[RCTWXShareTypeThumbImageUrl];
-    if (imageUrl.length && _bridge.imageLoader) {
-        NSURL *url = [NSURL URLWithString:imageUrl];
-        NSURLRequest *imageRequest = [NSURLRequest requestWithURL:url];
-        [_bridge.imageLoader loadImageWithURLRequest:imageRequest size:CGSizeMake(100, 100) scale:1 clipped:FALSE resizeMode:RCTResizeModeStretch progressBlock:nil partialLoadBlock:nil
-            completionBlock:^(NSError *error, UIImage *image) {
-            [self shareToWeixinWithData:aData thumbImage:image scene:aScene callBack:aCallBack];
-        }];
-    } else {
-        [self shareToWeixinWithData:aData thumbImage:nil scene:aScene callBack:aCallBack];
-    }
-
-}
-
-- (void)shareToWeixinWithTextMessage:(int)aScene
-                                Text:(NSString *)text
-                                callBack:(RCTResponseSenderBlock)callback
-{
-    SendMessageToWXReq* req = [SendMessageToWXReq new];
-    req.bText = YES;
-    req.scene = aScene;
-    req.text = text;
-
-    BOOL success = [WXApi sendReq:req];
-    callback(@[success ? [NSNull null] : INVOKE_FAILED]);
-}
-
-- (void)shareToWeixinWithMediaMessage:(int)aScene
-                                Title:(NSString *)title
-                          Description:(NSString *)description
-                               Object:(id)mediaObject
-                           MessageExt:(NSString *)messageExt
-                        MessageAction:(NSString *)action
-                           ThumbImage:(UIImage *)thumbImage
-                             MediaTag:(NSString *)tagName
-                             callBack:(RCTResponseSenderBlock)callback
-{
-    WXMediaMessage *message = [WXMediaMessage message];
-    message.title = title;
-    message.description = description;
-    message.mediaObject = mediaObject;
-    message.messageExt = messageExt;
-    message.messageAction = action;
-    message.mediaTagName = tagName;
-    [message setThumbImage:thumbImage];
-
-    SendMessageToWXReq* req = [SendMessageToWXReq new];
-    req.bText = NO;
-    req.scene = aScene;
-    req.message = message;
-
-    BOOL success = [WXApi sendReq:req];
-    callback(@[success ? [NSNull null] : INVOKE_FAILED]);
+    void ( ^ completion )( BOOL );
+    completion = ^( BOOL success )
+    {
+        callback(@[success ? [NSNull null] : INVOKE_FAILED]);
+        return;
+    };
+    [WXApi sendReq:req completion:completion];
 }
 
 #pragma mark - wx callback
 
--(void) onReq:(BaseReq*)req
+- (void)onReq:(BaseReq*)req
 {
     // TODO(Yorkie)
 }
 
--(void) onResp:(BaseResp*)resp
+- (void)onResp:(BaseResp*)resp
 {
-	if([resp isKindOfClass:[SendMessageToWXResp class]])
-	{
-	    SendMessageToWXResp *r = (SendMessageToWXResp *)resp;
+    if ([resp isKindOfClass:[SendMessageToWXResp class]])
+    {
+        SendMessageToWXResp *r = (SendMessageToWXResp *)resp;
     
-	    NSMutableDictionary *body = @{@"errCode":@(r.errCode)}.mutableCopy;
-	    body[@"errStr"] = r.errStr;
-	    body[@"lang"] = r.lang;
-	    body[@"country"] =r.country;
-	    body[@"type"] = @"SendMessageToWX.Resp";
-	    [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
-	} else if ([resp isKindOfClass:[SendAuthResp class]]) {
-	    SendAuthResp *r = (SendAuthResp *)resp;
-	    NSMutableDictionary *body = @{@"errCode":@(r.errCode)}.mutableCopy;
-	    body[@"errStr"] = r.errStr;
-	    body[@"state"] = r.state;
-	    body[@"lang"] = r.lang;
-	    body[@"country"] =r.country;
-	    body[@"type"] = @"SendAuth.Resp";
+        NSMutableDictionary *body = @{@"errCode":@(r.errCode)}.mutableCopy;
+        body[@"type"] = RCTWXSendMessageEvent;
+        body[@"errStr"] = r.errStr;
+        body[@"lang"] = r.lang;
+        body[@"country"] =r.country;
+        [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
+    }
+    else if ([resp isKindOfClass:[SendAuthResp class]])
+    {
+        SendAuthResp *r = (SendAuthResp *)resp;
+        NSMutableDictionary *body = @{@"errCode":@(r.errCode)}.mutableCopy;
+        body[@"type"] = RCTWXSendAuthEvent;
+        body[@"errStr"] = r.errStr;
+        body[@"state"] = r.state;
+        body[@"lang"] = r.lang;
+        body[@"country"] =r.country;
     
-	    if (resp.errCode == WXSuccess) {
-	        if (self.appId && r) {
-		    // ios第一次获取不到appid会卡死，加个判断OK		
-		    [body addEntriesFromDictionary:@{@"appid":self.appId, @"code":r.code}];
-		    [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
-	        }
-	    }
-	    else {
-	        [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
-	    }
-	} else if ([resp isKindOfClass:[PayResp class]]) {
-	        PayResp *r = (PayResp *)resp;
-	        NSMutableDictionary *body = @{@"errCode":@(r.errCode)}.mutableCopy;
-	        body[@"errStr"] = r.errStr;
-	        body[@"type"] = @(r.type);
-	        body[@"returnKey"] =r.returnKey;
-	        body[@"type"] = @"PayReq.Resp";
-	        [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
-    	}
+        if (resp.errCode == WXSuccess)
+        {
+            if (self.appId && r)
+            {
+                [body addEntriesFromDictionary:@{@"appid":self.appId, @"code":r.code}];
+                [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
+            }
+        }
+        else
+        {
+            [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
+        }
+    }
+    else if ([resp isKindOfClass:[WXLaunchMiniProgramResp class]])
+    {
+        WXLaunchMiniProgramResp *r = (WXLaunchMiniProgramResp *)resp;
+        NSMutableDictionary *body = @{@"errCode":@(r.errCode)}.mutableCopy;
+        body[@"type"] = RCTWXLaunchMiniProgramEvent;
+        body[@"data"] = r.extMsg;
+        [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
+    }
+    else if ([resp isKindOfClass:[PayResp class]])
+    {
+        PayResp *r = (PayResp *)resp;
+        NSMutableDictionary *body = @{@"errCode":@(r.errCode)}.mutableCopy;
+        body[@"type"] = RCTWXPayEvent;
+        body[@"errStr"] = r.errStr;
+        body[@"type"] = @(r.type);
+        body[@"returnKey"] =r.returnKey;
+        [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
+    }
 }
 
 @end

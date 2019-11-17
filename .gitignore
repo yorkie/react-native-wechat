@@ -3,15 +3,18 @@ node_modules
 /android/build
 /android/RCTWeChat.iml
 
-# ios
+# iOS
 ios/build
 
 # Xcode
 build/
 DerivedData/
-xcuserdata
+ios/RCTWeChat.xcodeproj/project.xcworkspace/xcuserdata
 Pods/
 *.xcuserstate
 *.ipa
 *.dSYM.zip
 *.dSYM
+
+# Android
+.idea
