@@ -62,7 +62,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
     private final static String INVALID_ARGUMENT = "invalid argument.";
     private final static int THUMB_SIZE = 32; // The size of thumb image in KB.
 
-    private static byte[] bitmapTopBytes(Bitmap bitmap, final boolean needRecycle) {
+    private static byte[] bitmapToBytesArray(Bitmap bitmap, final boolean needRecycle) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         if (needRecycle) {
@@ -245,10 +245,11 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             message.messageExt = data.getString("messageExt");
         }
         if (thumb != null) {
-            if (thumb.length() / 1024 > THUMB_SIZE) {
+            byte[] thumbData = bitmapToBytesArray(thumb, true);
+            if (thumbData.length / 1024 > THUMB_SIZE) {
                 message.thumbData = bitmapResizeGetBytes(thumb, THUMB_SIZE);
             } else {
-                message.thumbData = bitmapTopBytes(thumb, true);
+                message.thumbData = thumbData;
             }
         }
 
