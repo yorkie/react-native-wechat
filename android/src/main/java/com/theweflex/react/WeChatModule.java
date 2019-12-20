@@ -37,6 +37,7 @@ import com.tencent.mm.sdk.modelmsg.WXMusicObject;
 import com.tencent.mm.sdk.modelmsg.WXTextObject;
 import com.tencent.mm.sdk.modelmsg.WXVideoObject;
 import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.sdk.modelmsg.WXMiniProgramObject;
 import com.tencent.mm.sdk.modelpay.PayReq;
 import com.tencent.mm.sdk.modelpay.PayResp;
 import com.tencent.mm.sdk.openapi.IWXAPI;
@@ -335,6 +336,8 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
             mediaObject = __jsonToMusicMedia(data);
         } else if (type.equals("file")) {
             mediaObject = __jsonToFileMedia(data);
+        } else if (type.equals("miniProgram")) {
+            mediaObject = __jsonToMiniProgramMedia(data);
         }
 
         if (mediaObject == null) {
@@ -393,6 +396,40 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
 
         WXWebpageObject ret = new WXWebpageObject();
         ret.webpageUrl = data.getString("webpageUrl");
+        if (data.hasKey("extInfo")) {
+            ret.extInfo = data.getString("extInfo");
+        }
+        return ret;
+    }
+
+    private WXMiniProgramObject _jsonToMiniProgramMedia(ReadableMap data) {
+        if (!data.hasKey("userName")) {
+            return null;
+        }
+
+        WXMiniProgramObject ret = new WXMiniProgramObject();
+        if (data.hasKey("webpageUrl")) {
+            ret.webpageUrl = data.getString("webpageUrl"); // 兼容低版本的网页链接
+        }
+        if (data.hasKey("miniprogramType")) {
+            String type = data.getString("miniprogramType"); // 正式版:0，测试版:1，体验版:2
+            if (type.equals("release")) {
+                ret.miniprogramType = WXMiniProgramObject.MINIPTOGRAM_TYPE_RELEASE;
+            } else if (type.equals("test")) {
+                ret.miniprogramType = WXMiniProgramObject.MINIPROGRAM_TYPE_TEST
+            } else if (type.equals("preview")) {
+                ret.miniprogramType = WXMiniProgramObject.MINIPROGRAM_TYPE_PREVIEW
+            }
+        }
+        if (data.hasKey("userName")) {
+            ret.userName = data.getString("userName"); // 小程序原始id
+        }
+        if (data.hasKey("path")) {
+            ret.path = data.getString("path"); //小程序页面路径；对于小游戏，可以只传入 query 部分，来实现传参效果，如：传入 "?foo=bar"
+        }
+        if (data.hasKey("withShareTicket")) {
+            ret.withShareTicket = data.getBoolean("withShareTicket");
+        }
         if (data.hasKey("extInfo")) {
             ret.extInfo = data.getString("extInfo");
         }

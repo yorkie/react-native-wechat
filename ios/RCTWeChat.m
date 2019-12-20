@@ -254,7 +254,7 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
                 } else {
                     WXImageObject *imageObject = [WXImageObject object];
                     imageObject.imageData = UIImagePNGRepresentation(image);
-                    
+
                     [self shareToWeixinWithMediaMessage:aScene
                                                   Title:title
                                             Description:description
@@ -264,7 +264,7 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
                                              ThumbImage:aThumbImage
                                                MediaTag:mediaTagName
                                                callBack:callback];
-                    
+
                 }
             }];
         } else if ([type isEqualToString:RCTWXShareTypeFile]) {
@@ -285,6 +285,39 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
                                        MediaTag:mediaTagName
                                        callBack:callback];
 
+        } else if ([type isEqualToString:RCTWXShareTypeMiniProgram]) {
+          NSString * webpageUrl = aData[RCTWXShareWebpageUrl];
+          NSString * userName = aData[@"userName"];
+          NSString * path = aData[@"path"];
+          NSString * withShareTicket = aData[@"withShareTicket"];
+          NSString * miniprogramType = aData[@"miniprogramType"]
+          if (userName.length <= 0) {
+              callback(@[@"userName required"]);
+              return;
+          }
+
+          WXMiniProgramObject* miniProgramObject = [WXMiniProgramObject object];
+          miniProgramObject.webpageUrl = webpageUrl;
+          miniProgramObject.userName = userName;
+          miniProgramObject.path = path;
+          miniProgramObject.withShareTicket = withShareTicket;
+          if ([miniprogramType isEqualToString:@"release"]) {
+              miniProgramObject.miniprogramType = 0;
+          } else if ([miniprogramType isEqualToString:@"test"]) {
+              miniProgramObject.miniprogramType = 1;
+          } else if ([miniprogramType isEqualToString:@"preview"]) {
+              miniProgramObject.miniprogramType = 2;
+          }
+
+          [self shareToWeixinWithMediaMessage:aScene
+                                        Title:title
+                                  Description:description
+                                       Object:miniProgramObject
+                                   MessageExt:messageExt
+                                MessageAction:messageAction
+                                   ThumbImage:aThumbImage
+                                     MediaTag:mediaTagName
+                                     callBack:callback];
         } else {
             callback(@[@"message type unsupported"]);
         }
@@ -361,7 +394,7 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
 	if([resp isKindOfClass:[SendMessageToWXResp class]])
 	{
 	    SendMessageToWXResp *r = (SendMessageToWXResp *)resp;
-    
+
 	    NSMutableDictionary *body = @{@"errCode":@(r.errCode)}.mutableCopy;
 	    body[@"errStr"] = r.errStr;
 	    body[@"lang"] = r.lang;
@@ -376,10 +409,10 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
 	    body[@"lang"] = r.lang;
 	    body[@"country"] =r.country;
 	    body[@"type"] = @"SendAuth.Resp";
-    
+
 	    if (resp.errCode == WXSuccess) {
 	        if (self.appId && r) {
-		    // ios第一次获取不到appid会卡死，加个判断OK		
+		    // ios第一次获取不到appid会卡死，加个判断OK
 		    [body addEntriesFromDictionary:@{@"appid":self.appId, @"code":r.code}];
 		    [self.bridge.eventDispatcher sendDeviceEventWithName:RCTWXEventName body:body];
 	        }

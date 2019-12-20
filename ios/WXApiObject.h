@@ -69,7 +69,7 @@ typedef NS_ENUM(UInt64, enAppSupportContentFlag)
     MMAPP_SUPPORT_VIDEO     = 0x8,
     MMAPP_SUPPORT_AUDIO     = 0x10,
     MMAPP_SUPPORT_WEBPAGE   = 0x20,
-    
+
     // Suport File Type
     MMAPP_SUPPORT_DOC  = 0x40,               // doc
     MMAPP_SUPPORT_DOCX = 0x80,               // docx
@@ -676,6 +676,50 @@ typedef NS_ENUM(UInt64, enAppSupportContentFlag)
 
 
 
+#pragma mark - WXMiniProgramObject
+/*! @brief 多媒体消息中包含的小程序数据对象
+ *
+ * 微信终端和第三方程序之间传递消息中包含的小程序数据对象。
+ * @see WXMediaMessage
+ */
+@interface WXMiniProgramObject : NSObject
+/*! @brief 返回一个WXWebpageObject对象
+ *
+ * @note 返回的WXWebpageObject对象是自动释放的
+ */
++(WXMiniProgramObject *) object;
+
+/** 网页的url地址
+ * @note 长度不能超过10K
+ */
+@property (nonatomic, retain) NSString *webpageUrl;
+
+/** 小程序的userName
+ * @note 小程序原始ID获取方法：登录小程序管理后台-设置-基本设置-帐号信息
+ */
+@property (nonatomic, retain) NSString *userName;
+
+/** 小程序的页面路径
+ * @note 小程序页面路径；对于小游戏，可以只传入 query 部分，来实现传参效果，如：传入 "?foo=bar"
+ */
+@property (nonatomic, retain) NSString *path;
+
+/** 是否使用带shareTicket的分享
+ * @note 通常开发者希望分享出去的小程序被二次打开时可以获取到更多信息，例如群的标识。
+ */
+@property (nonatomic, retain) BOOL *withShareTicket;
+
+/** 小程序的类型，默认正式版
+ * @note 正式版: WXMiniProgramTypeRelease;
+        测试版: WXMiniProgramTypeTest;
+        体验版: WXMiniProgramTypePreview;
+ */
+@property (nonatomic, retain) int *miniprogramType;
+
+@end
+
+
+
 #pragma mark - WXAppExtendObject
 /*! @brief 多媒体消息中包含的App扩展数据对象
  *
@@ -800,4 +844,3 @@ typedef NS_ENUM(UInt64, enAppSupportContentFlag)
 @property (nonatomic, retain) NSString *contentText;
 
 @end
-
