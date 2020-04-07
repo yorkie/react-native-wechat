@@ -58,4 +58,5 @@ declare module "react-native-wechat" {
   export function pay(
     payload: PaymentLoad
   ): Promise<{ errCode?: number; errStr?: string }>;
+  export class WechatError extends Error {}
 }
