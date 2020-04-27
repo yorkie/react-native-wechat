@@ -96,16 +96,6 @@ export const removeAllListeners = emitter.removeAllListeners.bind(emitter);
 export const registerApp = wrapRegisterApp(WeChat.registerApp);
 
 /**
- * @method registerAppWithDescription
- * @param {String} appid - the app id
- * @param {String} appdesc - the app description
- * @return {Promise}
- */
-export const registerAppWithDescription = wrapRegisterApp(
-  WeChat.registerAppWithDescription,
-);
-
-/**
  * Return if the wechat app is installed in the device.
  * @method isWXAppInstalled
  * @return {Promise}
