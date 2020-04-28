@@ -22,11 +22,10 @@ android {
 allprojects {
   repositories {
     jcenter()
-    maven { url "$projectDir/../../react-native/android" }
   }
 }
 
 dependencies {
-  api 'com.facebook.react:react-native:+'
-  api files('libs/libammsdk.jar')
+  implementation 'com.facebook.react:react-native:+'
+  api 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:5.4.0'
 }
