@@ -57,6 +57,8 @@ Check if the WeChat app is installed on the device.
 
 Check if wechat support open url.
 
+This method is only available on iOS.
+
 #### getApiVersion()
 
 - returns {String} Contains the result.
