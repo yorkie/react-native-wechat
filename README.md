@@ -45,14 +45,6 @@ import * as WeChat from 'react-native-wechat';
 WeChat.registerApp('appid');
 ```
 
-#### registerAppWithDescription(appid, description)
-
-- `appid` {String} the appid you get from WeChat dashboard
-- `description` {String} the description of your app
-- returns {Boolean} explains if your application is registered done
-
-This method is only available on iOS.
-
 #### isWXAppInstalled() 
 
 - returns {Boolean} if WeChat is installed.
