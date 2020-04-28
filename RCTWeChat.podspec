@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "RCTWeChat"
-  s.version      = "1.9.12"
+  s.version      = "1.10.0"
   s.summary      = "React-Native(iOS/Android) functionalities include WeChat Login, Share, Favorite and Payment {QQ: 336021910}"
   s.description  = <<-DESC
   React-Native(iOS/Android) functionalities include WeChat Login, Share, Favorite and Payment {QQ: 336021910}
@@ -18,10 +18,10 @@ Pod::Spec.new do |s|
   s.license      = "MIT"
   s.platform     = :ios, "9.0"
   s.source       = { :git => "https://github.com/yorkie/react-native-wechat.git", :tag => "master" }
+  
   s.source_files  = "ios/*.{h,m}"
+  
   s.dependency "React"
-  s.vendored_libraries = "ios/libWeChatSDK.a"
+  s.dependency "WechatOpenSDK", "1.8.4"
   s.requires_arc = true
-  s.frameworks = 'SystemConfiguration','CoreTelephony'
-  s.library = 'sqlite3','c++','z'
 end
