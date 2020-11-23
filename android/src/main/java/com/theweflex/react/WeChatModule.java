@@ -98,8 +98,11 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
         }
     }
 
+    /**
+    * @param universalLinkIOS used on iOS only but added here to ensure the method is compatible cross platform
+    */
     @ReactMethod
-    public void registerApp(String appid, Callback callback) {
+    public void registerApp(String appid, String universalLinkIOS, Callback callback) {
         this.appId = appid;
         api = WXAPIFactory.createWXAPI(this.getReactApplicationContext().getBaseContext(), appid, true);
         callback.invoke(null, api.registerApp(appid));

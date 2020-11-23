@@ -22,6 +22,6 @@ Pod::Spec.new do |s|
   s.source_files  = "ios/*.{h,m}"
   
   s.dependency "React"
-  s.dependency "WechatOpenSDK", "1.8.4"
+  s.dependency "WechatOpenSDK", "1.8.7.1"
   s.requires_arc = true
 end
