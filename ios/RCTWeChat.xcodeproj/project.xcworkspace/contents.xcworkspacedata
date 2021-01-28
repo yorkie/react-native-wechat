@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:RCTWeChat.xcodeproj">
+      location = "self:/Users/apple/Documents/&#x9879;&#x76ee;/react-native-wechat/ios/RCTWechat.xcodeproj">
    </FileRef>
 </Workspace>

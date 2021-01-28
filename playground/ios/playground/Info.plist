@@ -26,10 +26,10 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>appid</string>
+			<string>wxid</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>wx13345678</string>
+				<string>wxid</string>
 			</array>
 		</dict>
 	</array>
@@ -37,6 +37,7 @@
 	<string>1</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>weixinULAPI</string>
 		<string>weixin</string>
 		<string>wechat</string>
 	</array>
