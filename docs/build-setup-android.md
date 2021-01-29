@@ -1,42 +1,11 @@
 # Build Setup for Android
 
-Copy lines to `android/settings.gradle`:
-
-```gradle
-include ':RCTWeChat'
-project(':RCTWeChat').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-wechat/android')
-```
-
-Copy lines to `android/app/build.gradle`
-
-```gradle
-dependencies {
-  implementation project(':RCTWeChat') // Add this line
-}
-```
-
 Copy lines to `proguard-rules.pro`:
 
 ```pro
 -keep class com.tencent.mm.sdk.** {
   *;
 }
-```
-
-Then update `MainActivity.java` or `MainApplication.java`:
-
-```java
-import com.theweflex.react.WeChatPackage; // Add this line
-
-  @Override
-  protected List<ReactPackage> getPackages() {
-    @SuppressWarnings("UnnecessaryLocalVariable")
-    List<ReactPackage> packages = new PackageList(this).getPackages();
-    // Packages that cannot be autolinked yet can be added manually here, for example:
-    // packages.add(new MyReactNativePackage());
-    packages.add(new WeChatPackage()); // Add this line
-    return packages;
-  }
 ```
 
 **Integrating with login and share**
@@ -56,6 +25,7 @@ public class WXEntryActivity extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    // 冷启动、热启动自己应用需要自己处理跳转到指定页面
     WeChatModule.handleIntent(getIntent());
     finish();
   }
@@ -93,6 +63,7 @@ public class WXPayEntryActivity extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+     // 冷启动、热启动自己应用需要自己处理跳转到指定页面
     WeChatModule.handleIntent(getIntent());
     finish();
   }

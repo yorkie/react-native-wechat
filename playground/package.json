@@ -10,7 +10,8 @@
   "dependencies": {
     "react": "16.8.6",
     "react-native": "0.60.0",
-    "react-native-wechat": "^1.9.12"
+    "events": "1.0.2",
+    "@shm-open/utilities": ">=1.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",

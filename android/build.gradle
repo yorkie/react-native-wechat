@@ -1,32 +1,44 @@
 apply plugin: 'com.android.library'
+buildscript {
+    repositories {
+        maven { url 'http://maven.aliyun.com/nexus/content/repositories/google' }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin/' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.0.0'
+    }
+}
 
 def safeExtGet(prop, fallback) {
-  rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
 }
 
 android {
-  compileSdkVersion safeExtGet('compileSdkVersion', 23)
-  buildToolsVersion safeExtGet('buildToolsVersion', '23.0.1')
+    compileSdkVersion safeExtGet('compileSdkVersion', 23)
+    buildToolsVersion safeExtGet('buildToolsVersion', '23.0.1')
 
-  defaultConfig {
-    minSdkVersion safeExtGet('minSdkVersion', 16)
-    targetSdkVersion safeExtGet('targetSdkVersion', 22)
-    versionCode 1
-    versionName "1.0"
-    ndk {
-      abiFilters "armeabi-v7a", "x86"
+    defaultConfig {
+        minSdkVersion safeExtGet('minSdkVersion', 16)
+        targetSdkVersion safeExtGet('targetSdkVersion', 22)
+        versionCode 1
+        versionName "1.0"
+        ndk {
+            abiFilters "armeabi-v7a", "x86"
+        }
     }
-  }
 }
 
 allprojects {
-  repositories {
-    jcenter()
-    maven { url "$projectDir/../../react-native/android" }
-  }
+    repositories {
+        jcenter()
+        maven { url "$projectDir/../../react-native/android" }
+    }
 }
 
 dependencies {
-  api 'com.facebook.react:react-native:+'
-  api files('libs/libammsdk.jar')
+    implementation 'com.facebook.react:react-native:+'
+    api 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:+'
 }
