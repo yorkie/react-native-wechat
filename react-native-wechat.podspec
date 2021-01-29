@@ -10,15 +10,15 @@ require 'json'
 package = JSON.parse(File.read(File.join(__dir__, 'package.json')))
 
 Pod::Spec.new do |s|
-  s.name         = "RCTWeChat"
+  s.name         = "react-native-wechat"
   s.version      = package['version']
-  s.summary      = "React-Native(iOS/Android) functionalities include WeChat Login, Share, Favorite and Payment"
+  s.summary      = "Wechat library"
   s.description  = package['description']
   s.author       = package['author']
   s.homepage     = package['homepage']
   s.license      = "MIT"
   s.platform     = :ios, "9.0"
-  s.source       = { :git => "https://github.com/yorkie/react-native-wechat.git", :tag => "master" }
+  s.source       = { :git => "https://github.com/yorkie/react-native-wechat.git", :tag => "#{s.version}" }
   s.source_files  = "ios/*.{h,m}"
   s.dependency "React"
   s.dependency "WechatOpenSDK", '1.8.7.1'

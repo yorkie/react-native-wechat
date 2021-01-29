@@ -6,15 +6,29 @@ node_modules
 # iOS
 ios/build
 
+# OSX
+#
+.DS_Store
+
 # Xcode
+#
 build/
-DerivedData/
-ios/RCTWeChat.xcodeproj/project.xcworkspace/xcuserdata
-Pods/
-*.xcuserstate
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
 *.ipa
-*.dSYM.zip
-*.dSYM
+*.xcuserstate
+project.xcworkspace
 
 
 # Android/IntelliJ
