@@ -40,5 +40,6 @@
     "standard-version": "9.1.0",
     "typescript": "4.1.3"
   },
+  "author": "shihuimiao",
   "license": "MIT"
 }
