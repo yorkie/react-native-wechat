@@ -8,10 +8,9 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@shm-open/utilities": "1.2.0",
     "react": "16.8.6",
-    "react-native": "0.60.0",
-    "events": "1.0.2",
-    "@shm-open/utilities": ">=1.1.0"
+    "react-native": "0.60.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
