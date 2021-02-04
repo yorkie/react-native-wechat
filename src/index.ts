@@ -20,6 +20,29 @@ import {
     SendAuthResp,
 } from './wechatInterface';
 
+export {
+    WechatMiniprogramTypeEnum,
+    WechatSceneEnum,
+    WechatShareBase,
+    WechatShareMiniprogram,
+    WechatOpenMiniprogram,
+    WechatShareText,
+    WechatShareImage,
+    WechatShareWebPage,
+    WechatShareVideo,
+    WechatShareMusic,
+    WechatPay,
+    WechatEntrust,
+    WXErrCodeEnum,
+    WechatError,
+    BaseWXResp,
+    SendMessageToWXResp,
+    SendAuthResp,
+    LaunchMiniprogramResp,
+    PayResp,
+    OpenBusinessWebViewResp,
+ } from './wechatInterface';
+
 const { Wechat } = NativeModules;
 
 type EventType =
