@@ -16,7 +16,7 @@
     "clean": "del-cli lib",
     "build": "npm run clean && npm run compile",
     "release": "npm test && npm run build && standard-version && git push --follow-tags origin master && npm publish",
-    "compile": "tsc --outDir lib -d"
+    "compile": "tsc -d"
   },
   "repository": {
     "type": "git",
