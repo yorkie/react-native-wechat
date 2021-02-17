@@ -37,7 +37,7 @@
   "devDependencies": {
     "@types/react-native": "0.63.46",
     "del-cli": "3.0.1",
-    "standard-version": "9.1.0",
+    "standard-version": "9.1.1",
     "typescript": "4.1.3"
   },
   "homepage": "https://github.com/shm-open/react-native-wechat",
