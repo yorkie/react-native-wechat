@@ -491,7 +491,7 @@ RCT_EXPORT_METHOD(shareFile:(NSDictionary *)data
     }];
 }
 
-RCT_EXPORT_METHOD(shareMiniProgram:(NSDictionary *)data
+RCT_EXPORT_METHOD(shareMiniprogram:(NSDictionary *)data
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
@@ -503,7 +503,7 @@ RCT_EXPORT_METHOD(shareMiniProgram:(NSDictionary *)data
         object.path = [miniprogram objectForKey:@"path"];
         // 压缩图片到小于128KB
         object.hdImageData = image ? [self compressImage:image toByte:131072] : nil;
-        object.miniProgramType = [miniprogram objectForKey:@"miniprogram"] ? [[miniprogram objectForKey:@"miniprogram"] integerValue] : WXMiniProgramTypeRelease;
+        object.miniProgramType = [miniprogram objectForKey:@"miniprogramType"] ? [[miniprogram objectForKey:@"miniprogramType"] integerValue] : WXMiniProgramTypeRelease;
         object.webpageUrl = [data objectForKey:@"webpageUrl"];
 
         WXMediaMessage *message = [WXMediaMessage message];

@@ -128,14 +128,13 @@ export default class App extends Component {
             miniprogram: {
                 userName: 'gh_b5158a3849b4',
                 path: '/pages/webview/index?url=',
-                miniProgramType: Wechat.WechatMiniprogramTypeEnum.RELEASE,
+                miniprogramType: Wechat.WechatMiniprogramTypeEnum.RELEASE,
             },
         };
-        Wechat.shareMiniprogram(shareData);
 
-        // Wechat.shareMiniprogram(shareData).catch((error) => {
-        //     Alert.alert(error);
-        // });
+        Wechat.shareMiniprogram(shareData).catch((error) => {
+            Alert.alert(error.message);
+        });
     }
     handleShareVideo() {
         const shareData = {
