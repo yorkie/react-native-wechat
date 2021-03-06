@@ -10,6 +10,7 @@
   "dependencies": {
     "@shm-open/utilities": "1.2.2",
     "react": "16.8.6",
+    "@shm-open/react-native-wechat": "1.1.1",
     "react-native": "0.60.0"
   },
   "devDependencies": {

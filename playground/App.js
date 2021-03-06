@@ -18,11 +18,8 @@ import {
     Text,
     Alert,
 } from 'react-native';
-
 import { Header, Colors } from 'react-native/Libraries/NewAppScreen';
-
-import * as Wechat from 'react-native-wechat';
-import * as WechatType from 'react-native-wechat/lib/wechatInterface';
+import * as Wechat from '@shm-open/react-native-wechat';
 
 export default class App extends Component {
     shareOptions = {
@@ -74,7 +71,7 @@ export default class App extends Component {
         if (this.state.isWXAppInstalled) {
             const shareData = {
                 text: 'share text',
-                scene: WechatType.WechatSceneEnum.SESSION,
+                scene: Wechat.WechatSceneEnum.SESSION,
             };
             Wechat.shareText(shareData)
                 .then((data) => {
@@ -91,7 +88,7 @@ export default class App extends Component {
         if (this.state.isWXAppInstalled) {
             const shareData = {
                 imageUrl: 'https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png',
-                scene: WechatType.WechatSceneEnum.SESSION,
+                scene: Wechat.WechatSceneEnum.SESSION,
             };
             Wechat.shareImage(shareData).catch((error) => {
                 Alert.alert(error);
@@ -106,7 +103,7 @@ export default class App extends Component {
             description: '百度一下,你就知道',
             webpageUrl: 'https://www.baidu.com',
             thumbImageUrl: 'https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png',
-            scene: WechatType.WechatSceneEnum.SESSION,
+            scene: Wechat.WechatSceneEnum.SESSION,
         };
         Wechat.shareWebpage(shareData).catch((error) => {
             Alert.alert(error);
@@ -116,7 +113,7 @@ export default class App extends Component {
         const shareData = {
             userName: 'gh_b5158a3849b4',
             path: '/pages/webview/index?url=',
-            miniprogramType: WechatType.WechatMiniprogramTypeEnum.RELEASE,
+            miniprogramType: Wechat.WechatMiniprogramTypeEnum.RELEASE,
         };
         Wechat.openMiniprogram(shareData).catch((error) => {
             Alert.alert(error);
@@ -131,12 +128,14 @@ export default class App extends Component {
             miniprogram: {
                 userName: 'gh_b5158a3849b4',
                 path: '/pages/webview/index?url=',
-                miniProgramType: WechatType.WechatMiniprogramTypeEnum.RELEASE,
+                miniProgramType: Wechat.WechatMiniprogramTypeEnum.RELEASE,
             },
         };
-        Wechat.shareMiniprogram(shareData).catch((error) => {
-            Alert.alert(error);
-        });
+        Wechat.shareMiniprogram(shareData);
+
+        // Wechat.shareMiniprogram(shareData).catch((error) => {
+        //     Alert.alert(error);
+        // });
     }
     handleShareVideo() {
         const shareData = {
@@ -144,7 +143,7 @@ export default class App extends Component {
             description: '分享description',
             videoUrl: 'http://music.163.com/song/media/outer/url?id=447925558.mp3',
             thumbImageUrl: 'https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png',
-            scene: WechatType.WechatSceneEnum.SESSION,
+            scene: Wechat.WechatSceneEnum.SESSION,
         };
         Wechat.shareVideo(shareData)
             .then((data) => {
@@ -160,7 +159,7 @@ export default class App extends Component {
             description: '分享description',
             musicUrl: 'http://music.163.com/song/media/outer/url?id=447925558.mp3',
             thumbImageUrl: 'https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png',
-            scene: WechatType.WechatSceneEnum.SESSION,
+            scene: Wechat.WechatSceneEnum.SESSION,
         };
         Wechat.shareMusic(shareData)
             .then((data) => {
