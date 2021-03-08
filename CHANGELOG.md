@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](https://github.com/shm-open/react-native-wechat/compare/v1.1.1...v1.1.2) (2021-03-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @shm-open/utilities to v1.3.0 ([612a68f](https://github.com/shm-open/react-native-wechat/commit/612a68f3559faef413dadb8f008c3a555a6044b7))
+* **iOS:** fix shareMiniprogram method not response ([16bc085](https://github.com/shm-open/react-native-wechat/commit/16bc085fc155d2d5c29caa2cb1c7f8a5b8e193ab))
+
 ### [1.1.1](https://github.com/shm-open/react-native-wechat/compare/v1.1.0...v1.1.1) (2021-02-05)
 
 
