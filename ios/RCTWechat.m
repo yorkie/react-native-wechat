@@ -199,30 +199,19 @@ RCT_EXPORT_METHOD(registerApp:(NSString *)appid
     else {
         reject(getWXCommonErrorCode(), INVOKE_FAILED, nil);
     }
+    [self handleWechatDeepLink];
 }
 
 RCT_EXPORT_METHOD(isWXAppInstalled:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
-    BOOL install = [WXApi isWXAppInstalled];
-    if (install) {
-        resolve(@(YES));
-    }
-    else {
-        reject(getWXCommonErrorCode(), @"Wechat not install", nil);
-    }
+    resolve(@([WXApi isWXAppInstalled]));
 }
 
 RCT_EXPORT_METHOD(isWXAppSupportApi:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
-    BOOL support = [WXApi isWXAppSupportApi];
-    if (support) {
-        resolve([NSNull null]);
-    }
-    else {
-        reject(getWXCommonErrorCode(), @"Wechat not install", nil);
-    }
+    resolve(@([WXApi isWXAppSupportApi]));
 }
 
 // only iOS
