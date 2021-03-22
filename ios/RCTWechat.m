@@ -18,8 +18,9 @@
 #define INVOKE_FAILED (@"Wechat API invoke returns false")
 
 // pending LaunchFromWX event if wechat not register
-static BOOL isWeChatRegister = NO;
-static NSString *pendingWeChatDelegateURL = nil;
+static NSURL *pendingWeChatDelegateURL = nil;
+// wechat实例，如果为nil，代表SDK未初始化
+static RCTWechat *instanceManager = nil;
 
 static inline NSString* getWXCommonErrorCode() {
     return [NSString stringWithFormat:@"%d", WXErrCodeCommon];
@@ -28,7 +29,6 @@ static inline NSString* getWXCommonErrorCode() {
 @implementation RCTWechat
 
 @synthesize bridge = _bridge;
-static RCTWechat *instanceManager = nil;
 
 RCT_EXPORT_MODULE(Wechat)
 
@@ -42,62 +42,34 @@ RCT_EXPORT_MODULE(Wechat)
     return YES;
 }
 
-// APPDelegate handleOpenURL通知比module初始化要早
-+ (void)initialize {
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(listenerNotification:)
-                                                 name:@"RCTOpenURLNotification"
-                                               object:nil];
++ (BOOL)handleOpenURL:(NSURL *)url {
+    if (!instanceManager) { // wechat sdk not init
+        pendingWeChatDelegateURL = url;
+        return NO;
+    }
+    return [WXApi handleOpenURL:url delegate:instanceManager];
 }
 
-+ (BOOL)listenerNotification:(NSNotification *)aNotification {
-    NSString *aURLString =  [aNotification userInfo][@"url"];
-    if (!isWeChatRegister) {
-        pendingWeChatDelegateURL = aURLString;
++ (BOOL)handleOpenUniversalLink:(NSUserActivity *)userActivity {
+    if (!instanceManager) { // wechat sdk not init
+        pendingWeChatDelegateURL = userActivity.webpageURL;
         return NO;
     }
     
-    // 已经注册过wechat，delegate交给module的实例去
-    NSURL *aURL = [NSURL URLWithString:aURLString];
-    if ([WXApi handleOpenURL:aURL delegate:instanceManager])
-    {
-        return YES;
-    }
-    else
-    {
-        return NO;
+    return [WXApi handleOpenUniversalLink:userActivity delegate:instanceManager];
+}
+
+- (void)handleWechatDeepLink {
+    if (pendingWeChatDelegateURL) {
+        [WXApi handleOpenURL:pendingWeChatDelegateURL delegate:instanceManager];
+        pendingWeChatDelegateURL = nil;
+        return;
     }
 }
 
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (BOOL)handleOpenURL:(NSNotification *)aNotification
-{
-    NSString * aURLString =  [aNotification userInfo][@"url"];
-    if (!isWeChatRegister) {
-        pendingWeChatDelegateURL = aURLString;
-        return NO;
-    }
-    NSURL *aURL = [NSURL URLWithString:aURLString];
-    if ([WXApi handleOpenURL:aURL delegate:self])
-    {
-        return YES;
-    }
-    else
-    {
-        return NO;
-    }
-}
-
-- (void)handleWechatDeepLink {
-    if (pendingWeChatDelegateURL) {
-        [WXApi handleOpenURL:[NSURL URLWithString:pendingWeChatDelegateURL] delegate:self];
-        pendingWeChatDelegateURL = nil;
-        return;
-    }
 }
 
 - (void)createImageRequest:(NSString *)url
@@ -180,7 +152,6 @@ RCT_EXPORT_MODULE(Wechat)
     return data;
 }
 
-
 /// wechat sdk register
 /// @param callback callback
 RCT_EXPORT_METHOD(registerApp:(NSString *)appid
@@ -193,7 +164,6 @@ RCT_EXPORT_METHOD(registerApp:(NSString *)appid
     
     BOOL registerAPP = [WXApi registerApp:appid universalLink:universalLink];
     if (registerAPP) {
-        isWeChatRegister = YES;
         resolve([NSNull null]);
     }
     else {

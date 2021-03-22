@@ -44,10 +44,18 @@ Wechat callback function, If not configured, When sharing is called, it appears 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
             options:(NSDictionary<NSString*, id> *)options
 {
+    BOOL handled = [RCTWechat handleOpenURL:url];
+    if (handled) {
+        return handled;
+    }
     return [RCTLinkingManager application:application openURL:url options:options];
 }
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler {
+    BOOL handled = [RCTWechat handleOpenUniversalLink:userActivity];
+    if (handled) {
+        return handled;
+    }
     return [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
 }
 ```
