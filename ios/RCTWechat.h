@@ -16,6 +16,12 @@
 
 @interface RCTWechat : NSObject <RCTBridgeModule, WXApiDelegate>
 
-@property NSString *appId;
+@property (nonatomic, copy) NSString *appId;
+
+// handle AppDelegate openURL
++ (BOOL)handleOpenURL:(NSURL *)url;
+
++ (BOOL)handleOpenUniversalLink:(NSUserActivity *)userActivity;
+
 
 @end
