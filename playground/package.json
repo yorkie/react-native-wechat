@@ -8,7 +8,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@shm-open/utilities": "1.4.1",
+    "@shm-open/utilities": "1.6.2",
     "react": "16.8.6",
     "@shm-open/react-native-wechat": "1.1.1",
     "react-native": "0.60.0"
