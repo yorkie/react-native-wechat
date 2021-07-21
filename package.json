@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "test": "echo 'no test'",
-    "clean": "del-cli lib",
+    "clean": "rm -rf lib",
     "build": "npm run clean && npm run compile",
     "release": "npm test && npm run build && standard-version && git push --follow-tags origin master && npm publish",
     "compile": "tsc -d"
@@ -36,7 +36,6 @@
   },
   "devDependencies": {
     "@types/react-native": "0.63.51",
-    "del-cli": "3.0.1",
     "standard-version": "9.1.1",
     "typescript": "4.2.3"
   },
