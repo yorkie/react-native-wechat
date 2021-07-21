@@ -32,7 +32,7 @@
     "react-component"
   ],
   "dependencies": {
-    "@shm-open/utilities": "^1.2.0"
+    "@shm-open/utilities": "^1.7.0"
   },
   "peerDependencies": {
     "react-native": "*"
