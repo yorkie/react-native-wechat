@@ -12,11 +12,14 @@
     "*.podspec"
   ],
   "scripts": {
-    "test": "echo 'no test'",
-    "clean": "rm -rf lib",
     "build": "npm run clean && npm run compile",
+    "clean": "rm -rf lib",
+    "compile": "tsc -d",
+    "start": "concurrently npm:watch-ts npm:sync-to-app",
+    "watch-ts": "npm run compile -- --watch",
+    "sync-to-app": "if [ $SHM_APP_SOURCE_PATH ]; then msf ./ $SHM_APP_SOURCE_PATH/node_modules/@shm-open/react-native-wechat; else tail -f /dev/null; fi",
     "release": "npm test && npm run build && standard-version && git push --follow-tags origin master && npm publish",
-    "compile": "tsc -d"
+    "test": "echo 'no test'"
   },
   "repository": {
     "type": "git",
@@ -35,7 +38,10 @@
     "react-native": "*"
   },
   "devDependencies": {
+    "@shm-open/eslint-config-bundle": "1.2.0",
     "@types/react-native": "0.63.51",
+    "concurrently": "6.2.0",
+    "msf-cli": "1.2.2",
     "standard-version": "9.1.1",
     "typescript": "4.2.3"
   },

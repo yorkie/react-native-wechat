@@ -1,5 +1,3 @@
-<img height="450" src="./wechat.jpg">
-
 # react-native-wechat
 
 [React Native] bridging library that integrates WeChat SDKs
@@ -8,17 +6,17 @@
 
 ## Table of Contents
 
-- [Getting Started](#getting-started)
-- [API Documentation](#api-documentation)
-- [Installation](#installation)
-- [Community](#community)
-- [Authors](#authors)
-- [License](#license)
+-   [Getting Started](#getting-started)
+-   [API Documentation](#api-documentation)
+-   [Installation](#installation)
+-   [Community](#community)
+-   [Authors](#authors)
+-   [License](#license)
 
 ## Getting Started
 
-- [Build setup on iOS](./docs/build-setup-ios.md)
-- [Build setup on Android](./docs/build-setup-android.md)
+-   [Build setup on iOS](./docs/build-setup-ios.md)
+-   [Build setup on Android](./docs/build-setup-android.md)
 
 ## API Documentation
 
@@ -27,9 +25,9 @@ or `async/await` to manage your dataflow.
 
 #### registerApp(appId, universalLink)
 
-- `appId` {String} the appId you get from WeChat dashboard
-- `universalLink` {String} the iOS universalLink setting
-- returns {Boolean} explains if your application is registered done
+-   `appId` {String} the appId you get from WeChat dashboard
+-   `universalLink` {String} the iOS universalLink setting
+-   returns {Boolean} explains if your application is registered done
 
 This method should be called once globally.
 
@@ -38,42 +36,43 @@ import * as WeChat from 'react-native-wechat';
 
 WeChat.registerApp('your wxid', 'your universal setting');
 ```
-#### isWXAppInstalled() 
 
-- returns {Boolean} if WeChat is installed.
+#### isWXAppInstalled()
+
+-   returns {Boolean} if WeChat is installed.
 
 Check if the WeChat app is installed on the device.
 
 #### isWXAppSupportApi()
 
-- returns {Boolean} Contains the result.
+-   returns {Boolean} Contains the result.
 
 Check if wechat support open url.
 
 #### getApiVersion()
 
-- returns {String} Contains the result.
+-   returns {String} Contains the result.
 
 Get the WeChat SDK api version.
 
 #### openWXApp()
 
-- returns {Boolean} 
+-   returns {Boolean}
 
 Open the WeChat app from your application.
 
 #### sendAuthRequest(scope, state)
 
-- `scope` {String} Scopes of auth request. 
+-   `scope` {String} Scopes of auth request.
     snsapi_userinfo or snsapi_base
-- `state` {String} 用于保持请求和回调的状态，授权请求后原样带回给第三方
-- returns {Object}
+-   `state` {String} 用于保持请求和回调的状态，授权请求后原样带回给第三方
+-   returns {Object}
 
-Send authentication request, and it returns an object with the 
+Send authentication request, and it returns an object with the
 following fields:
 
 | field   | type   | description                         |
-|---------|--------|-------------------------------------|
+| ------- | ------ | ----------------------------------- |
 | errCode | Number | Error Code                          |
 | errStr  | String | Error message if any error occurred |
 | code    | String | Authorization code                  |
@@ -81,19 +80,19 @@ following fields:
 
 #### pay(payload)
 
-- `partnerId` {String} 商家向财付通申请的商家id 
-- `prepayId` {String} 预支付订单ID
-- `nonceStr` {String} 随机串，防重发
-- `timeStamp` {String} 时间戳，防重发
-- `package` {String} 商家根据财付通文档填写的数据和签名
-- `sign` {String} 商家根据微信开放平台文档对数据做的签名
-- returns {Object}
+-   `partnerId` {String} 商家向财付通申请的商家 id
+-   `prepayId` {String} 预支付订单 ID
+-   `nonceStr` {String} 随机串，防重发
+-   `timeStamp` {String} 时间戳，防重发
+-   `package` {String} 商家根据财付通文档填写的数据和签名
+-   `sign` {String} 商家根据微信开放平台文档对数据做的签名
+-   returns {Object}
 
 Sends request for proceeding payment, then returns an object:
 
 | name    | type   | description                         |
-|---------|--------|-------------------------------------|
-| errCode | Number | 0 if pay successed        |
+| ------- | ------ | ----------------------------------- |
+| errCode | Number | 0 if pay successed                  |
 | errStr  | String | Error message if any error occurred |
 
 ## Installation
@@ -101,6 +100,7 @@ Sends request for proceeding payment, then returns an object:
 ```sh
 $ npm install react-native-wechat --save
 ```
+
 ## License
 
 MIT

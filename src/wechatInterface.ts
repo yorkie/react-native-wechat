@@ -104,11 +104,11 @@ export interface WechatShareVideo extends WechatShareBase {
 export interface WechatShareMusic extends WechatShareBase {
     // 音频网页的URL地址
     musicUrl?: string;
-    // 供低带宽环境下使用的音频网页URL地址	
+    // 供低带宽环境下使用的音频网页URL地址
     musicLowBandUrl?: string;
-    // 音频数据的URL地址	
+    // 音频数据的URL地址
     musicDataUrl?: string;
-    // 供低带宽环境下使用的音频数据URL地址	
+    // 供低带宽环境下使用的音频数据URL地址
     musicLowBandDataUrl?: string;
     // 缩略图
     thumbImageUrl?: string;
@@ -118,9 +118,11 @@ export interface WechatShareMusic extends WechatShareBase {
  * 微信支付
  */
 export interface WechatPay {
-    // 商家向财付通申请的商家id 
+    // 商家向财付通申请的商家id
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     partnerId: string;
     // 预支付订单
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     prepayId: string;
     // 随机串，防重发
     nonceStr: string;
@@ -136,6 +138,7 @@ export interface WechatPay {
  * 微信签约
  */
 export interface WechatEntrust {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     preEntrustWebId: string;
 }
 
@@ -143,12 +146,19 @@ export interface WechatEntrust {
  * 错误码
  */
 export enum WXErrCodeEnum {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     WXSuccess = 0, // 成功
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     WXErrCodeCommon = -1, // 普通错误类型
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     WXErrCodeUserCancel = -2, // 用户点击取消并返回
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     WXErrCodeSentFail = -3, // 发送失败
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     WXErrCodeAuthDeny = -4, // 授权失败
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     WXErrCodeUnsupport = -5, // 微信不支持
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     WXErrBan = -6, // Android禁止
 }
 
@@ -182,6 +192,7 @@ export interface SendAuthResp extends BaseWXResp {
     lang?: string;
     country?: string;
     state?: string;
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     appId?: string;
     code?: string;
 }

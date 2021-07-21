@@ -1,5 +1,6 @@
+/* eslint-disable import/no-unused-modules */
 import { DeviceEventEmitter, NativeModules } from 'react-native';
-import { ListenerHolder } from '@shm-open/utilities';
+import { ListenerHolder, ListenerSubscription } from '@shm-open/utilities';
 import {
     WechatPay,
     WechatEntrust,
@@ -41,7 +42,7 @@ export {
     LaunchMiniprogramResp,
     PayResp,
     OpenBusinessWebViewResp,
- } from './wechatInterface';
+} from './wechatInterface';
 
 const { Wechat } = NativeModules;
 
@@ -261,7 +262,10 @@ export function addWechatListener(
     listener: LaunchFromWXReqEventHandler,
 );
 
-export function addWechatListener(type: WechatEventType, listener: WechatEventHandler) {
+export function addWechatListener(
+    type: WechatEventType,
+    listener: WechatEventHandler,
+): ListenerSubscription {
     return handlerHolder.addListener(type, listener);
 }
 
