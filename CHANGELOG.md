@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/shm-open/react-native-wechat/compare/v1.2.0...v1.2.1) (2021-08-18)
+
+
+### Bug Fixes
+
+* remove the use of deprecated DeviceEventEmitter.removeListener() ([afbc8fd](https://github.com/shm-open/react-native-wechat/commit/afbc8fd508f6eb58a8bc1a66d51298fb9689e601))
+
 ## [1.2.0](https://github.com/shm-open/react-native-wechat/compare/v1.1.2...v1.2.0) (2021-07-22)
 
 
