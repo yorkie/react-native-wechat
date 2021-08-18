@@ -1,4 +1,4 @@
-# react-native-wechat
+# react-native-wechat ![Node.js CI](https://github.com/shm-open/react-native-wechat/workflows/Node.js%20CI/badge.svg)
 
 [React Native] bridging library that integrates WeChat SDKs
 

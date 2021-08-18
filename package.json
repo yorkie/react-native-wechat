@@ -19,7 +19,7 @@
     "watch-ts": "npm run compile -- --watch",
     "sync-to-app": "if [ $SHM_APP_SOURCE_PATH ]; then msf ./ $SHM_APP_SOURCE_PATH/node_modules/@shm-open/react-native-wechat; else tail -f /dev/null; fi",
     "release": "npm test && npm run build && standard-version && git push --follow-tags origin master && npm publish",
-    "test": "echo 'no test'"
+    "test": "eslint src/"
   },
   "repository": {
     "type": "git",
