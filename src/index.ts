@@ -1,6 +1,6 @@
 /* eslint-disable import/no-unused-modules */
-import { DeviceEventEmitter, NativeModules } from 'react-native';
 import { ListenerHolder, ListenerSubscription } from '@shm-open/utilities';
+import { DeviceEventEmitter, EmitterSubscription, NativeModules } from 'react-native';
 import {
     WechatPay,
     WechatEntrust,
@@ -117,18 +117,26 @@ function promiseWrap<T extends BaseWXResp>(
 ): Promise<T> {
     return new Promise((resolve, reject) => {
         // 异步结果，微信部分API成功结果没有回调。
+        let subscription: EmitterSubscription;
         const listener = (resp: T) => {
             if (resp.errCode === WXErrCodeEnum.WXSuccess) {
                 resolve(resp);
             } else {
                 reject(new WechatError(resp.errCode, resp.errStr));
             }
-            DeviceEventEmitter.removeListener(eventType, listener);
+            if (subscription) {
+                subscription.remove();
+                subscription = null;
+            }
         };
-        DeviceEventEmitter.addListener(eventType, listener);
+        subscription = DeviceEventEmitter.addListener(eventType, listener);
         // 同步结果，微信同步成功回调不可信，同步失败回调可信。
+        // TODO: do we need a timeout?
         callWXApi().catch((error: WechatError) => {
-            DeviceEventEmitter.removeListener(eventType, listener);
+            if (subscription) {
+                subscription.remove();
+                subscription = null;
+            }
             reject(error);
         });
     });
