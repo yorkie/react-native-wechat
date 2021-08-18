@@ -15,6 +15,8 @@
 
 ## Getting Started
 
+`$ npm install @shm-open/react-native-wechat`
+
 -   [Build setup on iOS](./docs/build-setup-ios.md)
 -   [Build setup on Android](./docs/build-setup-android.md)
 
