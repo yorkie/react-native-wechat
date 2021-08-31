@@ -237,13 +237,17 @@ RCT_EXPORT_METHOD(sendAuthRequest:(NSString *)scope
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
+    if (!instanceManager) {
+        reject(getWXCommonErrorCode(), NOT_REGISTERED, nil);
+        return;
+    }
     SendAuthReq *req = [[SendAuthReq alloc] init];
     req.scope = scope;
     req.state = state;
 
     [WXApi sendAuthReq:req
         viewController:RCTKeyWindow().rootViewController
-              delegate:self
+              delegate:instanceManager
             completion:^(BOOL success) {
         if (success) {
             resolve([NSNull null]);
