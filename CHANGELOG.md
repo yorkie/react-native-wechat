@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.2](https://github.com/shm-open/react-native-wechat/compare/v1.2.1...v1.2.2) (2021-09-02)
+
+
+### Bug Fixes
+
+* **iOS:** unable to handle login delegate ([8dc71d8](https://github.com/shm-open/react-native-wechat/commit/8dc71d8ab823e28fe1ae9257afc34e23aaf9f5c5))
+
 ### [1.2.1](https://github.com/shm-open/react-native-wechat/compare/v1.2.0...v1.2.1) (2021-08-18)
 
 
