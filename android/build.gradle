@@ -11,21 +11,10 @@ android {
   defaultConfig {
     minSdkVersion safeExtGet('minSdkVersion', 16)
     targetSdkVersion safeExtGet('targetSdkVersion', 22)
-    versionCode 1
-    versionName "1.0"
-    ndk {
-      abiFilters "armeabi-v7a", "x86"
-    }
-  }
-}
-
-allprojects {
-  repositories {
-    jcenter()
   }
 }
 
 dependencies {
   implementation 'com.facebook.react:react-native:+'
-  api 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:5.4.0'
+  api 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:6.7.9'
 }
