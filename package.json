@@ -43,7 +43,7 @@
     "concurrently": "6.4.0",
     "msf-cli": "1.2.3",
     "standard-version": "9.3.2",
-    "typescript": "4.4.4"
+    "typescript": "4.5.2"
   },
   "homepage": "https://github.com/shm-open/react-native-wechat",
   "author": "shihuimiao",
