@@ -38,7 +38,7 @@
     "react-native": "*"
   },
   "devDependencies": {
-    "@shm-open/eslint-config-bundle": "1.7.1",
+    "@shm-open/eslint-config-bundle": "1.7.2",
     "@types/react-native": "0.66.6",
     "concurrently": "6.4.0",
     "msf-cli": "1.2.3",
