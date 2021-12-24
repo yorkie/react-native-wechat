@@ -22,6 +22,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
@@ -53,7 +54,9 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+@ReactModule(name = WechatModule.NAME)
 public class WechatModule extends ReactContextBaseJavaModule implements IWXAPIEventHandler {
+    public final static String NAME = "Wechat";
     private String appId;
     private IWXAPI api = null;
     private final static String NOT_REGISTERED = "registerApp required.";
@@ -106,7 +109,7 @@ public class WechatModule extends ReactContextBaseJavaModule implements IWXAPIEv
 
     @Override
     public String getName() {
-        return "Wechat";
+        return NAME;
     }
 
     /**

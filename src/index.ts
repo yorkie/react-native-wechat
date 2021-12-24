@@ -44,8 +44,6 @@ export {
     OpenBusinessWebViewResp,
 } from './wechatInterface';
 
-const { Wechat } = NativeModules;
-
 type EventType =
     | 'SendMessageToWX.Resp'
     | 'LaunchMiniprogram.Resp'
@@ -57,21 +55,21 @@ type EventType =
  * 微信是否已安装
  */
 export function isWXAppInstalled(): Promise<boolean> {
-    return Wechat.isWXAppInstalled();
+    return NativeModules.Wechat.isWXAppInstalled();
 }
 
 /**
  * 注册wechat
  */
 export function registerApp(appId: string, universalLink: string): Promise<void> {
-    return Wechat.registerApp(appId, universalLink);
+    return NativeModules.Wechat.registerApp(appId, universalLink);
 }
 
 /**
  * 判断当前微信的版本是否支持
  */
 export function isWXAppSupportApi(): Promise<boolean> {
-    return Wechat.isWXAppSupportApi();
+    return NativeModules.Wechat.isWXAppSupportApi();
 }
 
 /**
@@ -79,7 +77,7 @@ export function isWXAppSupportApi(): Promise<boolean> {
  */
 export function getWXAppInstallUrl(): Promise<string> {
     return new Promise((resolve, reject) => {
-        Wechat.getWXAppInstallUrl((error: string, installURL: string) => {
+        NativeModules.Wechat.getWXAppInstallUrl((error: string, installURL: string) => {
             if (!error) {
                 resolve(installURL);
             } else {
@@ -94,7 +92,7 @@ export function getWXAppInstallUrl(): Promise<string> {
  */
 export function getApiVersion(): Promise<string> {
     return new Promise((resolve, reject) => {
-        Wechat.getApiVersion((error: string, version: string) => {
+        NativeModules.Wechat.getApiVersion((error: string, version: string) => {
             if (!error) {
                 resolve(version);
             } else {
@@ -108,7 +106,7 @@ export function getApiVersion(): Promise<string> {
  * 打开微信
  */
 export function openWXApp(): Promise<void> {
-    return Wechat.openWXApp();
+    return NativeModules.Wechat.openWXApp();
 }
 
 function promiseWrap<T extends BaseWXResp>(
@@ -152,7 +150,9 @@ export function sendAuthRequest(
     scopes: 'snsapi_userinfo' | 'snsapi_base',
     state?: string,
 ): Promise<SendAuthResp> {
-    return promiseWrap<SendAuthResp>('SendAuth.Resp', () => Wechat.sendAuthRequest(scopes, state));
+    return promiseWrap<SendAuthResp>('SendAuth.Resp', () =>
+        NativeModules.Wechat.sendAuthRequest(scopes, state),
+    );
 }
 
 /**
@@ -162,7 +162,7 @@ export function sendAuthRequest(
  */
 export function shareText(shareData: WechatShareText): Promise<SendMessageToWXResp> {
     return promiseWrap<SendMessageToWXResp>('SendMessageToWX.Resp', () =>
-        Wechat.shareText(shareData),
+        NativeModules.Wechat.shareText(shareData),
     );
 }
 
@@ -173,7 +173,7 @@ export function shareText(shareData: WechatShareText): Promise<SendMessageToWXRe
  */
 export function shareImage(shareData: WechatShareImage): Promise<SendMessageToWXResp> {
     return promiseWrap<SendMessageToWXResp>('SendMessageToWX.Resp', () =>
-        Wechat.shareImage(shareData),
+        NativeModules.Wechat.shareImage(shareData),
     );
 }
 
@@ -184,7 +184,7 @@ export function shareImage(shareData: WechatShareImage): Promise<SendMessageToWX
  */
 export function shareWebpage(shareData: WechatShareWebPage): Promise<SendMessageToWXResp> {
     return promiseWrap<SendMessageToWXResp>('SendMessageToWX.Resp', () =>
-        Wechat.shareWebpage(shareData),
+        NativeModules.Wechat.shareWebpage(shareData),
     );
 }
 
@@ -195,7 +195,7 @@ export function shareWebpage(shareData: WechatShareWebPage): Promise<SendMessage
  */
 export function shareMiniprogram(shareData: WechatShareMiniprogram): Promise<SendMessageToWXResp> {
     return promiseWrap<SendMessageToWXResp>('SendMessageToWX.Resp', () =>
-        Wechat.shareMiniprogram(shareData),
+        NativeModules.Wechat.shareMiniprogram(shareData),
     );
 }
 
@@ -206,7 +206,7 @@ export function shareMiniprogram(shareData: WechatShareMiniprogram): Promise<Sen
  */
 export function shareVideo(shareData: WechatShareVideo): Promise<SendMessageToWXResp> {
     return promiseWrap<SendMessageToWXResp>('SendMessageToWX.Resp', () =>
-        Wechat.shareVideo(shareData),
+        NativeModules.Wechat.shareVideo(shareData),
     );
 }
 
@@ -217,7 +217,7 @@ export function shareVideo(shareData: WechatShareVideo): Promise<SendMessageToWX
  */
 export function shareMusic(shareData: WechatShareMusic): Promise<SendMessageToWXResp> {
     return promiseWrap<SendMessageToWXResp>('SendMessageToWX.Resp', () =>
-        Wechat.shareMusic(shareData),
+        NativeModules.Wechat.shareMusic(shareData),
     );
 }
 
@@ -228,7 +228,7 @@ export function shareMusic(shareData: WechatShareMusic): Promise<SendMessageToWX
  */
 export function openMiniprogram(shareData: WechatOpenMiniprogram): Promise<LaunchMiniprogramResp> {
     return promiseWrap<LaunchMiniprogramResp>('LaunchMiniprogram.Resp', () =>
-        Wechat.openMiniprogram(shareData),
+        NativeModules.Wechat.openMiniprogram(shareData),
     );
 }
 
@@ -238,7 +238,7 @@ export function openMiniprogram(shareData: WechatOpenMiniprogram): Promise<Launc
  * @return Promise
  */
 export function pay(payData: WechatPay): Promise<PayResp> {
-    return promiseWrap<PayResp>('PayReq.Resp', () => Wechat.pay(payData));
+    return promiseWrap<PayResp>('PayReq.Resp', () => NativeModules.Wechat.pay(payData));
 }
 
 /**
@@ -248,7 +248,7 @@ export function pay(payData: WechatPay): Promise<PayResp> {
  */
 export function entrust(entrustData: WechatEntrust): Promise<OpenBusinessWebViewResp> {
     return promiseWrap<OpenBusinessWebViewResp>('WXOpenBusinessWebview.Resp', () =>
-        Wechat.entrust(entrustData),
+        NativeModules.Wechat.entrust(entrustData),
     );
 }
 

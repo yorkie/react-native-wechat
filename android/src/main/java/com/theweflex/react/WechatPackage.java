@@ -1,30 +1,50 @@
 package com.theweflex.react;
 
 import com.facebook.react.ReactPackage;
-import com.facebook.react.bridge.JavaScriptModule;
+import com.facebook.react.TurboReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.uimanager.ViewManager;
+import com.facebook.react.module.annotations.ReactModule;
+import com.facebook.react.module.model.ReactModuleInfo;
+import com.facebook.react.module.model.ReactModuleInfoProvider;
+import com.facebook.react.turbomodule.core.interfaces.TurboModule;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-public class WechatPackage implements ReactPackage {
+public class WechatPackage extends TurboReactPackage implements ReactPackage {
     @Override
-    public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-        return Arrays.asList(new NativeModule[]{
-            // Modules from third-party
-            new WechatModule(reactContext),
-        });
+    public NativeModule getModule(String name, ReactApplicationContext reactContext) {
+        switch (name) {
+            case WechatModule.NAME:
+                return new WechatModule(reactContext);
+            default:
+                throw new IllegalArgumentException("cannot find native module: " + name);
+        }
     }
 
-    public List<Class<? extends JavaScriptModule>> createJSModules() {
-        return Collections.emptyList();
-    }
-
     @Override
-    public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
-        return Collections.emptyList();
+    public ReactModuleInfoProvider getReactModuleInfoProvider() {
+        Class<? extends NativeModule>[] moduleList = new Class[]{
+            WechatModule.class
+        };
+
+        final Map<String, ReactModuleInfo> reactModuleInfoMap = new HashMap<>();
+        for (Class<? extends NativeModule> moduleClass : moduleList) {
+            ReactModule reactModule = moduleClass.getAnnotation(ReactModule.class);
+
+            reactModuleInfoMap.put(
+                reactModule.name(),
+                new ReactModuleInfo(
+                    reactModule.name(),
+                    moduleClass.getName(),
+                    true,
+                    reactModule.needsEagerInit(),
+                    reactModule.hasConstants(),
+                    reactModule.isCxxModule(),
+                    TurboModule.class.isAssignableFrom(moduleClass)));
+        }
+
+        return () -> reactModuleInfoMap;
     }
 }
