@@ -1,6 +1,6 @@
 {
   "name": "@shm-open/react-native-wechat",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "react-native library for wechat app",
   "type": "module",
   "main": "lib/index.js",
