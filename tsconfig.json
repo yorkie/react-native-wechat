@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "moduleResolution": "node",
+    "target": "es6",
+    "outDir": "lib",
+    "lib": ["es5", "es2015", "es2016", "es2017"],
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["src/*.*"]
+}

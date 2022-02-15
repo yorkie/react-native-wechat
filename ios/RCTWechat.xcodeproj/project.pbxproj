@@ -1,0 +1,385 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		10D6D7A91F160C250066F0F3 /* libRCTWechat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 86D238421BD0BB9E00C75D01 /* libRCTWechat.a */; };
+		867B79F6235EB79E00EE529A /* RCTWechat.m in Sources */ = {isa = PBXBuildFile; fileRef = 867B79F4235EB79E00EE529A /* RCTWechat.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		10D6D7AA1F160C250066F0F3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 86D2383A1BD0BB9E00C75D01 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 86D238411BD0BB9E00C75D01;
+			remoteInfo = RCTWechat;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		86D238401BD0BB9E00C75D01 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		10D6D7A41F160C250066F0F3 /* RCTWechatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RCTWechatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		867B79F4235EB79E00EE529A /* RCTWechat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTWechat.m; sourceTree = "<group>"; };
+		867B79F5235EB79E00EE529A /* RCTWechat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTWechat.h; sourceTree = "<group>"; };
+		86D238421BD0BB9E00C75D01 /* libRCTWechat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRCTWechat.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		10D6D7A11F160C250066F0F3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				10D6D7A91F160C250066F0F3 /* libRCTWechat.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86D2383F1BD0BB9E00C75D01 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		86D238391BD0BB9E00C75D01 = {
+			isa = PBXGroup;
+			children = (
+				867B79F5235EB79E00EE529A /* RCTWechat.h */,
+				867B79F4235EB79E00EE529A /* RCTWechat.m */,
+				86D238431BD0BB9E00C75D01 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		86D238431BD0BB9E00C75D01 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				86D238421BD0BB9E00C75D01 /* libRCTWechat.a */,
+				10D6D7A41F160C250066F0F3 /* RCTWechatTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		10D6D7A31F160C250066F0F3 /* RCTWechatTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 10D6D7AC1F160C250066F0F3 /* Build configuration list for PBXNativeTarget "RCTWechatTests" */;
+			buildPhases = (
+				10D6D7A01F160C250066F0F3 /* Sources */,
+				10D6D7A11F160C250066F0F3 /* Frameworks */,
+				10D6D7A21F160C250066F0F3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				10D6D7AB1F160C250066F0F3 /* PBXTargetDependency */,
+			);
+			name = RCTWechatTests;
+			productName = RCTWechatTests;
+			productReference = 10D6D7A41F160C250066F0F3 /* RCTWechatTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		86D238411BD0BB9E00C75D01 /* RCTWechat */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 86D2384B1BD0BB9E00C75D01 /* Build configuration list for PBXNativeTarget "RCTWechat" */;
+			buildPhases = (
+				86D2383E1BD0BB9E00C75D01 /* Sources */,
+				86D2383F1BD0BB9E00C75D01 /* Frameworks */,
+				86D238401BD0BB9E00C75D01 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RCTWechat;
+			productName = RCTWechat;
+			productReference = 86D238421BD0BB9E00C75D01 /* libRCTWechat.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		86D2383A1BD0BB9E00C75D01 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0830;
+				ORGANIZATIONNAME = WeFlex;
+				TargetAttributes = {
+					10D6D7A31F160C250066F0F3 = {
+						CreatedOnToolsVersion = 8.3.2;
+						DevelopmentTeam = QMP96B5DPW;
+						ProvisioningStyle = Automatic;
+					};
+					86D238411BD0BB9E00C75D01 = {
+						CreatedOnToolsVersion = 7.0;
+						DevelopmentTeam = JP4369ZCVM;
+					};
+				};
+			};
+			buildConfigurationList = 86D2383D1BD0BB9E00C75D01 /* Build configuration list for PBXProject "RCTWechat" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				English,
+				Base,
+			);
+			mainGroup = 86D238391BD0BB9E00C75D01;
+			productRefGroup = 86D238431BD0BB9E00C75D01 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				86D238411BD0BB9E00C75D01 /* RCTWechat */,
+				10D6D7A31F160C250066F0F3 /* RCTWechatTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		10D6D7A21F160C250066F0F3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		10D6D7A01F160C250066F0F3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86D2383E1BD0BB9E00C75D01 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				867B79F6235EB79E00EE529A /* RCTWechat.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		10D6D7AB1F160C250066F0F3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 86D238411BD0BB9E00C75D01 /* RCTWechat */;
+			targetProxy = 10D6D7AA1F160C250066F0F3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		10D6D7AD1F160C250066F0F3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = QMP96B5DPW;
+				INFOPLIST_FILE = RCTWechatTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = yorkie.RCTWechatTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		10D6D7AE1F160C250066F0F3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = QMP96B5DPW;
+				INFOPLIST_FILE = RCTWechatTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = yorkie.RCTWechatTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		86D238491BD0BB9E00C75D01 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		86D2384A1BD0BB9E00C75D01 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		86D2384C1BD0BB9E00C75D01 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../../React/**",
+					"$(SRCROOT)/../react-native/React/**",
+					"$(SRCROOT)/../node_modules/react-native/React/**",
+					"$(SRCROOT)/../node_modules/react-native/Libraries/Image/**",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		86D2384D1BD0BB9E00C75D01 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../../React/**",
+					"$(SRCROOT)/../react-native/React/**",
+					"$(SRCROOT)/../node_modules/react-native/React/**",
+					"$(SRCROOT)/../node_modules/react-native/Libraries/Image/**",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		10D6D7AC1F160C250066F0F3 /* Build configuration list for PBXNativeTarget "RCTWechatTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				10D6D7AD1F160C250066F0F3 /* Debug */,
+				10D6D7AE1F160C250066F0F3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		86D2383D1BD0BB9E00C75D01 /* Build configuration list for PBXProject "RCTWechat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				86D238491BD0BB9E00C75D01 /* Debug */,
+				86D2384A1BD0BB9E00C75D01 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		86D2384B1BD0BB9E00C75D01 /* Build configuration list for PBXNativeTarget "RCTWechat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				86D2384C1BD0BB9E00C75D01 /* Debug */,
+				86D2384D1BD0BB9E00C75D01 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 86D2383A1BD0BB9E00C75D01 /* Project object */;
+}

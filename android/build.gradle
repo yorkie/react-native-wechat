@@ -1,32 +1,48 @@
 apply plugin: 'com.android.library'
 
-def safeExtGet(prop, fallback) {
-  rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+def getExtOrDefault(name) {
+    return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['ReactNativeWechat_' + name]
 }
+
+buildscript {
+    repositories {
+        mavenCentral()
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.2.2'
+    }
+}
+
+
 
 android {
-  compileSdkVersion safeExtGet('compileSdkVersion', 23)
-  buildToolsVersion safeExtGet('buildToolsVersion', '23.0.1')
+    compileSdkVersion getExtOrDefault('compileSdkVersion')
+    buildToolsVersion getExtOrDefault('buildToolsVersion')
 
-  defaultConfig {
-    minSdkVersion safeExtGet('minSdkVersion', 16)
-    targetSdkVersion safeExtGet('targetSdkVersion', 22)
-    versionCode 1
-    versionName "1.0"
-    ndk {
-      abiFilters "armeabi-v7a", "x86"
+    defaultConfig {
+        minSdkVersion getExtOrDefault('minSdkVersion')
+        targetSdkVersion getExtOrDefault('targetSdkVersion')
+        versionCode 1
+        versionName "1.0"
     }
-  }
+    buildTypes {
+        release {
+            consumerProguardFiles   'proguard-rules.pro'
+        }
+    }
 }
 
-allprojects {
-  repositories {
-    jcenter()
-    maven { url "$projectDir/../../react-native/android" }
-  }
+repositories {
+    mavenCentral()
+    google()
+    maven {
+        // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+        url "$rootDir/../node_modules/react-native/android"
+    }
 }
 
 dependencies {
-  api 'com.facebook.react:react-native:+'
-  api files('libs/libammsdk.jar')
+    implementation 'com.facebook.react:react-native:+'
+    api "com.tencent.mm.opensdk:wechat-sdk-android-without-mta:${getExtOrDefault('WechatSdkVersion')}"
 }

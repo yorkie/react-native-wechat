@@ -3,15 +3,41 @@ node_modules
 /android/build
 /android/RCTWeChat.iml
 
-# ios
+# iOS
 ios/build
 
+# OSX
+#
+.DS_Store
+
 # Xcode
+#
 build/
-DerivedData/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
 xcuserdata
-Pods/
-*.xcuserstate
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
 *.ipa
-*.dSYM.zip
-*.dSYM
+*.xcuserstate
+project.xcworkspace
+
+
+# Android/IntelliJ
+build/
+.idea
+.gradle
+local.properties
+*.iml
+
+
+# outputs
+/lib
